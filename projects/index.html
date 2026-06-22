@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projects — Joshua Martin</title>
+  <link rel="stylesheet" href="/static/css/reset.css" />
+  <link rel="stylesheet" href="/static/css/typography.css" />
+  <link rel="stylesheet" href="/static/css/main.css" />
+</head>
+<body>
+
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="container">
+      <a href="/" class="nav-logo">Joshua Martin</a>
+      <ul class="nav-links" role="list">
+        <li><a href="/">Home</a></li>
+        <li><a href="/about/">About</a></li>
+        <li><a href="/projects/" aria-current="page">Projects</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+
+      <header class="page-header">
+        <h1>Projects</h1>
+        <p>Research and applied AI work across federal SBIR/STTR programs and commercial engagements.</p>
+      </header>
+
+      <section aria-label="Project list">
+        <div class="project-grid">
+
+          <!-- GRIDview -->
+          <article class="project-card">
+            <div class="project-card-img">
+              <img src="/static/img/gridview.jpg" alt="GRIDview simulation panel showing fan charts for wind, solar, and load with uncertainty bands" loading="lazy" />
+            </div>
+            <h2>GRIDview</h2>
+            <p>
+              Uncertainty-aware grid decision support platform for probabilistic forecasting, risk
+              visualization, and simulation-based operating decisions. Benchmarked Gaussian Processes,
+              Bayesian Neural Networks, and TCNs with Student-t likelihood heads; the TCN achieved
+              27.1% CRPS improvement over a deterministic baseline with calibrated 90%, 95%, and 99%
+              prediction interval coverage. Used Gaussian copula scenario generation to preserve
+              cross-variable dependencies across load, solar, and wind forecasts. Deployed via
+              FastAPI, PyTorch, React, D3.js, Docker, and Azure DevOps CI/CD with sub-one-minute
+              end-to-end latency.
+            </p>
+            <ul class="project-tags" role="list">
+              <li class="tag">PyTorch</li>
+              <li class="tag">FastAPI</li>
+              <li class="tag">React</li>
+              <li class="tag">Gaussian Processes</li>
+              <li class="tag">Probabilistic Forecasting</li>
+              <li class="tag">Docker</li>
+            </ul>
+            <div class="project-card-footer">
+              <span class="project-year">DOE Phase I (2025–2026) — Technical Lead</span>
+            </div>
+          </article>
+
+          <!-- Pelarion -->
+          <article class="project-card">
+            <div class="project-card-img">
+              <img src="/static/img/pelarion.jpg" alt="Pelarion title and abstract screening interface showing model recommendations and conflict flags" loading="lazy" />
+            </div>
+            <h2>Pelarion</h2>
+            <p>
+              Full-stack systematic review platform built for the EPA to accelerate grey literature
+              screening. Ingests PDFs and HTML, segments documents into sentence-aware chunks, and
+              ranks abstracts with a two-stage pipeline: BM25 lexical ranking followed by a
+              Random Forest / XGBoost classifier tuned via Optuna. Full-text screening uses an LLM
+              (Gemini Flash) with structured prompts, producing criterion-by-criterion rationales
+              and page-level citations. Delivered 80% recall and 86% precision. Deployed as a
+              production web app with Django, React, PostgreSQL, Celery, RabbitMQ, Redis, and
+              Azure Blob Storage.
+            </p>
+            <ul class="project-tags" role="list">
+              <li class="tag">Django</li>
+              <li class="tag">React</li>
+              <li class="tag">PostgreSQL</li>
+              <li class="tag">LLMs</li>
+              <li class="tag">XGBoost</li>
+              <li class="tag">Celery</li>
+            </ul>
+            <div class="project-card-footer">
+              <span class="project-year">EPA Phase II (2023–2025) — Technical Lead</span>
+            </div>
+          </article>
+
+          <!-- AILA -->
+          <article class="project-card">
+            <div class="project-card-img">
+              <img src="/static/img/aila.jpg" alt="AILA results viewer showing saliency heatmap overlaid on a targeting image and LIME word-importance bar chart" loading="lazy" />
+            </div>
+            <h2>AILA</h2>
+            <p>
+              Multimodal AI prototype for the DoD that prioritizes targeting-package review by
+              detecting mismatches between imagery and captions. Fine-tuned BLIP on a 1,435-pair
+              dataset of overhead and satellite imagery across four target categories. Developed
+              milBERT via the ExBERT architecture to improve masked language modeling on military
+              text, raising top-1 accuracy from 0.394 to 0.498. Final model: 81.9% accuracy,
+              87.2% recall, 79.2% precision, with simulated 4x+ reviewer speedup. Delivered
+              saliency maps and LIME explanations; deployed via React, Django, Flask, PostgreSQL,
+              Kubernetes, and NGINX.
+            </p>
+            <ul class="project-tags" role="list">
+              <li class="tag">BLIP</li>
+              <li class="tag">BERT</li>
+              <li class="tag">PyTorch</li>
+              <li class="tag">Kubernetes</li>
+              <li class="tag">Explainable AI</li>
+              <li class="tag">Multimodal AI</li>
+            </ul>
+            <div class="project-card-footer">
+              <span class="project-year">DoD SBIR (2023–2024) — Technical Lead</span>
+            </div>
+          </article>
+
+          <!-- EmiFor -->
+          <article class="project-card">
+            <h2>EmiFor</h2>
+            <p>
+              DOE amine emissions forecasting and decision-support framework for carbon capture
+              operations. Developed forecasting models using TCN baselines, quantile forecasting,
+              Neural Differential Equations, and physics-informed step-response models. Built a
+              synthetic data pipeline using vine-copula residual dependencies to augment sparse
+              experimental data. Best MAPE of 4.2% on synthetic data and 4.4% on Niederaussem
+              experimental data. Delivered causal impact analysis, counterfactual evaluation, and
+              a Streamlit application.
+            </p>
+            <ul class="project-tags" role="list">
+              <li class="tag">PyTorch</li>
+              <li class="tag">TCN</li>
+              <li class="tag">Neural ODEs</li>
+              <li class="tag">Streamlit</li>
+              <li class="tag">Probabilistic Forecasting</li>
+            </ul>
+            <div class="project-card-footer">
+              <span class="project-year">DOE Phase I — Principal Investigator</span>
+            </div>
+          </article>
+
+          <!-- Silva -->
+          <article class="project-card">
+            <div class="project-card-img">
+              <img src="/static/img/silva.jpg" alt="Silva GIS application showing a forestry operation with color-coded risk subregions on a map and soil attributes panel" loading="lazy" />
+            </div>
+            <h2>Silva</h2>
+            <p>
+              Explainable GIS-based ecological risk assessment tool for forestry operations, built
+              under USDA STTR Phase I. Encoded expert knowledge into a Bayesian Belief Network
+              spanning 50+ environmental variables and 14 best management practices to generate
+              synthetic training data. Trained XGBoost and GNN baselines on that synthetic data,
+              achieving ECE under 6% — prioritizing calibrated risk probabilities over binary
+              classification. Delivered as an offline-capable Progressive Web App with interactive
+              subregion mapping, auto-populated soil and hydrology data, and BMP recommendations
+              with per-recommendation risk impact estimates. Conducted 25 stakeholder interviews.
+            </p>
+            <ul class="project-tags" role="list">
+              <li class="tag">GNNs</li>
+              <li class="tag">XGBoost</li>
+              <li class="tag">Bayesian Networks</li>
+              <li class="tag">GIS</li>
+              <li class="tag">PWA</li>
+              <li class="tag">Explainable AI</li>
+            </ul>
+            <div class="project-card-footer">
+              <span class="project-year">USDA STTR Phase I (2024–2025) — Principal Investigator</span>
+            </div>
+          </article>
+
+          <!-- Demeter -->
+          <article class="project-card">
+            <div class="project-card-img">
+              <img src="/static/img/demeter.jpg" alt="Demeter hazard observation workflow showing color-coded risk status options for a manure transport hazard" loading="lazy" />
+            </div>
+            <h2>Demeter</h2>
+            <p>
+              Data-driven agricultural safety platform built under USDA Phase II SBIR. Incorporated
+              NLP embeddings (ExBERT fine-tuned on AgInjuryNews) to encode free-text hazard
+              descriptions, enabling a Graph Neural Network to generalize risk patterns to previously
+              unseen hazards across diverse farm operations. Added a CLIP-based image-text
+              verification module to validate photo evidence in safety records. GNN improvements —
+              Laplacian positional encodings, refined attention-convolution layering, Optuna/MLflow
+              hyperparameter tuning — raised accuracy from 94.9% to 96.3% and recall from 83.3%
+              to 86.8%. Delivered as an offline-capable PWA with a 5-step observation workflow
+              completable in under 60 seconds.
+            </p>
+            <ul class="project-tags" role="list">
+              <li class="tag">GNNs</li>
+              <li class="tag">ExBERT</li>
+              <li class="tag">CLIP</li>
+              <li class="tag">MLflow</li>
+              <li class="tag">PWA</li>
+              <li class="tag">Explainable AI</li>
+            </ul>
+            <div class="project-card-footer">
+              <span class="project-year">USDA Phase II SBIR — Technical Contributor</span>
+            </div>
+          </article>
+
+          <!-- ScopeVis -->
+          <article class="project-card">
+            <h2>ScopeVis</h2>
+            <p>
+              DOE toolkit for AI-assisted visualization of nanoscale microscopy data, developed in
+              partnership with Brookhaven National Laboratory. Implemented and evaluated five
+              segmentation approaches — SAM, MicroSAM, 3D watershed, region growing, and a custom
+              Sobel-edge watershed — plus graph-based clustering to join 2D masks into 3D objects.
+              Used entropy-based threshold selection, KDE background estimation, mutual-information
+              scoring, and TPE Bayesian optimization. Delivered all five technical objectives at
+              100% completion, demonstrating an estimated 94% time reduction over manual methods.
+            </p>
+            <ul class="project-tags" role="list">
+              <li class="tag">SAM</li>
+              <li class="tag">MicroSAM</li>
+              <li class="tag">Computer Vision</li>
+              <li class="tag">Segmentation</li>
+              <li class="tag">3D Reconstruction</li>
+            </ul>
+            <div class="project-card-footer">
+              <span class="project-year">DOE / Brookhaven National Laboratory — Technical Lead</span>
+            </div>
+          </article>
+
+          <!-- GRAMS -->
+          <article class="project-card">
+            <h2>GRAMS</h2>
+            <p>
+              NASA autonomous spacecraft cognitive architecture for anomaly detection, failure
+              classification, explanation, simulation, and recovery planning. Supported unified
+              autoencoder-based modeling, saliency-enabled anomaly detection, unknown failure
+              generation, and MCTS recovery planning. Demonstrated 2.7% post-training Unknown
+              Failure Generator MAE and roughly 3x recovery-distance improvement using
+              MCTS-generated recovery actions.
+            </p>
+            <ul class="project-tags" role="list">
+              <li class="tag">PyTorch</li>
+              <li class="tag">Autoencoder</li>
+              <li class="tag">MCTS</li>
+              <li class="tag">Anomaly Detection</li>
+              <li class="tag">NASA</li>
+            </ul>
+            <div class="project-card-footer">
+              <span class="project-year">NASA SBIR — Technical Contributor</span>
+            </div>
+          </article>
+
+          <!-- MVPT -->
+          <article class="project-card">
+            <h2>MVPT</h2>
+            <p>
+              NASA model-agnostic method for predicting AI validation status on novel mission data
+              using precomputed transformations and fast vector lookup. Demonstrated on a DSCOVR
+              solar wind proof of concept using TCN Student-t forecasting, penultimate-layer
+              embeddings, and HNSW approximate nearest-neighbor search. Achieved FCCV of
+              0.95 ± 0.05, correctly predicting validation status for 19 of 20 independent
+              volatile-regime groups at 83% budget utilization.
+            </p>
+            <ul class="project-tags" role="list">
+              <li class="tag">TCN</li>
+              <li class="tag">HNSW</li>
+              <li class="tag">NASA</li>
+              <li class="tag">Validation</li>
+              <li class="tag">Time Series</li>
+            </ul>
+            <div class="project-card-footer">
+              <span class="project-year">NASA SBIR — Technical Contributor</span>
+            </div>
+          </article>
+
+          <!-- Aletheia -->
+          <article class="project-card">
+            <h2>Aletheia</h2>
+            <p>
+              Raster image manipulation detection models for splicing, copy-move, and inpainting,
+              using CAT-Net localization and deep consensus aggregation. Delivered 98.3% manipulation
+              detection precision and 97.4% recall. Follow-on work included AI-generated image
+              detection with CLIP-based experiments reaching 98.7% binary real/fake accuracy on a
+              12,000-image test set.
+            </p>
+            <ul class="project-tags" role="list">
+              <li class="tag">CAT-Net</li>
+              <li class="tag">CLIP</li>
+              <li class="tag">Computer Vision</li>
+              <li class="tag">Image Forensics</li>
+              <li class="tag">PyTorch</li>
+            </ul>
+            <div class="project-card-footer">
+              <span class="project-year">Technical Contributor</span>
+            </div>
+          </article>
+
+          <!-- CGAN / Eikon -->
+          <article class="project-card">
+            <h2>CGAN / Eikon</h2>
+            <p>
+              AFRL synthetic satellite imagery effort for labeled data generation and object
+              detection augmentation. Developed controllable synthetic imagery workflows using
+              conditional GANs, semantic feature maps, and map-to-satellite translation, with
+              feature generation for roads, water, biomes, and building footprints. Directed
+              augmentation experiments across 300 Faster R-CNN and 220 YOLO models.
+            </p>
+            <ul class="project-tags" role="list">
+              <li class="tag">Conditional GAN</li>
+              <li class="tag">Faster R-CNN</li>
+              <li class="tag">YOLO</li>
+              <li class="tag">Satellite Imagery</li>
+              <li class="tag">AFRL</li>
+            </ul>
+            <div class="project-card-footer">
+              <span class="project-year">DoD / AFRL — Technical Lead</span>
+            </div>
+          </article>
+
+          <!-- UAS Certification -->
+          <article class="project-card">
+            <h2>UAS Certification</h2>
+            <p>
+              NASA Phase I SBIR developing a Verification and Validation (V&amp;V) Testing
+              Environment for autonomous UAS certification, in partnership with the University of
+              Cincinnati. Built on Microsoft AirSim and Unreal Engine 4, the TE injects sensor
+              and hardware failure scenarios — GPS corruption, ML input corruption via Gaussian
+              blur and pixel obscuration — and evaluates UAS responses using Monte Carlo trials.
+              Demonstrated GPS failure detection across 80 simulated flights per path-planning
+              algorithm, and confirmed TE failure detection matches independent ML model predictions
+              across five camera corruption conditions.
+            </p>
+            <ul class="project-tags" role="list">
+              <li class="tag">AirSim</li>
+              <li class="tag">Computer Vision</li>
+              <li class="tag">Monte Carlo</li>
+              <li class="tag">Autonomous Systems</li>
+              <li class="tag">NASA</li>
+            </ul>
+            <div class="project-card-footer">
+              <span class="project-year">NASA Phase I SBIR (2022–2023) — Technical Contributor</span>
+            </div>
+          </article>
+
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <ul class="footer-links" role="list">
+        <li><a href="mailto:joshtmartin99@gmail.com">Email</a></li>
+        <li><a href="https://github.com/JTM119" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/in/joshua-martin-333456192/" target="_blank" rel="noopener">LinkedIn</a></li>
+      </ul>
+      <p class="footer-copy"><small>© 2026 Joshua Martin</small></p>
+    </div>
+  </footer>
+
+</body>
+</html>
