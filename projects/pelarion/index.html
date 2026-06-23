@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pelarion — Joshua Martin</title>
+  <link rel="stylesheet" href="/static/css/reset.css" />
+  <link rel="stylesheet" href="/static/css/typography.css" />
+  <link rel="stylesheet" href="/static/css/main.css" />
+</head>
+<body>
+
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="container">
+      <a href="/" class="nav-logo">Joshua Martin</a>
+      <ul class="nav-links" role="list">
+        <li><a href="/">Home</a></li>
+        <li><a href="/about/">About</a></li>
+        <li><a href="/projects/">Projects</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+
+      <a href="/projects/" class="back-link">← All projects</a>
+
+      <header class="page-header">
+        <h1>Pelarion</h1>
+        <p>EPA Phase II (2023–2025) · Technical Lead</p>
+      </header>
+
+      <div class="project-detail-img">
+        <img src="/static/img/pelarion.jpg" alt="Pelarion title and abstract screening interface showing model recommendations and conflict flags" />
+      </div>
+
+      <section class="project-section" aria-labelledby="overview-heading">
+        <h2 id="overview-heading">Overview</h2>
+        <p>
+          Pelarion is a full-stack systematic review platform built for the EPA to accelerate
+          grey literature screening across regulatory documents, reports, technical studies,
+          and web content. The platform automates the most time-consuming stages of evidence
+          synthesis — title and abstract triage, full-text relevance assessment, and conflict
+          flagging — while preserving reviewer control and audit trails throughout.
+        </p>
+        <p>
+          The EPA's systematic review workflows required handling heterogeneous source types
+          (PDF, HTML, scanned documents), supporting multi-reviewer conflict resolution, and
+          producing structured outputs suitable for regulatory documentation. Pelarion was
+          designed to reduce the screening burden on domain experts without removing them from
+          the decision loop.
+        </p>
+      </section>
+
+      <section class="project-section" aria-labelledby="approach-heading">
+        <h2 id="approach-heading">Technical Approach</h2>
+        <ul>
+          <li>PDF and HTML ingestion pipeline with sentence-aware chunking and LLM-assisted title and abstract extraction for documents lacking structured metadata</li>
+          <li>BM25 lexical ranking for fast first-pass title and abstract triage across large literature sets</li>
+          <li>Random Forest and XGBoost classifiers with Optuna Bayesian hyperparameter tuning for learned relevance scoring at the abstract stage</li>
+          <li>Full-text screening via Gemini Flash LLM with structured prompts — producing criterion-by-criterion rationales and page-level citations as structured JSON, enabling reviewer audit</li>
+          <li>Multi-reviewer conflict detection and resolution workflow with configurable inclusion thresholds</li>
+          <li>Production stack: Django REST backend, React frontend, PostgreSQL, Celery task queue, RabbitMQ message broker, Redis cache, Azure Blob Storage for document storage</li>
+        </ul>
+      </section>
+
+      <section class="project-section" aria-labelledby="results-heading">
+        <h2 id="results-heading">Results</h2>
+        <ul>
+          <li>80% recall and 86% precision on held-out literature sets</li>
+          <li>LLM-based full-text screening with structured criterion-by-criterion outputs and page-level citations, enabling reviewer verification without re-reading full documents</li>
+          <li>Delivered as a production web application used by EPA reviewers across an active systematic review engagement</li>
+        </ul>
+      </section>
+
+      <section class="project-section" aria-labelledby="stack-heading">
+        <h2 id="stack-heading">Stack</h2>
+        <ul class="project-tags" role="list">
+          <li class="tag">Django</li>
+          <li class="tag">React</li>
+          <li class="tag">PostgreSQL</li>
+          <li class="tag">Celery</li>
+          <li class="tag">RabbitMQ</li>
+          <li class="tag">Redis</li>
+          <li class="tag">XGBoost</li>
+          <li class="tag">LLMs</li>
+          <li class="tag">Azure</li>
+        </ul>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <ul class="footer-links" role="list">
+        <li><a href="mailto:joshtmartin99@gmail.com">Email</a></li>
+        <li><a href="https://github.com/JTM119" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/in/joshua-martin-333456192/" target="_blank" rel="noopener">LinkedIn</a></li>
+      </ul>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demeter — Joshua Martin</title>
+  <link rel="stylesheet" href="/static/css/reset.css" />
+  <link rel="stylesheet" href="/static/css/typography.css" />
+  <link rel="stylesheet" href="/static/css/main.css" />
+</head>
+<body>
+
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="container">
+      <a href="/" class="nav-logo">Joshua Martin</a>
+      <ul class="nav-links" role="list">
+        <li><a href="/">Home</a></li>
+        <li><a href="/about/">About</a></li>
+        <li><a href="/projects/">Projects</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+
+      <a href="/projects/" class="back-link">← All projects</a>
+
+      <header class="page-header">
+        <h1>Demeter</h1>
+        <p>USDA Phase II SBIR · Technical Contributor</p>
+      </header>
+
+      <div class="project-detail-img">
+        <img src="/static/img/demeter.jpg" alt="Demeter hazard observation workflow showing color-coded risk status options for a manure transport hazard" />
+      </div>
+
+      <section class="project-section" aria-labelledby="overview-heading">
+        <h2 id="overview-heading">Overview</h2>
+        <p>
+          Demeter is a data-driven agricultural safety platform that enables farm workers and
+          safety officers to capture and classify workplace hazards in under 60 seconds using
+          a structured mobile observation workflow. The platform uses NLP and graph learning to
+          generalize risk patterns to novel hazard types — addressing the long tail of farm
+          safety incidents that don't fit neatly into predefined categories.
+        </p>
+        <p>
+          The project was published in the Journal of Agromedicine, validating the core
+          approach of using free-text hazard descriptions and graph-structured farm context
+          to predict injury risk with high recall. The platform is delivered as an
+          offline-capable PWA suitable for use in areas without reliable connectivity.
+        </p>
+      </section>
+
+      <section class="project-section" aria-labelledby="approach-heading">
+        <h2 id="approach-heading">Technical Approach</h2>
+        <ul>
+          <li>ExBERT architecture fine-tuned on the AgInjuryNews corpus to produce hazard-aware text embeddings for free-text observation descriptions</li>
+          <li>Graph Neural Network (GNN) with Laplacian positional encodings and refined attention-convolution layering to model relationships between hazard nodes in farm operation graphs</li>
+          <li>Optuna hyperparameter search with MLflow experiment tracking for systematic tuning of GNN architecture and training configuration</li>
+          <li>CLIP-based image-text verification module to validate that photo evidence submitted with safety records matches the described hazard</li>
+          <li>5-step observation workflow designed for mobile completion in under 60 seconds, delivered as an offline-capable PWA</li>
+        </ul>
+      </section>
+
+      <section class="project-section" aria-labelledby="results-heading">
+        <h2 id="results-heading">Results</h2>
+        <ul>
+          <li>GNN accuracy improved from 94.9% to 96.3% through architecture refinements and tuning</li>
+          <li>GNN recall improved from 83.3% to 86.8%</li>
+          <li>60-second observation workflow validated in field testing</li>
+          <li>Published: Martin, J., Seward, T., Mintas, D., &amp; Wanke, R. (2024). <em>Journal of Agromedicine</em>. <a href="https://doi.org/10.1080/1059924X.2024.2326556" target="_blank" rel="noopener">doi:10.1080/1059924X.2024.2326556</a></li>
+        </ul>
+      </section>
+
+      <section class="project-section" aria-labelledby="stack-heading">
+        <h2 id="stack-heading">Stack</h2>
+        <ul class="project-tags" role="list">
+          <li class="tag">GNNs</li>
+          <li class="tag">ExBERT</li>
+          <li class="tag">CLIP</li>
+          <li class="tag">MLflow</li>
+          <li class="tag">Optuna</li>
+          <li class="tag">PWA</li>
+          <li class="tag">PyTorch</li>
+        </ul>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <ul class="footer-links" role="list">
+        <li><a href="mailto:joshtmartin99@gmail.com">Email</a></li>
+        <li><a href="https://github.com/JTM119" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/in/joshua-martin-333456192/" target="_blank" rel="noopener">LinkedIn</a></li>
+      </ul>
+    </div>
+  </footer>
+
+</body>
+</html>

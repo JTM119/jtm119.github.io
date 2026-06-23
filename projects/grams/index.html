@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GRAMS — Joshua Martin</title>
+  <link rel="stylesheet" href="/static/css/reset.css" />
+  <link rel="stylesheet" href="/static/css/typography.css" />
+  <link rel="stylesheet" href="/static/css/main.css" />
+</head>
+<body>
+
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="container">
+      <a href="/" class="nav-logo">Joshua Martin</a>
+      <ul class="nav-links" role="list">
+        <li><a href="/">Home</a></li>
+        <li><a href="/about/">About</a></li>
+        <li><a href="/projects/">Projects</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+
+      <a href="/projects/" class="back-link">← All projects</a>
+
+      <header class="page-header">
+        <h1>GRAMS</h1>
+        <p>NASA SBIR · Technical Contributor</p>
+      </header>
+
+      <section class="project-section" aria-labelledby="overview-heading">
+        <h2 id="overview-heading">Overview</h2>
+        <p>
+          GRAMS is a cognitive architecture for autonomous spacecraft health management,
+          developed under NASA SBIR. The system integrates anomaly detection, failure
+          classification, natural language explanation, failure simulation, and recovery
+          planning into a unified AI framework — enabling spacecraft to detect, understand,
+          and respond to health anomalies with minimal ground intervention.
+        </p>
+        <p>
+          A key challenge in spacecraft health management is handling failure modes that
+          were never observed during training. GRAMS addresses this through an Unknown
+          Failure Generator (UFG) that synthesizes novel failure scenarios, allowing the
+          recovery planner to reason about conditions outside the training distribution.
+        </p>
+      </section>
+
+      <section class="project-section" aria-labelledby="approach-heading">
+        <h2 id="approach-heading">Technical Approach</h2>
+        <ul>
+          <li>Unified autoencoder-based model for normal spacecraft behavior representation, enabling anomaly detection via reconstruction error across telemetry channels</li>
+          <li>Saliency-enabled anomaly localization to identify which subsystems or telemetry signals contributed most to a detected deviation</li>
+          <li>Unknown Failure Generator (UFG) for synthesizing novel failure modes outside the training distribution, expanding the recovery planner's operating envelope</li>
+          <li>Monte Carlo Tree Search (MCTS) for recovery action planning — evaluating action sequences by simulating their effects on spacecraft state and selecting plans that minimize deviation from nominal</li>
+        </ul>
+      </section>
+
+      <section class="project-section" aria-labelledby="results-heading">
+        <h2 id="results-heading">Results</h2>
+        <ul>
+          <li>2.7% post-training Unknown Failure Generator MAE on out-of-distribution failure generation</li>
+          <li>Approximately 3x improvement in recovery distance using MCTS-generated action sequences compared to baseline recovery approaches</li>
+        </ul>
+      </section>
+
+      <section class="project-section" aria-labelledby="stack-heading">
+        <h2 id="stack-heading">Stack</h2>
+        <ul class="project-tags" role="list">
+          <li class="tag">PyTorch</li>
+          <li class="tag">Autoencoder</li>
+          <li class="tag">MCTS</li>
+          <li class="tag">Anomaly Detection</li>
+          <li class="tag">Python</li>
+        </ul>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <ul class="footer-links" role="list">
+        <li><a href="mailto:joshtmartin99@gmail.com">Email</a></li>
+        <li><a href="https://github.com/JTM119" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/in/joshua-martin-333456192/" target="_blank" rel="noopener">LinkedIn</a></li>
+      </ul>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ScopeVis — Joshua Martin</title>
+  <link rel="stylesheet" href="/static/css/reset.css" />
+  <link rel="stylesheet" href="/static/css/typography.css" />
+  <link rel="stylesheet" href="/static/css/main.css" />
+</head>
+<body>
+
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="container">
+      <a href="/" class="nav-logo">Joshua Martin</a>
+      <ul class="nav-links" role="list">
+        <li><a href="/">Home</a></li>
+        <li><a href="/about/">About</a></li>
+        <li><a href="/projects/">Projects</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+
+      <a href="/projects/" class="back-link">← All projects</a>
+
+      <header class="page-header">
+        <h1>ScopeVis</h1>
+        <p>DOE / Brookhaven National Laboratory · Technical Lead</p>
+      </header>
+
+      <section class="project-section" aria-labelledby="overview-heading">
+        <h2 id="overview-heading">Overview</h2>
+        <p>
+          ScopeVis is an AI-assisted toolkit for segmenting and visualizing nanoscale
+          microscopy data, developed in partnership with Brookhaven National Laboratory under
+          DOE funding. The project evaluated and combined multiple computer vision approaches
+          to automate 3D object reconstruction from 2D microscopy stack slices — a process
+          that previously required hours of manual expert annotation per sample.
+        </p>
+        <p>
+          The toolkit was designed to be generalizable across microscopy modalities and sample
+          types, with automated threshold selection and Bayesian hyperparameter optimization
+          reducing the per-dataset configuration burden on domain scientists.
+        </p>
+      </section>
+
+      <section class="project-section" aria-labelledby="approach-heading">
+        <h2 id="approach-heading">Technical Approach</h2>
+        <ul>
+          <li>Implemented and evaluated five 2D segmentation approaches: SAM (Segment Anything Model), MicroSAM (microscopy-adapted SAM), 3D watershed, region growing, and a custom Sobel-edge watershed pipeline</li>
+          <li>Graph-based clustering to join 2D segmentation masks across z-slices into coherent 3D objects, handling object split and merge cases common in dense nanoscale samples</li>
+          <li>Entropy-based automatic threshold selection for foreground/background separation, removing the need for per-image manual threshold tuning</li>
+          <li>KDE background estimation and mutual-information scoring for feature quality assessment and segmentation validation</li>
+          <li>TPE (Tree-structured Parzen Estimator) Bayesian optimization for pipeline hyperparameter tuning across the full segmentation and clustering configuration space</li>
+        </ul>
+      </section>
+
+      <section class="project-section" aria-labelledby="results-heading">
+        <h2 id="results-heading">Results</h2>
+        <ul>
+          <li>All five technical objectives delivered at 100% completion</li>
+          <li>Estimated 94% time reduction compared to manual expert annotation methods</li>
+        </ul>
+      </section>
+
+      <section class="project-section" aria-labelledby="stack-heading">
+        <h2 id="stack-heading">Stack</h2>
+        <ul class="project-tags" role="list">
+          <li class="tag">SAM</li>
+          <li class="tag">MicroSAM</li>
+          <li class="tag">Computer Vision</li>
+          <li class="tag">Segmentation</li>
+          <li class="tag">3D Reconstruction</li>
+          <li class="tag">PyTorch</li>
+          <li class="tag">Python</li>
+        </ul>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <ul class="footer-links" role="list">
+        <li><a href="mailto:joshtmartin99@gmail.com">Email</a></li>
+        <li><a href="https://github.com/JTM119" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/in/joshua-martin-333456192/" target="_blank" rel="noopener">LinkedIn</a></li>
+      </ul>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -22,7 +22,7 @@
   </nav>
 
   <main>
-    <div class="container">
+    <div class="container container-wide">
 
       <header class="page-header">
         <h1>Projects</h1>
@@ -30,14 +30,19 @@
       </header>
 
       <section aria-label="Project list">
-        <div class="project-grid">
+
+        <details class="project-client-group">
+          <summary>
+            <h2 class="project-client-heading">Department of Energy (DOE)</h2>
+          </summary>
+          <div class="project-grid">
 
           <!-- GRIDview -->
           <article class="project-card">
             <div class="project-card-img">
               <img src="/static/img/gridview.jpg" alt="GRIDview simulation panel showing fan charts for wind, solar, and load with uncertainty bands" loading="lazy" />
             </div>
-            <h2>GRIDview</h2>
+            <h2><a href="/projects/gridview/">GRIDview</a></h2>
             <p>
               Uncertainty-aware grid decision support platform for probabilistic forecasting, risk
               visualization, and simulation-based operating decisions. Benchmarked Gaussian Processes,
@@ -61,12 +66,69 @@
             </div>
           </article>
 
+          <!-- EmiFor -->
+          <article class="project-card">
+            <h2><a href="/projects/emifor/">EmiFor</a></h2>
+            <p>
+              DOE amine emissions forecasting and decision-support framework for carbon capture
+              operations. Developed forecasting models using TCN baselines, quantile forecasting,
+              Neural Differential Equations, and physics-informed step-response models. Built a
+              synthetic data pipeline using vine-copula residual dependencies to augment sparse
+              experimental data. Best MAPE of 4.2% on synthetic data and 4.4% on Niederaussem
+              experimental data. Delivered causal impact analysis, counterfactual evaluation, and
+              a Streamlit application.
+            </p>
+            <ul class="project-tags" role="list">
+              <li class="tag">PyTorch</li>
+              <li class="tag">TCN</li>
+              <li class="tag">Neural ODEs</li>
+              <li class="tag">Streamlit</li>
+              <li class="tag">Probabilistic Forecasting</li>
+            </ul>
+            <div class="project-card-footer">
+              <span class="project-year">DOE Phase I — Principal Investigator</span>
+            </div>
+          </article>
+
+          <!-- ScopeVis -->
+          <article class="project-card">
+            <h2><a href="/projects/scopevis/">ScopeVis</a></h2>
+            <p>
+              DOE toolkit for AI-assisted visualization of nanoscale microscopy data, developed in
+              partnership with Brookhaven National Laboratory. Implemented and evaluated five
+              segmentation approaches — SAM, MicroSAM, 3D watershed, region growing, and a custom
+              Sobel-edge watershed — plus graph-based clustering to join 2D masks into 3D objects.
+              Used entropy-based threshold selection, KDE background estimation, mutual-information
+              scoring, and TPE Bayesian optimization. Delivered all five technical objectives at
+              100% completion, demonstrating an estimated 94% time reduction over manual methods.
+            </p>
+            <ul class="project-tags" role="list">
+              <li class="tag">SAM</li>
+              <li class="tag">MicroSAM</li>
+              <li class="tag">Computer Vision</li>
+              <li class="tag">Segmentation</li>
+              <li class="tag">3D Reconstruction</li>
+            </ul>
+            <div class="project-card-footer">
+              <span class="project-year">DOE / Brookhaven National Laboratory — Technical Lead</span>
+            </div>
+          </article>
+
+          </div>
+        </details>
+
+        <details class="project-client-group">
+          <summary>
+            <h2 class="project-client-heading">Environmental Protection Agency (EPA)</h2>
+          </summary>
+          <div class="project-grid">
+
           <!-- Pelarion -->
           <article class="project-card">
             <div class="project-card-img">
               <img src="/static/img/pelarion.jpg" alt="Pelarion title and abstract screening interface showing model recommendations and conflict flags" loading="lazy" />
             </div>
-            <h2>Pelarion</h2>
+            <h2><a href="/projects/pelarion/">Pelarion</a></h2>
             <p>
               Full-stack systematic review platform built for the EPA to accelerate grey literature
               screening. Ingests PDFs and HTML, segments documents into sentence-aware chunks, and
@@ -90,12 +152,21 @@
             </div>
           </article>
 
+          </div>
+        </details>
+
+        <details class="project-client-group">
+          <summary>
+            <h2 class="project-client-heading">Department of Defense (DoD)</h2>
+          </summary>
+          <div class="project-grid">
+
           <!-- AILA -->
           <article class="project-card">
             <div class="project-card-img">
               <img src="/static/img/aila.jpg" alt="AILA results viewer showing saliency heatmap overlaid on a targeting image and LIME word-importance bar chart" loading="lazy" />
             </div>
-            <h2>AILA</h2>
+            <h2><a href="/projects/aila/">AILA</a></h2>
             <p>
               Multimodal AI prototype for the DoD that prioritizes targeting-package review by
               detecting mismatches between imagery and captions. Fine-tuned BLIP on a 1,435-pair
@@ -119,36 +190,65 @@
             </div>
           </article>
 
-          <!-- EmiFor -->
+          <!-- CGAN / Eikon -->
           <article class="project-card">
-            <h2>EmiFor</h2>
+            <h2><a href="/projects/cgan/">CGAN / Eikon</a></h2>
             <p>
-              DOE amine emissions forecasting and decision-support framework for carbon capture
-              operations. Developed forecasting models using TCN baselines, quantile forecasting,
-              Neural Differential Equations, and physics-informed step-response models. Built a
-              synthetic data pipeline using vine-copula residual dependencies to augment sparse
-              experimental data. Best MAPE of 4.2% on synthetic data and 4.4% on Niederaussem
-              experimental data. Delivered causal impact analysis, counterfactual evaluation, and
-              a Streamlit application.
+              AFRL synthetic satellite imagery effort for labeled data generation and object
+              detection augmentation. Developed controllable synthetic imagery workflows using
+              conditional GANs, semantic feature maps, and map-to-satellite translation, with
+              feature generation for roads, water, biomes, and building footprints. Directed
+              augmentation experiments across 300 Faster R-CNN and 220 YOLO models.
             </p>
             <ul class="project-tags" role="list">
-              <li class="tag">PyTorch</li>
-              <li class="tag">TCN</li>
-              <li class="tag">Neural ODEs</li>
-              <li class="tag">Streamlit</li>
-              <li class="tag">Probabilistic Forecasting</li>
+              <li class="tag">Conditional GAN</li>
+              <li class="tag">Faster R-CNN</li>
+              <li class="tag">YOLO</li>
+              <li class="tag">Satellite Imagery</li>
+              <li class="tag">AFRL</li>
             </ul>
             <div class="project-card-footer">
-              <span class="project-year">DOE Phase I — Principal Investigator</span>
+              <span class="project-year">DoD / AFRL — Technical Lead</span>
             </div>
           </article>
+
+          <!-- Aletheia -->
+          <article class="project-card">
+            <h2><a href="/projects/aletheia/">Aletheia</a></h2>
+            <p>
+              Raster image manipulation detection models for splicing, copy-move, and inpainting,
+              using CAT-Net localization and deep consensus aggregation. Delivered 98.3% manipulation
+              detection precision and 97.4% recall. Follow-on work included AI-generated image
+              detection with CLIP-based experiments reaching 98.7% binary real/fake accuracy on a
+              12,000-image test set.
+            </p>
+            <ul class="project-tags" role="list">
+              <li class="tag">CAT-Net</li>
+              <li class="tag">CLIP</li>
+              <li class="tag">Computer Vision</li>
+              <li class="tag">Image Forensics</li>
+              <li class="tag">PyTorch</li>
+            </ul>
+            <div class="project-card-footer">
+              <span class="project-year">U.S. Air Force — Technical Contributor</span>
+            </div>
+          </article>
+
+          </div>
+        </details>
+
+        <details class="project-client-group">
+          <summary>
+            <h2 class="project-client-heading">U.S. Department of Agriculture (USDA)</h2>
+          </summary>
+          <div class="project-grid">
 
           <!-- Silva -->
           <article class="project-card">
             <div class="project-card-img">
               <img src="/static/img/silva.jpg" alt="Silva GIS application showing a forestry operation with color-coded risk subregions on a map and soil attributes panel" loading="lazy" />
             </div>
-            <h2>Silva</h2>
+            <h2><a href="/projects/silva/">Silva</a></h2>
             <p>
               Explainable GIS-based ecological risk assessment tool for forestry operations, built
               under USDA STTR Phase I. Encoded expert knowledge into a Bayesian Belief Network
@@ -177,7 +277,7 @@
             <div class="project-card-img">
               <img src="/static/img/demeter.jpg" alt="Demeter hazard observation workflow showing color-coded risk status options for a manure transport hazard" loading="lazy" />
             </div>
-            <h2>Demeter</h2>
+            <h2><a href="/projects/demeter/">Demeter</a></h2>
             <p>
               Data-driven agricultural safety platform built under USDA Phase II SBIR. Incorporated
               NLP embeddings (ExBERT fine-tuned on AgInjuryNews) to encode free-text hazard
@@ -202,33 +302,18 @@
             </div>
           </article>
 
-          <!-- ScopeVis -->
-          <article class="project-card">
-            <h2>ScopeVis</h2>
-            <p>
-              DOE toolkit for AI-assisted visualization of nanoscale microscopy data, developed in
-              partnership with Brookhaven National Laboratory. Implemented and evaluated five
-              segmentation approaches — SAM, MicroSAM, 3D watershed, region growing, and a custom
-              Sobel-edge watershed — plus graph-based clustering to join 2D masks into 3D objects.
-              Used entropy-based threshold selection, KDE background estimation, mutual-information
-              scoring, and TPE Bayesian optimization. Delivered all five technical objectives at
-              100% completion, demonstrating an estimated 94% time reduction over manual methods.
-            </p>
-            <ul class="project-tags" role="list">
-              <li class="tag">SAM</li>
-              <li class="tag">MicroSAM</li>
-              <li class="tag">Computer Vision</li>
-              <li class="tag">Segmentation</li>
-              <li class="tag">3D Reconstruction</li>
-            </ul>
-            <div class="project-card-footer">
-              <span class="project-year">DOE / Brookhaven National Laboratory — Technical Lead</span>
-            </div>
-          </article>
+          </div>
+        </details>
+
+        <details class="project-client-group">
+          <summary>
+            <h2 class="project-client-heading">National Aeronautics and Space Administration (NASA)</h2>
+          </summary>
+          <div class="project-grid">
 
           <!-- GRAMS -->
           <article class="project-card">
-            <h2>GRAMS</h2>
+            <h2><a href="/projects/grams/">GRAMS</a></h2>
             <p>
               NASA autonomous spacecraft cognitive architecture for anomaly detection, failure
               classification, explanation, simulation, and recovery planning. Supported unified
@@ -251,7 +336,7 @@
 
           <!-- MVPT -->
           <article class="project-card">
-            <h2>MVPT</h2>
+            <h2><a href="/projects/mvpt/">MVPT</a></h2>
             <p>
               NASA model-agnostic method for predicting AI validation status on novel mission data
               using precomputed transformations and fast vector lookup. Demonstrated on a DSCOVR
@@ -272,53 +357,9 @@
             </div>
           </article>
 
-          <!-- Aletheia -->
-          <article class="project-card">
-            <h2>Aletheia</h2>
-            <p>
-              Raster image manipulation detection models for splicing, copy-move, and inpainting,
-              using CAT-Net localization and deep consensus aggregation. Delivered 98.3% manipulation
-              detection precision and 97.4% recall. Follow-on work included AI-generated image
-              detection with CLIP-based experiments reaching 98.7% binary real/fake accuracy on a
-              12,000-image test set.
-            </p>
-            <ul class="project-tags" role="list">
-              <li class="tag">CAT-Net</li>
-              <li class="tag">CLIP</li>
-              <li class="tag">Computer Vision</li>
-              <li class="tag">Image Forensics</li>
-              <li class="tag">PyTorch</li>
-            </ul>
-            <div class="project-card-footer">
-              <span class="project-year">Technical Contributor</span>
-            </div>
-          </article>
-
-          <!-- CGAN / Eikon -->
-          <article class="project-card">
-            <h2>CGAN / Eikon</h2>
-            <p>
-              AFRL synthetic satellite imagery effort for labeled data generation and object
-              detection augmentation. Developed controllable synthetic imagery workflows using
-              conditional GANs, semantic feature maps, and map-to-satellite translation, with
-              feature generation for roads, water, biomes, and building footprints. Directed
-              augmentation experiments across 300 Faster R-CNN and 220 YOLO models.
-            </p>
-            <ul class="project-tags" role="list">
-              <li class="tag">Conditional GAN</li>
-              <li class="tag">Faster R-CNN</li>
-              <li class="tag">YOLO</li>
-              <li class="tag">Satellite Imagery</li>
-              <li class="tag">AFRL</li>
-            </ul>
-            <div class="project-card-footer">
-              <span class="project-year">DoD / AFRL — Technical Lead</span>
-            </div>
-          </article>
-
           <!-- UAS Certification -->
           <article class="project-card">
-            <h2>UAS Certification</h2>
+            <h2><a href="/projects/uas/">UAS Certification</a></h2>
             <p>
               NASA Phase I SBIR developing a Verification and Validation (V&amp;V) Testing
               Environment for autonomous UAS certification, in partnership with the University of
@@ -341,7 +382,9 @@
             </div>
           </article>
 
-        </div>
+          </div>
+        </details>
+
       </section>
 
     </div>
@@ -354,7 +397,6 @@
         <li><a href="https://github.com/JTM119" target="_blank" rel="noopener">GitHub</a></li>
         <li><a href="https://www.linkedin.com/in/joshua-martin-333456192/" target="_blank" rel="noopener">LinkedIn</a></li>
       </ul>
-      <p class="footer-copy"><small>© 2026 Joshua Martin</small></p>
     </div>
   </footer>
 

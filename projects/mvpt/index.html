@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MVPT — Joshua Martin</title>
+  <link rel="stylesheet" href="/static/css/reset.css" />
+  <link rel="stylesheet" href="/static/css/typography.css" />
+  <link rel="stylesheet" href="/static/css/main.css" />
+</head>
+<body>
+
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="container">
+      <a href="/" class="nav-logo">Joshua Martin</a>
+      <ul class="nav-links" role="list">
+        <li><a href="/">Home</a></li>
+        <li><a href="/about/">About</a></li>
+        <li><a href="/projects/">Projects</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+
+      <a href="/projects/" class="back-link">← All projects</a>
+
+      <header class="page-header">
+        <h1>MVPT</h1>
+        <p>NASA SBIR · Technical Contributor</p>
+      </header>
+
+      <section class="project-section" aria-labelledby="overview-heading">
+        <h2 id="overview-heading">Overview</h2>
+        <p>
+          MVPT (Model Validation via Precomputed Transformations) is a model-agnostic method
+          for predicting whether an AI model's validation results will transfer to novel mission
+          data — without rerunning the full model. Instead of re-executing expensive inference,
+          MVPT uses fast vector lookup against a precomputed embedding database to estimate
+          validation status, enabling rapid triage of new data against known model behavior.
+        </p>
+        <p>
+          The approach is particularly relevant for space mission contexts, where computational
+          budgets are constrained, ground-in-the-loop validation cycles are slow, and
+          distributional shift from mission data relative to training data is common.
+        </p>
+      </section>
+
+      <section class="project-section" aria-labelledby="approach-heading">
+        <h2 id="approach-heading">Technical Approach</h2>
+        <ul>
+          <li>Proof of concept on DSCOVR L1 solar wind data using a TCN with Student-t likelihood head for probabilistic forecasting</li>
+          <li>Penultimate-layer embeddings extracted from validation-set inputs and indexed using HNSW (Hierarchical Navigable Small World) approximate nearest-neighbor search for sub-millisecond retrieval</li>
+          <li>SoftMax-weighted validation status estimation from nearest neighbors in the embedding space, producing a calibrated validation confidence score for new input windows</li>
+          <li>Volatile-regime grouping to stress-test validation generalization under distributional shift — evaluating whether validation status predictions hold across structurally distinct solar wind regimes</li>
+        </ul>
+      </section>
+
+      <section class="project-section" aria-labelledby="results-heading">
+        <h2 id="results-heading">Results</h2>
+        <ul>
+          <li>FCCV (Fraction of Correctly Classified Validation windows) of 0.95 ± 0.05</li>
+          <li>Correctly predicted validation status for 19 of 20 independent volatile-regime groups</li>
+          <li>Completed all Phase I objectives at 83% budget utilization</li>
+        </ul>
+      </section>
+
+      <section class="project-section" aria-labelledby="stack-heading">
+        <h2 id="stack-heading">Stack</h2>
+        <ul class="project-tags" role="list">
+          <li class="tag">PyTorch</li>
+          <li class="tag">TCN</li>
+          <li class="tag">HNSW</li>
+          <li class="tag">Time Series</li>
+          <li class="tag">Probabilistic Forecasting</li>
+          <li class="tag">Python</li>
+        </ul>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <ul class="footer-links" role="list">
+        <li><a href="mailto:joshtmartin99@gmail.com">Email</a></li>
+        <li><a href="https://github.com/JTM119" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/in/joshua-martin-333456192/" target="_blank" rel="noopener">LinkedIn</a></li>
+      </ul>
+    </div>
+  </footer>
+
+</body>
+</html>

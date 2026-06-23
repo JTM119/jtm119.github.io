@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aletheia — Joshua Martin</title>
+  <link rel="stylesheet" href="/static/css/reset.css" />
+  <link rel="stylesheet" href="/static/css/typography.css" />
+  <link rel="stylesheet" href="/static/css/main.css" />
+</head>
+<body>
+
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="container">
+      <a href="/" class="nav-logo">Joshua Martin</a>
+      <ul class="nav-links" role="list">
+        <li><a href="/">Home</a></li>
+        <li><a href="/about/">About</a></li>
+        <li><a href="/projects/">Projects</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+
+      <a href="/projects/" class="back-link">← All projects</a>
+
+      <header class="page-header">
+        <h1>Aletheia</h1>
+        <p>U.S. Air Force — Technical Contributor</p>
+      </header>
+
+      <section class="project-section" aria-labelledby="overview-heading">
+        <h2 id="overview-heading">Overview</h2>
+        <p>
+          Aletheia is an image forensics system for detecting raster manipulation and
+          AI-generated synthetic imagery. The project addressed two related but distinct
+          problems: detecting post-capture edits (splicing, copy-move, inpainting) where
+          a real image has been locally altered, and identifying fully AI-generated images
+          where no original photograph exists.
+        </p>
+        <p>
+          Both capabilities are relevant for intelligence analysis and content verification
+          contexts where the authenticity of visual evidence cannot be assumed. The system
+          delivers pixel-level manipulation localization alongside document-level binary
+          classification.
+        </p>
+      </section>
+
+      <section class="project-section" aria-labelledby="approach-heading">
+        <h2 id="approach-heading">Technical Approach</h2>
+        <ul>
+          <li>CAT-Net (Compression Artifact Tracing Network) for pixel-level localization of manipulation artifacts — detecting JPEG compression inconsistencies introduced by post-capture editing tools</li>
+          <li>Deep consensus aggregation for combining evidence across multiple detection pathways into a single manipulation probability estimate</li>
+          <li>Secondary classification layer for manipulation type identification: splicing (inserting content from another image), copy-move (duplicating regions within the same image), and inpainting (filling removed regions with synthesized content)</li>
+          <li>CLIP-based experiments for AI-generated image detection, leveraging vision-language alignment representations to distinguish real photographs from synthetic imagery</li>
+          <li>Evaluation using pixel-level precision, pixel-level recall, and Cohen's kappa to assess both detection and localization quality</li>
+        </ul>
+      </section>
+
+      <section class="project-section" aria-labelledby="results-heading">
+        <h2 id="results-heading">Results</h2>
+        <ul>
+          <li>98.3% manipulation detection precision, 97.4% recall across splicing, copy-move, and inpainting categories</li>
+          <li>98.7% binary real/fake accuracy on a 12,000-image AI-generated image test set using CLIP-based detection</li>
+        </ul>
+      </section>
+
+      <section class="project-section" aria-labelledby="stack-heading">
+        <h2 id="stack-heading">Stack</h2>
+        <ul class="project-tags" role="list">
+          <li class="tag">CAT-Net</li>
+          <li class="tag">CLIP</li>
+          <li class="tag">PyTorch</li>
+          <li class="tag">Computer Vision</li>
+          <li class="tag">Image Forensics</li>
+        </ul>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <ul class="footer-links" role="list">
+        <li><a href="mailto:joshtmartin99@gmail.com">Email</a></li>
+        <li><a href="https://github.com/JTM119" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/in/joshua-martin-333456192/" target="_blank" rel="noopener">LinkedIn</a></li>
+      </ul>
+    </div>
+  </footer>
+
+</body>
+</html>

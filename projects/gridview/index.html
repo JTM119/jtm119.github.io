@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GRIDview — Joshua Martin</title>
+  <link rel="stylesheet" href="/static/css/reset.css" />
+  <link rel="stylesheet" href="/static/css/typography.css" />
+  <link rel="stylesheet" href="/static/css/main.css" />
+</head>
+<body>
+
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="container">
+      <a href="/" class="nav-logo">Joshua Martin</a>
+      <ul class="nav-links" role="list">
+        <li><a href="/">Home</a></li>
+        <li><a href="/about/">About</a></li>
+        <li><a href="/projects/">Projects</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+
+      <a href="/projects/" class="back-link">← All projects</a>
+
+      <header class="page-header">
+        <h1>GRIDview</h1>
+        <p>DOE Phase I (2025–2026) · Technical Lead</p>
+      </header>
+
+      <div class="project-detail-img">
+        <img src="/static/img/gridview.jpg" alt="GRIDview simulation panel showing fan charts for wind, solar, and load with uncertainty bands" />
+      </div>
+
+      <section class="project-section" aria-labelledby="overview-heading">
+        <h2 id="overview-heading">Overview</h2>
+        <p>
+          GRIDview is an uncertainty-aware decision support prototype for electric grid operations,
+          developed under DOE Phase I SBIR. The platform enables grid operators to make
+          simulation-based decisions informed by calibrated probabilistic forecasts for load,
+          solar, and wind — surfacing not just expected values but full predictive distributions
+          with quantified uncertainty across short planning horizons.
+        </p>
+        <p>
+          The core research question was whether calibrated probabilistic forecasts could be
+          integrated into an operable decision-support interface without sacrificing latency or
+          usability. The result is a system that generates correlated multi-variable scenario
+          draws, renders them as interactive fan charts, and delivers them end-to-end in under
+          one minute.
+        </p>
+      </section>
+
+      <section class="project-section" aria-labelledby="approach-heading">
+        <h2 id="approach-heading">Technical Approach</h2>
+        <ul>
+          <li>Benchmarked Gaussian Processes, Bayesian Neural Networks, and Temporal Convolutional Networks (TCN) with Student-t likelihood heads for probabilistic load, solar, and wind forecasting</li>
+          <li>Selected TCN with Student-t head as primary model based on calibration-accuracy tradeoff across held-out evaluation sets</li>
+          <li>Gaussian copula scenario generation used to draw correlated samples across load, solar, and wind simultaneously — preserving cross-variable dependencies that independent marginal draws would miss</li>
+          <li>Evaluated interval coverage at 90%, 95%, and 99% nominal levels using CRPS as the primary scoring rule</li>
+          <li>FastAPI backend serving model inference; PyTorch for training and serving; React and D3.js for interactive fan chart and confidence band visualization</li>
+          <li>Containerized with Docker, deployed via Azure DevOps CI/CD pipeline</li>
+        </ul>
+      </section>
+
+      <section class="project-section" aria-labelledby="results-heading">
+        <h2 id="results-heading">Results</h2>
+        <ul>
+          <li>27.1% CRPS improvement over deterministic baseline</li>
+          <li>Calibrated coverage at 90%, 95%, and 99% prediction intervals</li>
+          <li>End-to-end latency under one minute from data ingestion to rendered visualization</li>
+        </ul>
+      </section>
+
+      <section class="project-section" aria-labelledby="stack-heading">
+        <h2 id="stack-heading">Stack</h2>
+        <ul class="project-tags" role="list">
+          <li class="tag">PyTorch</li>
+          <li class="tag">FastAPI</li>
+          <li class="tag">React</li>
+          <li class="tag">D3.js</li>
+          <li class="tag">Gaussian Processes</li>
+          <li class="tag">Probabilistic Forecasting</li>
+          <li class="tag">Docker</li>
+          <li class="tag">Azure DevOps</li>
+        </ul>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <ul class="footer-links" role="list">
+        <li><a href="mailto:joshtmartin99@gmail.com">Email</a></li>
+        <li><a href="https://github.com/JTM119" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/in/joshua-martin-333456192/" target="_blank" rel="noopener">LinkedIn</a></li>
+      </ul>
+    </div>
+  </footer>
+
+</body>
+</html>

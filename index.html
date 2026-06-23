@@ -23,6 +23,7 @@
 
   <main>
     <div class="container">
+
       <section class="hero" aria-labelledby="hero-heading">
         <h1 id="hero-heading">Data scientist<br />and AI engineer.</h1>
         <p>
@@ -35,6 +36,138 @@
           <a href="/about/" class="btn btn-secondary">About me</a>
         </div>
       </section>
+
+      <section class="home-section" aria-label="Summary">
+        <ul class="credibility-strip" role="list">
+          <li>PI &amp; Technical Lead on SBIR/STTR programs</li>
+          <li>NASA · DOE · USDA · DoD · EPA</li>
+          <li>5+ years building production ML systems</li>
+        </ul>
+      </section>
+
+      <section class="home-section" aria-labelledby="what-i-do-heading">
+        <h2 id="what-i-do-heading" class="section-label">What I do</h2>
+        <ul class="home-bullets" role="list">
+          <li>Build and deploy ML systems end to end, from model development through APIs and user-facing tools</li>
+          <li>Lead federally funded R&amp;D from proposal through final delivery as PI and Technical Lead</li>
+          <li>Work with domain experts to make model outputs usable in real operational settings</li>
+        </ul>
+      </section>
+
+      <section class="home-section" aria-labelledby="featured-heading">
+        <h2 id="featured-heading" class="section-label">Featured projects</h2>
+        <div class="home-featured-grid">
+
+          <article class="project-card">
+            <div class="project-card-img">
+              <img src="/static/img/gridview.jpg" alt="GRIDview simulation panel showing fan charts for wind, solar, and load with uncertainty bands" loading="lazy" />
+            </div>
+            <h2><a href="/projects/gridview/">GRIDview</a></h2>
+            <p>
+              Uncertainty-aware grid decision support with probabilistic forecasting,
+              risk visualization, and simulation-based operating decisions for load,
+              solar, and wind.
+            </p>
+            <ul class="project-tags" role="list">
+              <li class="tag">PyTorch</li>
+              <li class="tag">Probabilistic Forecasting</li>
+              <li class="tag">React</li>
+            </ul>
+          </article>
+
+          <article class="project-card">
+            <div class="project-card-img">
+              <img src="/static/img/pelarion.jpg" alt="Pelarion title and abstract screening interface showing model recommendations and conflict flags" loading="lazy" />
+            </div>
+            <h2><a href="/projects/pelarion/">Pelarion</a></h2>
+            <p>
+              Full-stack systematic review platform for grey literature screening,
+              combining BM25 and ML ranking with LLM full-text assessment for the EPA.
+            </p>
+            <ul class="project-tags" role="list">
+              <li class="tag">Django</li>
+              <li class="tag">React</li>
+              <li class="tag">LLMs</li>
+            </ul>
+          </article>
+
+          <article class="project-card">
+            <div class="project-card-img">
+              <img src="/static/img/aila.jpg" alt="AILA results viewer showing saliency heatmap overlaid on a targeting image and LIME word-importance bar chart" loading="lazy" />
+            </div>
+            <h2><a href="/projects/aila/">AILA</a></h2>
+            <p>
+              Multimodal AI for targeting-package review, detecting mismatches between
+              imagery and captions with saliency maps and LIME explanations.
+            </p>
+            <ul class="project-tags" role="list">
+              <li class="tag">BLIP</li>
+              <li class="tag">PyTorch</li>
+              <li class="tag">Explainable AI</li>
+            </ul>
+          </article>
+
+          <article class="project-card">
+            <div class="project-card-img">
+              <img src="/static/img/silva.jpg" alt="Silva GIS application showing a forestry operation with color-coded risk subregions on a map and soil attributes panel" loading="lazy" />
+            </div>
+            <h2><a href="/projects/silva/">Silva</a></h2>
+            <p>
+              Explainable GIS-based ecological risk assessment for forestry operations,
+              with calibrated risk probabilities and BMP recommendations.
+            </p>
+            <ul class="project-tags" role="list">
+              <li class="tag">GNNs</li>
+              <li class="tag">GIS</li>
+              <li class="tag">Explainable AI</li>
+            </ul>
+          </article>
+
+        </div>
+        <p class="home-section-cta">
+          <a href="/projects/" class="btn btn-secondary">View all projects</a>
+        </p>
+      </section>
+
+      <section class="home-section" aria-labelledby="capabilities-heading">
+        <h2 id="capabilities-heading" class="section-label">Capabilities</h2>
+        <ul class="project-tags" role="list">
+          <li class="tag">Deep Learning</li>
+          <li class="tag">Computer Vision</li>
+          <li class="tag">NLP &amp; LLMs</li>
+          <li class="tag">Graph Neural Networks</li>
+          <li class="tag">Probabilistic Forecasting</li>
+          <li class="tag">Generative Models</li>
+          <li class="tag">Explainable AI</li>
+        </ul>
+      </section>
+
+      <section class="home-section" aria-labelledby="currently-heading">
+        <h2 id="currently-heading" class="section-label">Currently</h2>
+        <div class="home-highlights">
+
+          <div class="home-highlight">
+            <p class="home-highlight-label">Role</p>
+            <p class="home-highlight-body">
+              <strong>Visimo</strong> — Data Scientist / Technical Lead &amp; PI
+              <span class="home-highlight-meta">Nov 2021 – Present</span>
+            </p>
+          </div>
+
+          <div class="home-highlight">
+            <p class="home-highlight-label">Publication</p>
+            <p class="home-highlight-body">
+              <strong>Demeter: A Risk Mitigation Tool for Agriculture Workers</strong>
+              <span class="home-highlight-meta">
+                Martin, J., Seward, T., Mintas, D., &amp; Wanke, R. (2024). <em>Journal of Agromedicine</em>.
+                <a href="https://doi.org/10.1080/1059924X.2024.2326556" target="_blank" rel="noopener">doi:10.1080/1059924X.2024.2326556</a>
+              </span>
+            </p>
+          </div>
+
+        </div>
+      </section>
+
     </div>
   </main>
 
@@ -45,7 +178,6 @@
         <li><a href="https://github.com/JTM119" target="_blank" rel="noopener">GitHub</a></li>
         <li><a href="https://www.linkedin.com/in/joshua-martin-333456192/" target="_blank" rel="noopener">LinkedIn</a></li>
       </ul>
-      <p class="footer-copy"><small>© 2026 Joshua Martin</small></p>
     </div>
   </footer>
 

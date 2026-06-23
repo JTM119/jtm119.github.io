@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AILA — Joshua Martin</title>
+  <link rel="stylesheet" href="/static/css/reset.css" />
+  <link rel="stylesheet" href="/static/css/typography.css" />
+  <link rel="stylesheet" href="/static/css/main.css" />
+</head>
+<body>
+
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="container">
+      <a href="/" class="nav-logo">Joshua Martin</a>
+      <ul class="nav-links" role="list">
+        <li><a href="/">Home</a></li>
+        <li><a href="/about/">About</a></li>
+        <li><a href="/projects/">Projects</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+
+      <a href="/projects/" class="back-link">← All projects</a>
+
+      <header class="page-header">
+        <h1>AILA</h1>
+        <p>DoD SBIR (2023–2024) · Technical Lead</p>
+      </header>
+
+      <div class="project-detail-img">
+        <img src="/static/img/aila.jpg" alt="AILA results viewer showing saliency heatmap overlaid on a targeting image and LIME word-importance bar chart" />
+      </div>
+
+      <section class="project-section" aria-labelledby="overview-heading">
+        <h2 id="overview-heading">Overview</h2>
+        <p>
+          AILA is a multimodal AI prototype developed for the DoD that prioritizes
+          targeting-package review by detecting mismatches between overhead imagery and
+          associated captions. When imagery and text diverge — through mislabeling, outdated
+          content, or adversarial manipulation — AILA surfaces those packages for analyst
+          attention, reducing the cognitive burden of manually triaging large review queues.
+        </p>
+        <p>
+          The project combined vision-language model fine-tuning, military-domain language
+          model adaptation, and post-hoc explainability to produce a system analysts could
+          trust and interrogate. Both saliency maps and LIME word-importance outputs are
+          delivered alongside each prediction, showing which image regions and caption words
+          drove the mismatch score.
+        </p>
+      </section>
+
+      <section class="project-section" aria-labelledby="approach-heading">
+        <h2 id="approach-heading">Technical Approach</h2>
+        <ul>
+          <li>Fine-tuned BLIP (Bootstrapping Language-Image Pre-training) on a 1,435-pair dataset of overhead and satellite imagery spanning four target categories</li>
+          <li>Developed milBERT via the ExBERT architecture to adapt BERT to military text through domain-specific masked language modeling, improving top-1 accuracy from 0.394 to 0.498 on military corpora</li>
+          <li>Combined vision and language scores to produce a per-package mismatch probability, with configurable thresholds for analyst review queues</li>
+          <li>Saliency maps generated for image regions and LIME word-importance charts generated for caption tokens, delivered as per-result explanation outputs</li>
+          <li>React frontend, Django and Flask backends, PostgreSQL, Kubernetes orchestration, NGINX ingress, GPU-backed model serving</li>
+        </ul>
+      </section>
+
+      <section class="project-section" aria-labelledby="results-heading">
+        <h2 id="results-heading">Results</h2>
+        <ul>
+          <li>81.9% accuracy, 87.2% recall, 79.2% precision on held-out evaluation sets</li>
+          <li>Simulated 4x+ reviewer speedup over manual review baseline under the evaluated queue prioritization scheme</li>
+          <li>milBERT top-1 masked language modeling accuracy: 0.394 → 0.498 on military text</li>
+          <li>Explainability outputs (saliency + LIME) delivered alongside every prediction</li>
+        </ul>
+      </section>
+
+      <section class="project-section" aria-labelledby="stack-heading">
+        <h2 id="stack-heading">Stack</h2>
+        <ul class="project-tags" role="list">
+          <li class="tag">BLIP</li>
+          <li class="tag">BERT</li>
+          <li class="tag">PyTorch</li>
+          <li class="tag">React</li>
+          <li class="tag">Django</li>
+          <li class="tag">Flask</li>
+          <li class="tag">Kubernetes</li>
+          <li class="tag">NGINX</li>
+          <li class="tag">Explainable AI</li>
+          <li class="tag">Multimodal AI</li>
+        </ul>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <ul class="footer-links" role="list">
+        <li><a href="mailto:joshtmartin99@gmail.com">Email</a></li>
+        <li><a href="https://github.com/JTM119" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/in/joshua-martin-333456192/" target="_blank" rel="noopener">LinkedIn</a></li>
+      </ul>
+    </div>
+  </footer>
+
+</body>
+</html>
