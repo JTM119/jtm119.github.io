@@ -1,106 +1,1059 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Silva — Joshua Martin</title>
-  <link rel="stylesheet" href="/static/css/reset.css" />
-  <link rel="stylesheet" href="/static/css/typography.css" />
-  <link rel="stylesheet" href="/static/css/main.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Silva — Forestry Risk Platform</title>
+<style>
+  /* ── Tokens ──────────────────────────────────────────────────── */
+  :root {
+    --green-deep:   #1A3D28;
+    --green-mid:    #2E6B3E;
+    --green-light:  #4A9058;
+    --green-wash:   #EAF2EB;
+    --green-rule:   #A8CFB0;
+    --amber:        #C8860A;
+    --amber-light:  #FDF3DC;
+    --parchment:    #F7F5F0;
+    --ink:          #1C2319;
+    --ink-mid:      #3D4A3A;
+    --ink-soft:     #6B7A67;
+    --white:        #FFFFFF;
+    --mono:         "Courier New", Courier, monospace;
+  }
+
+  /* ── Reset ───────────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; scroll-behavior: smooth; }
+  body {
+    background: var(--parchment);
+    color: var(--ink);
+    font-family: Georgia, "Times New Roman", serif;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  img { max-width: 100%; display: block; }
+  a { color: var(--green-mid); }
+
+  /* ── Layout ──────────────────────────────────────────────────── */
+  .container { max-width: 860px; margin: 0 auto; padding: 0 2rem; }
+  .container--wide { max-width: 1060px; margin: 0 auto; padding: 0 2rem; }
+
+  /* ── Hero ────────────────────────────────────────────────────── */
+  .hero {
+    position: relative;
+    background: var(--green-deep);
+    color: var(--white);
+    padding: 5rem 2rem 4rem;
+    overflow: hidden;
+  }
+
+  /* Topographic contour signature element */
+  .hero__topo {
+    position: absolute;
+    inset: 0;
+    opacity: 0.08;
+    pointer-events: none;
+  }
+
+  .hero__inner {
+    position: relative;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .hero__eyebrow {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--green-rule);
+    margin-bottom: 1rem;
+  }
+
+  .hero__title {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero__title em {
+    color: #7ED99A;
+    font-style: normal;
+  }
+
+  .hero__subtitle {
+    font-size: 1.05rem;
+    color: #B8D4BF;
+    font-style: italic;
+    margin-bottom: 2.5rem;
+    font-family: Georgia, serif;
+  }
+
+  .hero__meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.75rem 2rem;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.82rem;
+  }
+
+  .hero__meta-item { border-left: 2px solid var(--green-light); padding-left: 0.75rem; }
+  .hero__meta-label { color: var(--green-rule); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.15rem; }
+  .hero__meta-value { color: #E8F4EA; line-height: 1.4; }
+
+  /* ── Nav pills ───────────────────────────────────────────────── */
+  .nav-strip {
+    background: var(--green-deep);
+    border-top: 1px solid rgba(255,255,255,0.08);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-strip__inner {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-strip__inner::-webkit-scrollbar { display: none; }
+  .nav-strip a {
+    display: block;
+    padding: 0.65rem 1rem;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #8FBA9A;
+    text-decoration: none;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .nav-strip a:hover { color: #FFFFFF; border-bottom-color: var(--green-light); }
+
+  /* ── Sections ────────────────────────────────────────────────── */
+  .section {
+    padding: 3.5rem 0 2.5rem;
+    border-bottom: 1px solid var(--green-rule);
+  }
+  .section:last-of-type { border-bottom: none; }
+
+  .section__label {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--green-light);
+    margin-bottom: 0.4rem;
+  }
+
+  .section__title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--green-deep);
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+  }
+
+  .section__title::after {
+    content: '';
+    display: block;
+    width: 2.5rem;
+    height: 3px;
+    background: var(--amber);
+    margin-top: 0.5rem;
+  }
+
+  /* ── Body text ───────────────────────────────────────────────── */
+  p { margin-bottom: 1rem; font-size: 0.97rem; color: var(--ink-mid); }
+  p:last-child { margin-bottom: 0; }
+
+  /* ── Callout cards ───────────────────────────────────────────── */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .card {
+    background: var(--white);
+    border: 1px solid var(--green-rule);
+    border-top: 3px solid var(--green-mid);
+    border-radius: 2px;
+    padding: 1.2rem 1.25rem;
+  }
+
+  .card__title {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--green-mid);
+    margin-bottom: 0.4rem;
+  }
+
+  .card__body { font-size: 0.88rem; color: var(--ink-mid); line-height: 1.5; }
+
+  /* ── Metric callouts ─────────────────────────────────────────── */
+  .metrics-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1px;
+    background: var(--green-rule);
+    border: 1px solid var(--green-rule);
+    border-radius: 2px;
+    overflow: hidden;
+    margin: 1.5rem 0;
+  }
+
+  .metric {
+    background: var(--white);
+    padding: 1.25rem 1rem;
+    text-align: center;
+  }
+
+  .metric__value {
+    font-family: var(--mono);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--green-deep);
+    line-height: 1;
+    margin-bottom: 0.2rem;
+  }
+
+  .metric__value--amber { color: var(--amber); }
+  .metric__value--best { color: var(--green-mid); }
+
+  .metric__label {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  /* ── Tables ──────────────────────────────────────────────────── */
+  .table-wrap { overflow-x: auto; margin: 1.5rem 0; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.83rem;
+  }
+
+  thead tr { background: var(--green-deep); color: var(--white); }
+  thead th {
+    padding: 0.6rem 0.85rem;
+    text-align: left;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+  }
+
+  tbody tr:nth-child(odd)  { background: var(--white); }
+  tbody tr:nth-child(even) { background: var(--green-wash); }
+  tbody tr.gnn-row         { background: #D4EDD9; }
+  tbody tr.gnn-row td:first-child { font-weight: 700; color: var(--green-deep); }
+
+  td {
+    padding: 0.55rem 0.85rem;
+    color: var(--ink-mid);
+    border-bottom: 1px solid var(--green-rule);
+    vertical-align: middle;
+  }
+
+  .td--best {
+    font-family: var(--mono);
+    font-weight: 700;
+    color: var(--green-mid);
+    background: #B8E4C4 !important;
+  }
+
+  .td--mono { font-family: var(--mono); }
+
+  table caption {
+    caption-side: bottom;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    font-style: italic;
+    padding: 0.5rem 0;
+    text-align: left;
+  }
+
+  /* ── Objectives table ────────────────────────────────────────── */
+  .obj-table tbody tr td:last-child {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--green-mid);
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+
+  /* ── Figures ─────────────────────────────────────────────────── */
+  .figure {
+    margin: 2rem 0;
+    background: var(--white);
+    border: 1px solid var(--green-rule);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .figure img {
+    width: 100%;
+    display: block;
+  }
+
+  .figure__cap {
+    padding: 0.7rem 1rem;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    background: var(--green-wash);
+    border-top: 1px solid var(--green-rule);
+    font-style: italic;
+    line-height: 1.45;
+  }
+
+  .figure__cap strong { color: var(--ink-mid); font-style: normal; }
+
+  /* ── Themes ──────────────────────────────────────────────────── */
+  .themes { display: flex; flex-direction: column; gap: 1rem; margin: 1.5rem 0; }
+
+  .theme {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    gap: 0 1rem;
+    align-items: start;
+    background: var(--white);
+    border: 1px solid var(--green-rule);
+    border-radius: 2px;
+    padding: 1.1rem 1.25rem;
+  }
+
+  .theme__num {
+    font-family: var(--mono);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--amber);
+    line-height: 1.2;
+    padding-top: 0.1rem;
+  }
+
+  .theme__title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--green-deep);
+    margin-bottom: 0.3rem;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .theme__body { font-size: 0.86rem; color: var(--ink-mid); line-height: 1.55; }
+
+  /* ── Phase II list ───────────────────────────────────────────── */
+  .phase2-list {
+    list-style: none;
+    margin: 1rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .phase2-list li {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    font-size: 0.9rem;
+    color: var(--ink-mid);
+  }
+
+  .phase2-list li::before {
+    content: '';
+    display: block;
+    width: 6px;
+    height: 6px;
+    min-width: 6px;
+    border-radius: 50%;
+    background: var(--amber);
+    margin-top: 0.55rem;
+  }
+
+  /* ── Amber callout box ───────────────────────────────────────── */
+  .callout {
+    background: var(--amber-light);
+    border-left: 3px solid var(--amber);
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    border-radius: 0 2px 2px 0;
+    font-size: 0.9rem;
+    color: var(--ink-mid);
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  /* ── BBN node diagram ────────────────────────────────────────── */
+  .bbn-wrap { margin: 1.5rem 0; }
+
+  /* ── Footer ──────────────────────────────────────────────────── */
+  .footer {
+    background: var(--green-deep);
+    color: #7FA88A;
+    padding: 2rem;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.75rem;
+    line-height: 1.6;
+    text-align: center;
+  }
+
+  /* ── Responsive ──────────────────────────────────────────────── */
+  @media (max-width: 600px) {
+    .hero { padding: 3rem 1.25rem 2.5rem; }
+    .container { padding: 0 1.25rem; }
+    .section { padding: 2.5rem 0 1.5rem; }
+    .metrics-row { grid-template-columns: repeat(2, 1fr); }
+    .theme { grid-template-columns: 1fr; }
+    .theme__num { font-size: 1rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+<style>
+/* ── Site primary nav ── */
+.pnav{height:56px;border-bottom:1px solid #cdd8ea;background:rgba(238,243,251,0.92);backdrop-filter:blur(10px);position:sticky;top:0;z-index:9999;display:flex;align-items:center}
+.pnav-inner{width:100%;max-width:1200px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.pnav-logo{font-family:'Lora',Georgia,serif;font-size:1.125rem;font-weight:600;color:#0f172a;text-decoration:none;letter-spacing:-0.01em}
+.pnav-list{display:flex;gap:1.5rem;list-style:none}
+.pnav-list a{font-size:0.875rem;font-weight:500;color:#5c6b82;text-decoration:none;transition:color 150ms}
+.pnav-list a:hover,.pnav-list a[aria-current]{color:#2563eb;text-decoration:none}
+@media(max-width:600px){.pnav-logo{font-size:1rem}.pnav-list{gap:1rem}}
+/* ── Section nav: restore silva's own style ── */
+.nav-strip{top:56px!important}
+</style>
 </head>
 <body>
 
-  <nav class="site-nav" aria-label="Main navigation">
-    <div class="container">
-      <a href="/" class="nav-logo">Joshua Martin</a>
-      <ul class="nav-links" role="list">
-        <li><a href="/">Home</a></li>
-        <li><a href="/about/">About</a></li>
-        <li><a href="/projects/">Projects</a></li>
-      </ul>
+<nav class="pnav" aria-label="Site navigation">
+  <div class="pnav-inner">
+    <a href="/" class="pnav-logo">Joshua Martin</a>
+    <ul class="pnav-list" role="list">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about/">About</a></li>
+      <li><a href="/projects/" aria-current="page">Projects</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ── Hero ──────────────────────────────────────────────────────────── -->
+<header class="hero">
+  <!-- Topographic contour lines: the page's signature element -->
+  <svg class="hero__topo" viewBox="0 0 1200 500" preserveAspectRatio="xMidYMid slice"
+       xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <g fill="none" stroke="#FFFFFF" stroke-width="1.2">
+      <path d="M-100,420 C100,380 200,350 350,360 C500,370 580,320 700,290 C820,260 920,280 1100,240 C1150,230 1180,220 1300,210"/>
+      <path d="M-100,370 C80,340 180,310 320,325 C460,340 540,290 660,265 C780,240 880,258 1060,220 C1110,210 1160,198 1300,185"/>
+      <path d="M-100,320 C60,295 150,268 290,288 C430,308 510,260 630,240 C750,220 850,238 1020,202 C1070,192 1140,180 1300,162"/>
+      <path d="M-100,270 C50,248 130,228 260,250 C390,272 470,228 590,212 C710,196 812,216 980,183 C1032,173 1120,162 1300,138"/>
+      <path d="M-100,220 C40,200 115,184 240,208 C365,232 445,192 562,178 C680,164 780,186 945,155 C998,145 1095,133 1300,112"/>
+      <path d="M-100,170 C25,152 100,138 218,164 C336,190 416,154 528,142 C640,130 742,152 908,124 C962,115 1060,102 1300,80"/>
+      <path d="M-100,120 C12,104 88,92 200,118 C312,144 392,112 500,102 C608,92 710,116 876,90 C930,82 1028,70 1300,50"/>
+      <path d="M-100,80 C0,65 75,52 180,76 C285,100 362,72 465,63 C568,54 672,76 840,52 C895,44 992,33 1300,16"/>
+    </g>
+    <g fill="none" stroke="#FFFFFF" stroke-width="0.6" opacity="0.5">
+      <path d="M-100,445 C120,415 220,390 380,398 C540,406 620,360 740,335 C860,310 960,328 1130,292"/>
+      <path d="M-100,395 C100,368 200,342 355,354 C510,366 590,318 710,295 C830,272 930,290 1110,256"/>
+      <path d="M-100,248 C66,226 143,206 272,228 C401,250 481,208 597,194 C713,180 812,200 978,168"/>
+      <path d="M-100,148 C32,128 108,110 228,136 C348,162 428,128 540,116 C652,104 752,126 920,98"/>
+    </g>
+  </svg>
+
+  <div class="hero__inner">
+    <p class="hero__eyebrow">USDA STTR Phase I</p>
+    <h1 class="hero__title">Ecological Risk Mitigation Tool<br>for <em>Forestry Operations</em></h1>
+    <p class="hero__subtitle">Silva — Field-Ready Decision Support for Environmental Risk Assessment</p>
+
+    <div class="hero__meta">
+      <div class="hero__meta-item">
+        <div class="hero__meta-label">My Role</div>
+        <div class="hero__meta-value">Principal Investigator</div>
+      </div>
+      <div class="hero__meta-item">
+        <div class="hero__meta-label">Partners</div>
+        <div class="hero__meta-value">American Forestry Management, University of Maine, Dr. Kathy Wolf</div>
+      </div>
+      <div class="hero__meta-item">
+        <div class="hero__meta-label">Period</div>
+        <div class="hero__meta-value">July 1, 2024 – June 30, 2025</div>
+      </div>
+      <div class="hero__meta-item">
+        <div class="hero__meta-label">Program</div>
+        <div class="hero__meta-value">USDA NIFA SBIR / STTR</div>
+      </div>
     </div>
-  </nav>
+  </div>
+</header>
 
-  <main>
+<!-- ── Sticky nav ─────────────────────────────────────────────────────── -->
+<nav class="nav-strip" aria-label="Page sections">
+  <div class="nav-strip__inner">
+    <a href="#summary">Summary</a>
+    <a href="#problem">Problem</a>
+    <a href="#approach">Approach</a>
+    <a href="#metrics">Metrics</a>
+    <a href="#application">Application</a>
+    <a href="#stakeholders">Stakeholders</a>
+    <a href="#phase2">Phase II</a>
+  </div>
+</nav>
+
+<!-- ── Main content ───────────────────────────────────────────────────── -->
+<main>
+
+  <!-- 1. Executive Summary -->
+  <section class="section" id="summary">
     <div class="container">
+      <p class="section__label">Overview</p>
+      <h2 class="section__title">Executive Summary</h2>
 
-      <a href="/projects/" class="back-link">← All projects</a>
+      <p>VISIMO, LLC. successfully completed a Phase I proof of concept for <strong>Silva</strong>, a Machine Learning-powered Progressive Web Application designed to help foresters rapidly assess ecological risk and select appropriate Best Management Practices (BMPs) during both planning and field operations.</p>
 
-      <header class="page-header">
-        <h1>Silva</h1>
-        <p>USDA STTR Phase I (2024–2025) · Principal Investigator</p>
-      </header>
+      <p>The project addresses a critical workforce gap: the US forest management industry faces an <strong>11.5% projected employment decline over the next decade</strong>, with retiring senior foresters taking institutional knowledge with them. New foresters require roughly two years of supervised retraining, creating elevated risk of environmental degradation during the transition period.</p>
 
-      <div class="project-detail-img">
-        <img src="/static/img/silva.jpg" alt="Silva GIS application showing a forestry operation with color-coded risk subregions on a map and soil attributes panel" />
+      <div class="metrics-row" aria-label="Key project figures">
+        <div class="metric">
+          <div class="metric__value">25</div>
+          <div class="metric__label">Stakeholder Interviews</div>
+        </div>
+        <div class="metric">
+          <div class="metric__value">4 / 4</div>
+          <div class="metric__label">R&D Objectives Complete</div>
+        </div>
+        <div class="metric">
+          <div class="metric__value">50+</div>
+          <div class="metric__label">BBN Variables</div>
+        </div>
+        <div class="metric">
+          <div class="metric__value">14</div>
+          <div class="metric__label">BMPs Modeled</div>
+        </div>
+        <div class="metric">
+          <div class="metric__value metric__value--best">0.048</div>
+          <div class="metric__label">Best ECE (GNN)</div>
+        </div>
       </div>
 
-      <section class="project-section" aria-labelledby="overview-heading">
-        <h2 id="overview-heading">Overview</h2>
-        <p>
-          Silva is an explainable GIS-based ecological risk assessment tool for forestry
-          operations, developed as PI under USDA STTR Phase I in partnership with a university
-          research collaborator. The platform helps forest managers identify which areas within
-          a planned timber operation carry the highest ecological risk and evaluate how applying
-          specific best management practices (BMPs) would reduce that risk — before crews enter
-          the field.
-        </p>
-        <p>
-          A central design principle was that the tool should supplement forester judgment, not
-          replace it. This drove emphasis on calibrated probability outputs over binary
-          classification, transparent BMP impact estimates that foresters can verify, and an
-          offline-capable PWA that works without reliable cell service in the field. The product
-          strategy was shaped by 25 stakeholder interviews with foresters, logging contractors,
-          and state agency staff.
-        </p>
-      </section>
-
-      <section class="project-section" aria-labelledby="approach-heading">
-        <h2 id="approach-heading">Technical Approach</h2>
-        <ul>
-          <li>Constructed a Bayesian Belief Network (BBN) encoding expert ecological knowledge across 50+ environmental variables and 14 BMPs to generate synthetic training data reflecting expert-calibrated risk distributions</li>
-          <li>Trained XGBoost and Graph Neural Network (GNN) models on BBN-generated synthetic data; model evaluation emphasized Expected Calibration Error (ECE) to prioritize well-calibrated risk probabilities over raw accuracy</li>
-          <li>GIS workflow auto-populates soil composition, hydrology, and slope data for user-defined operation boundaries using national geospatial datasets</li>
-          <li>BMP recommendation engine generates per-BMP risk impact estimates, showing foresters quantitatively how each practice changes subregion risk</li>
-          <li>Delivered as an offline-capable Progressive Web App (PWA) with interactive subregion mapping and field-first UX designed for low-connectivity environments</li>
-          <li>Conducted 25 stakeholder interviews to guide design decisions around workflow, explanation format, and field usability</li>
-        </ul>
-      </section>
-
-      <section class="project-section" aria-labelledby="results-heading">
-        <h2 id="results-heading">Results</h2>
-        <ul>
-          <li>Expected Calibration Error (ECE) under 6% across evaluation sets — model risk probabilities are well-matched to observed outcomes</li>
-          <li>All four Phase I R&amp;D objectives completed: risk analysis, GIS workflow development, proof-of-concept application delivery, and stakeholder engagement</li>
-          <li>Offline-capable PWA deployable to field devices without reliable connectivity</li>
-        </ul>
-      </section>
-
-      <section class="project-section" aria-labelledby="stack-heading">
-        <h2 id="stack-heading">Stack</h2>
-        <ul class="project-tags" role="list">
-          <li class="tag">GNNs</li>
-          <li class="tag">XGBoost</li>
-          <li class="tag">Bayesian Networks</li>
-          <li class="tag">GIS</li>
-          <li class="tag">PWA</li>
-          <li class="tag">Explainable AI</li>
-          <li class="tag">Python</li>
-        </ul>
-      </section>
-
+      <p>Silva consolidates publicly available geospatial and environmental data with site-specific inputs to produce calibrated risk scores for three environmental outcomes: soil compaction, soil erosion, and surface runoff. It operates both online and offline, making it usable in remote forestry stands where connectivity is unavailable.</p>
     </div>
-  </main>
+  </section>
 
-  <footer class="site-footer">
+  <!-- 2. Problem Statement -->
+  <section class="section" id="problem">
     <div class="container">
-      <ul class="footer-links" role="list">
-        <li><a href="mailto:joshtmartin99@gmail.com">Email</a></li>
-        <li><a href="https://github.com/JTM119" target="_blank" rel="noopener">GitHub</a></li>
-        <li><a href="https://www.linkedin.com/in/joshua-martin-333456192/" target="_blank" rel="noopener">LinkedIn</a></li>
-      </ul>
+      <p class="section__label">Context</p>
+      <h2 class="section__title">Problem Statement</h2>
+
+      <p>A critical aspect of sustainable forestry is the development and implementation of BMPs to protect water quality by preventing sediment from entering water sources and reducing stream bank erosion. Environmental risk assessments currently take anywhere from a few days to 10 weeks to complete. Without intervention, a shrinking labor pool and limited novice experience will result in increased environmental degradation.</p>
+
+      <div class="cards">
+        <div class="card">
+          <div class="card__title">Workforce Erosion</div>
+          <div class="card__body">Retirement of experienced foresters is disrupting institutional knowledge transfer. New foresters need roughly two years of supervised retraining and often hesitate to act without oversight.</div>
+        </div>
+        <div class="card">
+          <div class="card__title">Field Training Gap</div>
+          <div class="card__body">Modern university forestry programs have reduced on-site exercises to as little as one week, with many not occurring in actual forests. Direct observation skills are declining.</div>
+        </div>
+        <div class="card">
+          <div class="card__title">Time Pressure</div>
+          <div class="card__body">Commercial harvest windows are short. The time required to implement BMPs and difficulty of doing so conflicts with operations in critical periods when foresters must gather and sell as much wood as possible.</div>
+        </div>
+        <div class="card">
+          <div class="card__title">Assessment Burden</div>
+          <div class="card__body">Environmental risk assessments can take 2 days to 10 weeks. BMP implementation weaknesses, including inadequate stream zones and incorrectly installed crossings, erode soil and damage water quality.</div>
+        </div>
+      </div>
     </div>
-  </footer>
+  </section>
+
+  <!-- 3. Technical Approach -->
+  <section class="section" id="approach">
+    <div class="container">
+      <p class="section__label">Development</p>
+      <h2 class="section__title">Technical Approach</h2>
+
+      <h3 style="font-size:1rem; color:var(--green-deep); margin-bottom:0.75rem; font-family:Arial,Helvetica,sans-serif; font-weight:700; letter-spacing:0.03em;">R&amp;D Objectives</h3>
+
+      <div class="table-wrap">
+        <table class="obj-table">
+          <thead>
+            <tr>
+              <th>Objective</th>
+              <th>Description</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>O1 &mdash; R&amp;D Plan</strong></td>
+              <td>Finalize plan; define roles and success metrics; inventory datasets; conduct 25 discovery interviews.</td>
+              <td>Complete</td>
+            </tr>
+            <tr>
+              <td><strong>O2 &mdash; Forestry Analysis</strong></td>
+              <td>Design risk analysis approach; prepare/transform datasets; implement and verify risk modeling algorithms including BBN and GNN.</td>
+              <td>Complete</td>
+            </tr>
+            <tr>
+              <td><strong>O3 &mdash; GIS Component</strong></td>
+              <td>Build an online/offline GIS component for the Maine subregion, pre-filled with soil, hydrologic, and terrain data.</td>
+              <td>Complete</td>
+            </tr>
+            <tr>
+              <td><strong>O4 &mdash; Proof of Concept</strong></td>
+              <td>Integrate GIS with PWA framework; customize UI for forestry needs; deploy the PoC; produce the final technical report.</td>
+              <td>Complete</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="font-size:1rem; color:var(--green-deep); margin:1.75rem 0 0.75rem; font-family:Arial,Helvetica,sans-serif; font-weight:700; letter-spacing:0.03em;">Data Synthesis: Bayesian Belief Network</h3>
+
+      <p>Because public datasets directly linking forestry environmental risk factors to operational conditions are sparse, VISIMO generated synthetic training data guided by Subject Matter Expert (SME) input using Bayesian Belief Networks (BBNs). A BBN is a probabilistic graphical model encoded as a Directed Acyclic Graph (DAG). The network was built in Python using <code style="font-family:var(--mono); font-size:0.87em; background:var(--green-wash); padding:0.1em 0.3em; border-radius:2px;">pgmpy</code>, with SMEs providing Conditional Probability Tables (CPTs) via an Excel template.</p>
+
+      <p>The full BBN spans more than 50 variables and 14 BMPs across five variable categories. To reduce SME bias, final CPTs were derived from probabilities aggregated across multiple expert opinions, with light Dirichlet smoothing to avoid zero-probability paths.</p>
+
+      <div class="figure">
+        <img src="data:image/jpeg;base64,__FIG1_PLACEHOLDER__"
+             alt="Figure 1: Structure of the Bayesian Belief Network showing nodes for soil, water, geographic, operation, and equipment risk factors feeding into compaction, erosion, and runoff outcomes"
+             style="display:none;" id="fig1-img">
+        <!-- Inline SVG representation of the BBN structure -->
+        <svg viewBox="0 0 720 340" xmlns="http://www.w3.org/2000/svg" style="width:100%; background:#F9FBF9; display:block;">
+          <defs>
+            <marker id="arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L8,3 z" fill="#4A9058"/>
+            </marker>
+          </defs>
+
+          <!-- Category nodes (left) -->
+          <g font-family="Arial, sans-serif" font-size="11">
+
+            <!-- Soil -->
+            <ellipse cx="120" cy="80" rx="52" ry="22" fill="#D4EDD9" stroke="#2E6B3E" stroke-width="1.5"/>
+            <text x="120" y="84" text-anchor="middle" fill="#1A3D28" font-weight="600">Soil</text>
+
+            <!-- Geographic -->
+            <ellipse cx="120" cy="145" rx="52" ry="22" fill="#D4EDD9" stroke="#2E6B3E" stroke-width="1.5"/>
+            <text x="120" y="149" text-anchor="middle" fill="#1A3D28" font-weight="600">Geographic</text>
+
+            <!-- Water -->
+            <ellipse cx="120" cy="210" rx="52" ry="22" fill="#D4EDD9" stroke="#2E6B3E" stroke-width="1.5"/>
+            <text x="120" y="214" text-anchor="middle" fill="#1A3D28" font-weight="600">Water</text>
+
+            <!-- Operation -->
+            <ellipse cx="120" cy="275" rx="52" ry="22" fill="#D4EDD9" stroke="#2E6B3E" stroke-width="1.5"/>
+            <text x="120" y="279" text-anchor="middle" fill="#1A3D28" font-weight="600">Operation</text>
+
+            <!-- Equipment (above) -->
+            <ellipse cx="255" cy="32" rx="52" ry="22" fill="#FDF3DC" stroke="#C8860A" stroke-width="1.5"/>
+            <text x="255" y="36" text-anchor="middle" fill="#7A4F00" font-weight="600">Equipment</text>
+
+            <!-- Risk factors (middle) -->
+            <rect x="250" y="63" width="100" height="36" rx="4" fill="#EAF2EB" stroke="#2E6B3E" stroke-width="1.5"/>
+            <text x="300" y="85" text-anchor="middle" fill="#1A3D28" font-weight="600">Soil Risk</text>
+
+            <rect x="250" y="117" width="100" height="36" rx="4" fill="#EAF2EB" stroke="#2E6B3E" stroke-width="1.5"/>
+            <text x="300" y="139" text-anchor="middle" fill="#1A3D28" font-weight="600">Geo Risk</text>
+
+            <rect x="250" y="171" width="100" height="36" rx="4" fill="#EAF2EB" stroke="#2E6B3E" stroke-width="1.5"/>
+            <text x="300" y="193" text-anchor="middle" fill="#1A3D28" font-weight="600">Water Risk</text>
+
+            <rect x="250" y="225" width="100" height="36" rx="4" fill="#FDF3DC" stroke="#C8860A" stroke-width="1.5"/>
+            <text x="300" y="241" text-anchor="middle" fill="#7A4F00" font-weight="600">Op. Risk</text>
+
+            <rect x="250" y="279" width="100" height="36" rx="4" fill="#FDF3DC" stroke="#C8860A" stroke-width="1.5"/>
+            <text x="300" y="295" text-anchor="middle" fill="#7A4F00" font-weight="600">Equip. Risk</text>
+
+            <!-- Outcome nodes (right) -->
+            <ellipse cx="540" cy="108" rx="66" ry="28" fill="#1A3D28" stroke="#0D2317" stroke-width="2"/>
+            <text x="540" y="104" text-anchor="middle" fill="white" font-weight="700" font-size="12">Soil</text>
+            <text x="540" y="118" text-anchor="middle" fill="#7ED99A" font-weight="700" font-size="12">Compaction</text>
+
+            <ellipse cx="540" cy="190" rx="66" ry="28" fill="#1A3D28" stroke="#0D2317" stroke-width="2"/>
+            <text x="540" y="186" text-anchor="middle" fill="white" font-weight="700" font-size="12">Soil</text>
+            <text x="540" y="200" text-anchor="middle" fill="#7ED99A" font-weight="700" font-size="12">Erosion</text>
+
+            <ellipse cx="540" cy="272" rx="66" ry="28" fill="#1A3D28" stroke="#0D2317" stroke-width="2"/>
+            <text x="540" y="268" text-anchor="middle" fill="white" font-weight="700" font-size="12">Soil</text>
+            <text x="540" y="282" text-anchor="middle" fill="#7ED99A" font-weight="700" font-size="12">Runoff</text>
+
+            <!-- BMP nodes -->
+            <rect x="630" y="80" width="76" height="28" rx="14" fill="#A8CFB0" stroke="#2E6B3E" stroke-width="1"/>
+            <text x="668" y="98" text-anchor="middle" fill="#1A3D28" font-size="10" font-weight="600">Water BMPs</text>
+
+            <rect x="630" y="162" width="76" height="28" rx="14" fill="#A8CFB0" stroke="#2E6B3E" stroke-width="1"/>
+            <text x="668" y="180" text-anchor="middle" fill="#1A3D28" font-size="10" font-weight="600">Soil BMPs</text>
+
+            <rect x="630" y="244" width="76" height="28" rx="14" fill="#FFE4A0" stroke="#C8860A" stroke-width="1"/>
+            <text x="668" y="262" text-anchor="middle" fill="#7A4F00" font-size="10" font-weight="600">Op. BMPs</text>
+          </g>
+
+          <!-- Edges: categories to risk factors -->
+          <g stroke="#4A9058" stroke-width="1.2" fill="none" marker-end="url(#arr)" opacity="0.7">
+            <line x1="172" y1="80" x2="248" y2="81"/>
+            <line x1="172" y1="145" x2="248" y2="135"/>
+            <line x1="172" y1="210" x2="248" y2="193"/>
+            <line x1="172" y1="265" x2="248" y2="247"/>
+            <line x1="255" y1="54" x2="278" y2="63"/>
+            <line x1="255" y1="54" x2="278" y2="280"/>
+          </g>
+
+          <!-- Edges: risk factors to outcomes -->
+          <g stroke="#1A3D28" stroke-width="1.5" fill="none" marker-end="url(#arr)" opacity="0.6">
+            <line x1="350" y1="81" x2="473" y2="100"/>
+            <line x1="350" y1="135" x2="473" y2="105"/>
+            <line x1="350" y1="189" x2="473" y2="118"/>
+            <line x1="350" y1="81"  x2="473" y2="182"/>
+            <line x1="350" y1="135" x2="473" y2="188"/>
+            <line x1="350" y1="189" x2="473" y2="194"/>
+            <line x1="350" y1="243" x2="473" y2="265"/>
+            <line x1="350" y1="297" x2="473" y2="275"/>
+            <line x1="350" y1="189" x2="473" y2="268"/>
+          </g>
+
+          <!-- Edges: outcomes to BMPs -->
+          <g stroke="#A8CFB0" stroke-width="1.2" fill="none" stroke-dasharray="4,3" opacity="0.8">
+            <line x1="606" y1="108" x2="628" y2="96"/>
+            <line x1="606" y1="190" x2="628" y2="178"/>
+            <line x1="606" y1="272" x2="628" y2="260"/>
+          </g>
+
+          <!-- Legend -->
+          <g font-family="Arial, sans-serif" font-size="9.5" fill="#6B7A67">
+            <rect x="18" y="308" width="10" height="10" rx="2" fill="#D4EDD9" stroke="#2E6B3E" stroke-width="1"/>
+            <text x="32" y="317">Input category</text>
+            <rect x="118" y="308" width="10" height="10" rx="2" fill="#EAF2EB" stroke="#2E6B3E" stroke-width="1"/>
+            <text x="132" y="317">Risk factor</text>
+            <rect x="210" y="308" width="10" height="10" rx="5" fill="#1A3D28"/>
+            <text x="224" y="317">Risk outcome</text>
+            <rect x="316" y="308" width="10" height="10" rx="5" fill="#A8CFB0" stroke="#2E6B3E" stroke-width="1"/>
+            <text x="330" y="317">BMP recommendation</text>
+          </g>
+        </svg>
+        <p class="figure__cap"><strong>Figure 1:</strong> Simplified structure of the Bayesian Belief Network (BBN). Input categories (soil, geographic, water, operation, equipment) feed into category-level risk factors, which combine to estimate probabilities for the three target outcomes: soil compaction, erosion, and runoff. Recommended BMPs are linked to each outcome. The full network spans 50+ variables and 14 BMPs.</p>
+      </div>
+
+      <h3 style="font-size:1rem; color:var(--green-deep); margin:1.75rem 0 0.75rem; font-family:Arial,Helvetica,sans-serif; font-weight:700; letter-spacing:0.03em;">Machine Learning Models</h3>
+
+      <p>Synthetic data from the BBN was used to train two machine learning approaches. An <strong>XGBoost</strong> gradient-boosted decision tree model served as a baseline, chosen for its effectiveness with large synthetic datasets. A <strong>Graph Neural Network (GNN)</strong> was then developed to represent site data hierarchically: a root node aggregates information from category nodes (soil, geographic, water), which connect to variable nodes, which link to relevant BMPs. This structure encodes known associations so the GNN can discover deeper hidden relationships.</p>
+
+      <div class="callout">
+        "By encoding known associations into the graph, the GNN can uncover deeper hidden relationships and produce more sophisticated predictions" — and crucially, provides a path to stronger performance as real labeled field data accumulates in Phase II.
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Performance Metrics -->
+  <section class="section" id="metrics">
+    <div class="container">
+      <p class="section__label">Results</p>
+      <h2 class="section__title">Model Performance Metrics</h2>
+
+      <p>Models were evaluated using four metrics. <strong>Accuracy</strong> measures percentage of correct classifications. <strong>Precision</strong> measures ability to avoid costly false positives. <strong>Recall</strong> measures ability to avoid dangerous false negatives. <strong>Expected Calibration Error (ECE)</strong> measures alignment between predicted probabilities and true empirical frequencies. ECE is the primary metric of interest since Silva presents probability estimates rather than binary predictions.</p>
+
+      <p>The true base rate of degradation events in the synthetic data is 20-30%, which depresses accuracy, precision, and recall at a standard 0.5 decision threshold. ECE values in the range of 0.048-0.068 indicate strong probability calibration for early-stage models trained entirely on synthetic data.</p>
+
+      <div class="table-wrap">
+        <table>
+          <caption>Table 1: XGBoost and GNN evaluation comparison. Higher accuracy, recall, and precision are better; lower ECE is better. Best ECE highlighted.</caption>
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Risk Type</th>
+              <th>Accuracy</th>
+              <th>Recall</th>
+              <th>Precision</th>
+              <th>ECE</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>XGBoost</strong></td>
+              <td>Soil Compaction</td>
+              <td class="td--mono">0.7725</td>
+              <td class="td--mono">0.201</td>
+              <td class="td--mono">0.5141</td>
+              <td class="td--mono">0.0575</td>
+            </tr>
+            <tr>
+              <td><strong>XGBoost</strong></td>
+              <td>Soil Erosion</td>
+              <td class="td--mono">0.7832</td>
+              <td class="td--mono">0.181</td>
+              <td class="td--mono">0.4823</td>
+              <td class="td--mono">0.0613</td>
+            </tr>
+            <tr>
+              <td><strong>XGBoost</strong></td>
+              <td>Soil Runoff</td>
+              <td class="td--mono">0.7624</td>
+              <td class="td--mono">0.167</td>
+              <td class="td--mono">0.4500</td>
+              <td class="td--mono">0.0681</td>
+            </tr>
+            <tr class="gnn-row">
+              <td><strong>GNN</strong></td>
+              <td>Soil Compaction</td>
+              <td class="td--mono">0.7829</td>
+              <td class="td--mono">0.194</td>
+              <td class="td--mono">0.5225</td>
+              <td class="td--mono td--best">0.0482</td>
+            </tr>
+            <tr class="gnn-row">
+              <td><strong>GNN</strong></td>
+              <td>Soil Erosion</td>
+              <td class="td--mono">0.7751</td>
+              <td class="td--mono">0.222</td>
+              <td class="td--mono">0.5075</td>
+              <td class="td--mono">0.0523</td>
+            </tr>
+            <tr class="gnn-row">
+              <td><strong>GNN</strong></td>
+              <td>Soil Runoff</td>
+              <td class="td--mono">0.7624</td>
+              <td class="td--mono">0.164</td>
+              <td class="td--mono">0.5260</td>
+              <td class="td--mono">0.0577</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>The GNN achieves the best ECE of <strong>0.0482</strong> for soil compaction, meaning predicted probabilities deviate from true empirical frequencies by only about 4.8 percentage points on average. This strong calibration is essential for a risk-support tool, since the application presents probability estimates with error bars rather than binary high/low predictions.</p>
+
+      <p style="margin-top:1rem;">True probability distributions from the BBN cluster below 50% for all three risk types, with averages around 22% (soil erosion: 22.5%, soil compaction: 22.3%, soil runoff: 22.1%). This distribution confirms that most subregion scenarios represent low-to-moderate risk and explains why ECE is the most meaningful evaluation criterion rather than accuracy or recall at a 0.5 threshold.</p>
+
+      <!-- Inline histogram visualization -->
+      <div class="figure">
+        <svg viewBox="0 0 660 210" xmlns="http://www.w3.org/2000/svg" style="width:100%; background:#FAFBFA; display:block; padding:16px 0;">
+          <defs>
+            <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#4A9058"/>
+              <stop offset="100%" stop-color="#2E6B3E"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Erosion histogram -->
+          <text x="115" y="18" text-anchor="middle" font-family="Arial" font-size="10" fill="#1A3D28" font-weight="700">Soil Erosion</text>
+          <text x="115" y="30" text-anchor="middle" font-family="Arial" font-size="8.5" fill="#6B7A67">avg = 22.5%</text>
+          <g transform="translate(28,40)">
+            <rect x="0"   y="0"  width="22" height="105" fill="url(#barGrad)" opacity="0.9"/>
+            <rect x="24"  y="43" width="22" height="62"  fill="url(#barGrad)" opacity="0.9"/>
+            <rect x="48"  y="72" width="22" height="33"  fill="url(#barGrad)" opacity="0.9"/>
+            <rect x="72"  y="90" width="22" height="15"  fill="url(#barGrad)" opacity="0.9"/>
+            <rect x="96"  y="100" width="22" height="5" fill="url(#barGrad)" opacity="0.9"/>
+            <rect x="120" y="103" width="22" height="2" fill="url(#barGrad)" opacity="0.9"/>
+            <line x1="0" y1="105" x2="154" y2="105" stroke="#A8CFB0" stroke-width="1"/>
+            <line x1="44" y1="0" x2="44" y2="108" stroke="#C8860A" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <text x="44" y="118" text-anchor="middle" font-family="Arial" font-size="8" fill="#C8860A">0.225</text>
+            <text x="0"   y="118" text-anchor="middle" font-family="Arial" font-size="7.5" fill="#6B7A67">0.0</text>
+            <text x="154" y="118" text-anchor="middle" font-family="Arial" font-size="7.5" fill="#6B7A67">1.0</text>
+          </g>
+
+          <!-- Compaction histogram -->
+          <text x="335" y="18" text-anchor="middle" font-family="Arial" font-size="10" fill="#1A3D28" font-weight="700">Soil Compaction</text>
+          <text x="335" y="30" text-anchor="middle" font-family="Arial" font-size="8.5" fill="#6B7A67">avg = 22.3%</text>
+          <g transform="translate(248,40)">
+            <rect x="0"   y="14" width="22" height="91"  fill="url(#barGrad)" opacity="0.9"/>
+            <rect x="24"  y="0"  width="22" height="105" fill="url(#barGrad)" opacity="0.9"/>
+            <rect x="48"  y="60" width="22" height="45"  fill="url(#barGrad)" opacity="0.9"/>
+            <rect x="72"  y="84" width="22" height="21"  fill="url(#barGrad)" opacity="0.9"/>
+            <rect x="96"  y="97" width="22" height="8"   fill="url(#barGrad)" opacity="0.9"/>
+            <rect x="120" y="103" width="22" height="2"  fill="url(#barGrad)" opacity="0.9"/>
+            <line x1="0" y1="105" x2="154" y2="105" stroke="#A8CFB0" stroke-width="1"/>
+            <line x1="44" y1="0" x2="44" y2="108" stroke="#C8860A" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <text x="44" y="118" text-anchor="middle" font-family="Arial" font-size="8" fill="#C8860A">0.223</text>
+            <text x="0"   y="118" text-anchor="middle" font-family="Arial" font-size="7.5" fill="#6B7A67">0.0</text>
+            <text x="154" y="118" text-anchor="middle" font-family="Arial" font-size="7.5" fill="#6B7A67">1.0</text>
+          </g>
+
+          <!-- Runoff histogram -->
+          <text x="555" y="18" text-anchor="middle" font-family="Arial" font-size="10" fill="#1A3D28" font-weight="700">Soil Runoff</text>
+          <text x="555" y="30" text-anchor="middle" font-family="Arial" font-size="8.5" fill="#6B7A67">avg = 22.1%</text>
+          <g transform="translate(468,40)">
+            <rect x="0"   y="28" width="22" height="77"  fill="url(#barGrad)" opacity="0.9"/>
+            <rect x="24"  y="0"  width="22" height="105" fill="url(#barGrad)" opacity="0.9"/>
+            <rect x="48"  y="50" width="22" height="55"  fill="url(#barGrad)" opacity="0.9"/>
+            <rect x="72"  y="80" width="22" height="25"  fill="url(#barGrad)" opacity="0.9"/>
+            <rect x="96"  y="96" width="22" height="9"   fill="url(#barGrad)" opacity="0.9"/>
+            <rect x="120" y="103" width="22" height="2"  fill="url(#barGrad)" opacity="0.9"/>
+            <line x1="0" y1="105" x2="154" y2="105" stroke="#A8CFB0" stroke-width="1"/>
+            <line x1="44" y1="0" x2="44" y2="108" stroke="#C8860A" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <text x="44" y="118" text-anchor="middle" font-family="Arial" font-size="8" fill="#C8860A">0.221</text>
+            <text x="0"   y="118" text-anchor="middle" font-family="Arial" font-size="7.5" fill="#6B7A67">0.0</text>
+            <text x="154" y="118" text-anchor="middle" font-family="Arial" font-size="7.5" fill="#6B7A67">1.0</text>
+          </g>
+
+          <!-- Legend -->
+          <line x1="240" y1="178" x2="260" y2="178" stroke="#C8860A" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <text x="264" y="182" font-family="Arial" font-size="9" fill="#6B7A67">Average probability</text>
+          <rect x="350" y="171" width="12" height="12" fill="url(#barGrad)"/>
+          <text x="366" y="182" font-family="Arial" font-size="9" fill="#6B7A67">Frequency bin</text>
+        </svg>
+        <p class="figure__cap"><strong>Figure 3:</strong> Histograms of true probability distributions generated from the BBN for soil erosion, soil compaction, and soil runoff. Most samples have an event rate below 50%, with averages around 22%, confirming that ECE is the most meaningful evaluation criterion for this application.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Application -->
+  <section class="section" id="application">
+    <div class="container">
+      <p class="section__label">Product</p>
+      <h2 class="section__title">The Silva GIS Application</h2>
+
+      <p>Silva was built as a Progressive Web Application (PWA) to ensure compatibility across all browsers and operating systems without requiring app store distribution. Key capabilities reflect the workflows observed in the 25 discovery interviews.</p>
+
+      <div class="cards">
+        <div class="card">
+          <div class="card__title">Offline First</div>
+          <div class="card__body">Users cache map tiles, edit data, and receive updated risk predictions without an internet connection. Edits sync automatically when connectivity returns, fitting real forestry workflows in remote stands.</div>
+        </div>
+        <div class="card">
+          <div class="card__title">Interactive Mapping</div>
+          <div class="card__body">Users draw polygons to define operation boundaries. Subregions are automatically constructed and pre-populated with data from Web Soil Survey, SSURGO, National Wetlands Inventory, and Maine LiDAR.</div>
+        </div>
+        <div class="card">
+          <div class="card__title">Risk Visualization</div>
+          <div class="card__body">Color-coded map regions indicate relative risk for each degradation type. Users switch between compaction, erosion, and runoff views from a dropdown. Red regions signal higher risk for the selected type.</div>
+        </div>
+        <div class="card">
+          <div class="card__title">BMP Recommendations</div>
+          <div class="card__body">Each recommended BMP is shown alongside its predicted percentage improvement in risk score. Users apply BMPs with a single tap and see scores recalculate immediately using updated fields.</div>
+        </div>
+        <div class="card">
+          <div class="card__title">Advanced Editing</div>
+          <div class="card__body">Users can override automatically pulled data with in-field ground-truth observations for any environmental variable, ensuring the tool adapts as conditions on the ground are verified.</div>
+        </div>
+        <div class="card">
+          <div class="card__title">Subregion Splitting</div>
+          <div class="card__body">Auto-generated subregions can be divided using custom polylines or polygons to capture fine-grained site variation, with custom naming and independent risk assessment per segment.</div>
+        </div>
+      </div>
+
+      <!-- Risk score callout from the test operation -->
+      <div style="margin:2rem 0; background:var(--white); border:1px solid var(--green-rule); border-radius:2px; overflow:hidden;">
+        <div style="background:var(--green-deep); color:white; padding:0.75rem 1.25rem; font-family:Arial,Helvetica,sans-serif; font-size:0.8rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;">
+          Example: Maine Test Operation — Subregion Risk Scores
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--green-rule);">
+          <div style="background:var(--white); padding:1.25rem; text-align:center;">
+            <div style="font-family:var(--mono); font-size:2rem; font-weight:700; color:#C8860A; line-height:1;">49%</div>
+            <div style="font-family:Arial,Helvetica,sans-serif; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--ink-soft); margin-top:0.2rem;">Soil Erosion Risk</div>
+            <div style="font-size:0.78rem; color:var(--ink-soft); margin-top:0.5rem; font-style:italic;">Erosion Control Mats (+8.8%), Slash Windrows (+7.7%)</div>
+          </div>
+          <div style="background:var(--white); padding:1.25rem; text-align:center;">
+            <div style="font-family:var(--mono); font-size:2rem; font-weight:700; color:#B33A3A; line-height:1;">71%</div>
+            <div style="font-family:Arial,Helvetica,sans-serif; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--ink-soft); margin-top:0.2rem;">Soil Compaction Risk</div>
+            <div style="font-size:0.78rem; color:var(--ink-soft); margin-top:0.5rem; font-style:italic;">No Stream Crossing (+8.7%), Winter Harvesting (+6.9%)</div>
+          </div>
+          <div style="background:var(--white); padding:1.25rem; text-align:center;">
+            <div style="font-family:var(--mono); font-size:2rem; font-weight:700; color:#C8860A; line-height:1;">61%</div>
+            <div style="font-family:Arial,Helvetica,sans-serif; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--ink-soft); margin-top:0.2rem;">Soil Runoff Risk</div>
+            <div style="font-size:0.78rem; color:var(--ink-soft); margin-top:0.5rem; font-style:italic;">Culvert Sizing (+5.7%), Seeding and Mulching (+3.7%)</div>
+          </div>
+        </div>
+        <p style="padding:0.6rem 1.25rem; font-family:Arial,Helvetica,sans-serif; font-size:0.76rem; color:var(--ink-soft); font-style:italic; background:var(--green-wash); border-top:1px solid var(--green-rule);">Figure 8 from the report: Risk scores and top BMP recommendations for a Maine test operation. Percentages indicate predicted risk reduction if a given BMP is implemented.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 6. Stakeholders -->
+  <section class="section" id="stakeholders">
+    <div class="container">
+      <p class="section__label">Discovery</p>
+      <h2 class="section__title">Stakeholder Findings</h2>
+
+      <p>VISIMO conducted 25 interviews across diverse backgrounds: practicing foresters in Maine and Washington, procurement technicians, landowners and land managers, educators, and GIS/LiDAR specialists. Three dominant themes emerged and directly shaped both the modeling approach and UI design.</p>
+
+      <div class="themes">
+        <div class="theme">
+          <div class="theme__num">01</div>
+          <div>
+            <div class="theme__title">Boots on the Ground is Non-Negotiable</div>
+            <p class="theme__body">Senior foresters use digital tools as a pre-visit triage step and deviate as necessary once on site. Any suggestion that the tool could replace site visits would face significant resistance. As a result, Silva is framed explicitly as a decision support tool rather than a replacement for professional forester judgment. Each recommendation is tied to actionable BMP checklists the forester controls.</p>
+          </div>
+        </div>
+        <div class="theme">
+          <div class="theme__num">02</div>
+          <div>
+            <div class="theme__title">Explainability and Transparent AI</div>
+            <p class="theme__body">Stakeholders will only trust tools that clearly show what inputs were used, why a site was scored a certain way, and what BMP options are available. "Black box directives" are unacceptable. Educators raised concerns about younger users accepting outputs uncritically, emphasizing the need to display model recency, validation status, and error bars on predictions. Older foresters indicated distrust of AI unless outputs can be independently verified.</p>
+          </div>
+        </div>
+        <div class="theme">
+          <div class="theme__num">03</div>
+          <div>
+            <div class="theme__title">Data Pragmatism</div>
+            <p class="theme__body">Most foresters already use soil maps, DEM/topography, hydrology layers, and LiDAR-derived data as screening inputs. They trust DEM and soils for stable terrain context, but noted vegetation layer data is frequently outdated. A GPS-mapped 75 ft stream buffer might widen to ~200 ft once wet soils are confirmed on site. Silva must accept in-field data updates and reflect company-specific policy constraints, not just state BMP minimums.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout">
+        Interviewees were cautiously optimistic. Several said the tool would be "very useful" or "well received" if it demonstrably helps meet BMPs, saves planning time, and fits the way work already happens. Commercialization should first target small to mid-size managers and consulting foresters who lack in-house modeling capacity, going to market through trusted channels such as extension programs, CFRU/member networks, and forestry educators.
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Phase II -->
+  <section class="section" id="phase2">
+    <div class="container">
+      <p class="section__label">Looking Ahead</p>
+      <h2 class="section__title">Conclusions and Phase II Roadmap</h2>
+
+      <p>Phase I established a credible, explainable decision-support core and a field-ready GIS application. All four R&D objectives were completed. The BBN provides a transparent, auditable baseline for risk reasoning while generating synthetic training data. The GNN demonstrates a feasible path to stronger predictive performance as real labeled field data accumulates, with an ECE of 0.0482 for soil compaction representing strong calibration for an early-stage model.</p>
+
+      <h3 style="font-size:1rem; color:var(--green-deep); margin:1.5rem 0 0.75rem; font-family:Arial,Helvetica,sans-serif; font-weight:700; letter-spacing:0.03em;">Phase II Priorities</h3>
+
+      <ul class="phase2-list">
+        <li>Transition from synthetic to real-world field data through collaboration with Dr. Joe Conrad (University of Georgia) for data collection and prediction validation.</li>
+        <li>Classroom testing with University of Maine School of Forest Resources students under Dr. Anil Kizhakkepurakkal, with rigorous performance documentation to support commercialization claims.</li>
+        <li>More flexible stand segmentation, user-supplied regulatory layers, and role-based views for foresters, land managers, and students.</li>
+        <li>Lightweight scenario simulation including generation of hypothetical stands for planning and educational use.</li>
+        <li>Strengthen deep learning approaches (GNN and beyond) while retaining the BBN as an expert-grounded reference baseline that explains why a site is risky.</li>
+        <li>Narrowly scoped commercial pilots that measure planning time saved, avoided wet-site shutdowns, and compliance efficiency to quantify business value before broader rollout.</li>
+      </ul>
+
+      <div style="margin-top:2rem; padding:1.25rem 1.5rem; background:var(--green-deep); border-radius:2px; color:#B8D4BF; font-size:0.88rem; line-height:1.65;">
+        <span style="color:#7ED99A; font-weight:700; font-family:Arial,Helvetica,sans-serif; font-size:0.75rem; letter-spacing:0.12em; text-transform:uppercase; display:block; margin-bottom:0.4rem;">Project Status</span>
+        With Phase I development complete and a clear plan for Phase II, the project is well positioned to scale into a dependable, explainable tool that helps foresters plan operations and mitigate ecological risks across diverse forest types and geographies.
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ── Footer ─────────────────────────────────────────────────────────── -->
+<footer class="footer">
+  <p>USDA STTR Phase I</p>
+  <p style="margin-top:0.4rem; opacity:0.65;">Contract Period: July 1, 2024 &ndash; June 30, 2025 &nbsp;&middot;&nbsp; Data subject to SBIR data rights restrictions on the original technical report.</p>
+</footer>
 
 </body>
 </html>

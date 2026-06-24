@@ -1,96 +1,434 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CGAN / Eikon — Joshua Martin</title>
-  <link rel="stylesheet" href="/static/css/reset.css" />
-  <link rel="stylesheet" href="/static/css/typography.css" />
-  <link rel="stylesheet" href="/static/css/main.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CGAN-ISALD | Synthetic Satellite Imagery via Conditional GAN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink:     #0d1117;
+    --paper:   #f2f0eb;
+    --mid:     #6e7580;
+    --accent:  #1a56db;
+    --accent2: #e63946;
+    --surface: #ffffff;
+    --border:  #d8d5ce;
+    --mono:    'IBM Plex Mono', monospace;
+    --sans:    'Space Grotesk', sans-serif;
+    --serif:   'Fraunces', serif;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+  nav { position: sticky; top: 0; z-index: 100; background: var(--ink); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 52px; border-bottom: 2px solid var(--accent); }
+  .nav-logo { font-family: var(--mono); font-size: 0.78rem; color: #fff; letter-spacing: 0.12em; text-transform: uppercase; }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 1.8rem; list-style: none; }
+  .nav-links a { font-family: var(--mono); font-size: 0.72rem; color: #9ca3af; text-decoration: none; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.2s; }
+  .nav-links a:hover { color: #fff; }
+
+  .hero { background: var(--ink); padding: 5rem 2rem 4rem; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 60% at 75% 50%, rgba(26,86,219,0.18) 0%, transparent 70%); pointer-events: none; }
+  .hero-inner { max-width: 900px; margin: 0 auto; position: relative; }
+  .hero-eyebrow { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.7rem; }
+  .hero-eyebrow::before { content: ''; display: inline-block; width: 28px; height: 1px; background: var(--accent); }
+  .hero h1 { font-family: var(--serif); font-size: clamp(2.4rem, 5vw, 3.8rem); font-weight: 700; line-height: 1.1; color: #fff; margin-bottom: 0.5rem; }
+  .hero h1 em { font-style: italic; color: #93c5fd; font-weight: 300; }
+  .hero-sub { font-size: 1.05rem; color: #9ca3af; max-width: 600px; margin: 1.2rem 0 2.5rem; line-height: 1.65; }
+  .hero-meta { display: flex; flex-wrap: wrap; gap: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1); }
+  .hero-meta-item { display: flex; flex-direction: column; gap: 0.2rem; }
+  .hero-meta-item .label { font-family: var(--mono); font-size: 0.65rem; color: #4b5563; text-transform: uppercase; letter-spacing: 0.1em; }
+  .hero-meta-item .value { font-size: 0.85rem; color: #d1d5db; }
+
+  .verdict { background: #fff7ed; border-left: 4px solid #f97316; padding: 1.1rem 1.6rem; max-width: 860px; margin: 0 auto; display: flex; align-items: flex-start; gap: 1rem; }
+  .verdict-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 0.05rem; }
+  .verdict p { font-size: 0.92rem; color: #78350f; line-height: 1.55; }
+  .verdict strong { color: #431407; }
+
+  main { max-width: 900px; margin: 0 auto; padding: 0 2rem 5rem; }
+  section { padding-top: 4rem; }
+  .section-header { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 1.6rem; padding-bottom: 0.8rem; border-bottom: 1px solid var(--border); }
+  .section-num { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); letter-spacing: 0.1em; flex-shrink: 0; }
+  .section-header h2 { font-family: var(--serif); font-size: 1.7rem; font-weight: 700; line-height: 1.2; color: var(--ink); }
+  h3 { font-family: var(--sans); font-size: 1rem; font-weight: 600; color: var(--ink); margin: 1.8rem 0 0.6rem; letter-spacing: -0.01em; }
+  p { font-size: 0.97rem; color: #2d3748; line-height: 1.72; margin-bottom: 0.9rem; }
+
+  .fig-wrap { margin: 2rem 0; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+  .fig-wrap img { width: 100%; height: auto; display: block; }
+  .fig-wrap.fig-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .fig-wrap.fig-pair .fig-img { overflow: hidden; border-right: 1px solid var(--border); }
+  .fig-wrap.fig-pair .fig-img:last-child { border-right: none; }
+  .fig-wrap.fig-pair .fig-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .fig-cap { padding: 0.75rem 1rem; font-family: var(--mono); font-size: 0.73rem; color: var(--mid); line-height: 1.5; border-top: 1px solid var(--border); background: #fafaf8; }
+  .fig-cap strong { color: var(--ink); }
+
+  .callout { background: #eff6ff; border-left: 3px solid var(--accent); padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 0 3px 3px 0; }
+  .callout p { font-size: 0.9rem; color: #1e3a5f; margin: 0; }
+
+  .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; margin: 1.5rem 0; }
+  .metric-cell { background: var(--surface); padding: 1rem; }
+  .metric-cell.header { background: var(--ink); color: #fff; font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 500; }
+  .metric-cell .cat { font-family: var(--mono); font-size: 0.72rem; font-weight: 500; color: var(--accent); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.3rem; }
+  .metric-cell .names { font-size: 0.88rem; font-weight: 600; color: var(--ink); margin-bottom: 0.25rem; }
+  .metric-cell .desc { font-size: 0.8rem; color: var(--mid); line-height: 1.45; }
+
+  .arch-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin: 1.5rem 0; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+  .arch-table thead tr { background: var(--ink); color: #fff; }
+  .arch-table th { padding: 0.7rem 0.9rem; font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500; text-align: left; }
+  .arch-table td { padding: 0.65rem 0.9rem; border-bottom: 1px solid var(--border); color: #2d3748; }
+  .arch-table tbody tr:nth-child(even) { background: #fafaf8; }
+  .arch-table tbody tr:last-child td { border-bottom: none; }
+  .arch-table .best { font-weight: 700; color: var(--accent); }
+
+  ul.content-list { padding-left: 1.4rem; margin: 0.8rem 0 1rem; }
+  ul.content-list li { font-size: 0.95rem; color: #2d3748; line-height: 1.68; margin-bottom: 0.5rem; padding-left: 0.3rem; }
+  ul.content-list li strong { color: var(--ink); }
+
+  .dataset-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+  .dataset-card { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.1rem; position: relative; }
+  .dataset-card.selected { border-color: var(--accent); background: #eff6ff; }
+  .dataset-card.selected::after { content: 'SELECTED'; position: absolute; top: 0.7rem; right: 0.8rem; font-family: var(--mono); font-size: 0.6rem; font-weight: 500; background: var(--accent); color: #fff; padding: 0.15rem 0.45rem; border-radius: 2px; letter-spacing: 0.08em; }
+  .dataset-card h4 { font-size: 0.9rem; font-weight: 600; color: var(--ink); margin-bottom: 0.35rem; }
+  .dataset-card p { font-size: 0.8rem; color: var(--mid); margin: 0; line-height: 1.5; }
+
+  .result-highlight { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; margin: 1.5rem 0; }
+  .rh-cell { background: var(--surface); padding: 1.2rem; display: flex; flex-direction: column; gap: 0.3rem; }
+  .rh-cell .rh-label { font-family: var(--mono); font-size: 0.67rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--mid); }
+  .rh-cell .rh-val { font-family: var(--serif); font-size: 2rem; font-weight: 700; line-height: 1; color: var(--accent); }
+  .rh-cell .rh-desc { font-size: 0.8rem; color: var(--mid); line-height: 1.4; }
+
+  ol.rec-list { counter-reset: rec; list-style: none; padding: 0; margin: 1.2rem 0; display: flex; flex-direction: column; gap: 0.85rem; }
+  ol.rec-list li { counter-increment: rec; display: flex; align-items: flex-start; gap: 0.9rem; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 0.9rem 1rem; }
+  ol.rec-list li::before { content: counter(rec, decimal-leading-zero); font-family: var(--mono); font-size: 0.8rem; font-weight: 500; color: var(--accent); flex-shrink: 0; margin-top: 0.1rem; }
+  ol.rec-list li .rec-text { font-size: 0.9rem; color: #2d3748; line-height: 1.6; }
+  ol.rec-list li .rec-text strong { color: var(--ink); }
+
+  footer { background: var(--ink); color: #4b5563; padding: 2rem; font-family: var(--mono); font-size: 0.7rem; line-height: 1.7; letter-spacing: 0.04em; }
+  footer .footer-inner { max-width: 900px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+
+  @media (max-width: 640px) {
+    .metrics-grid { grid-template-columns: 1fr; }
+    .result-highlight { grid-template-columns: 1fr; }
+    .fig-wrap.fig-pair { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    .hero h1 { font-size: 2rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+<style>
+/* ── Site primary nav ── */
+.pnav{height:56px;border-bottom:1px solid #cdd8ea;background:rgba(238,243,251,0.92);backdrop-filter:blur(10px);position:sticky;top:0;z-index:9999;display:flex;align-items:center}
+.pnav-inner{width:100%;max-width:1200px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.pnav-logo{font-family:'Lora',Georgia,serif;font-size:1.125rem;font-weight:600;color:#0f172a;text-decoration:none;letter-spacing:-0.01em}
+.pnav-list{display:flex;gap:1.5rem;list-style:none}
+.pnav-list a{font-size:0.875rem;font-weight:500;color:#5c6b82;text-decoration:none;transition:color 150ms}
+.pnav-list a:hover,.pnav-list a[aria-current]{color:#2563eb;text-decoration:none}
+@media(max-width:600px){.pnav-logo{font-size:1rem}.pnav-list{gap:1rem}}
+/* ── Silva-style override ── */
+body{background:#F7F5F0!important;color:#1C2319!important;font-family:Georgia,"Times New Roman",serif!important}
+nav:not(.pnav){top:56px!important;background:#1A3D28!important;backdrop-filter:none!important;border-bottom:1px solid rgba(255,255,255,0.08)!important}
+.nav-logo{color:#E8F4EA!important}
+.nav-logo span{color:#7ED99A!important}
+.nav-links a{color:#8FBA9A!important}
+.nav-links a:hover{color:#FFFFFF!important}
+nav:not(.pnav){padding-left:max(1.5rem,calc(50% - 430px))!important;padding-right:max(1.5rem,calc(50% - 430px))!important}
+</style>
 </head>
 <body>
 
-  <nav class="site-nav" aria-label="Main navigation">
-    <div class="container">
-      <a href="/" class="nav-logo">Joshua Martin</a>
-      <ul class="nav-links" role="list">
-        <li><a href="/">Home</a></li>
-        <li><a href="/about/">About</a></li>
-        <li><a href="/projects/">Projects</a></li>
-      </ul>
+<nav class="pnav" aria-label="Site navigation">
+  <div class="pnav-inner">
+    <a href="/" class="pnav-logo">Joshua Martin</a>
+    <ul class="pnav-list" role="list">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about/">About</a></li>
+      <li><a href="/projects/" aria-current="page">Projects</a></li>
+    </ul>
+  </div>
+</nav>
+
+<nav>
+  <div class="nav-logo"><span>VISIMO</span> &nbsp;/&nbsp; CGAN-ISALD</div>
+  <ul class="nav-links">
+    <li><a href="#background">Background</a></li>
+    <li><a href="#methods">Methods</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#diffusion">Diffusion</a></li>
+    <li><a href="#conclusions">Conclusions</a></li>
+    <li><a href="#recommendations">Recommendations</a></li>
+  </ul>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">STTR Phase II &nbsp;&bull;&nbsp; AFRL/SBRK</div>
+    <h1>Conditional GAN for<br><em>Infinite Synthetic</em><br>Aerial Landscape Data</h1>
+    <p class="hero-sub">Can a machine learn to paint satellite imagery from scratch? This project investigated using a Conditional Generative Adversarial Network to produce labeled synthetic satellite images for object detection training augmentation.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span class="label">My Role (CGAN)</span><span class="value">Technical Contributor</span></div>
+      <div class="hero-meta-item"><span class="label">My Role (Eikon)</span><span class="value">Technical Lead</span></div>
+      <div class="hero-meta-item"><span class="label">Sponsor</span><span class="value">Air Force Research Laboratory</span></div>
+      <div class="hero-meta-item"><span class="label">Period</span><span class="value">Aug 2021 &ndash; Nov 2022</span></div>
     </div>
-  </nav>
+  </div>
+</header>
 
-  <main>
-    <div class="container">
+<div class="verdict">
+  <div class="verdict-icon">&#9888;</div>
+  <p><strong>Key finding:</strong> The CGAN produced visually plausible synthetic satellite images, but augmenting real training sets with those images did <strong>not improve</strong> object detection model performance in Faster R-CNN or YOLO tests. Adding real images consistently did. The feature image generator and augmentation testing pipeline are identified as the project&rsquo;s primary contributions.</p>
+</div>
 
-      <a href="/projects/" class="back-link">← All projects</a>
+<main>
 
-      <header class="page-header">
-        <h1>CGAN / Eikon</h1>
-        <p>DoD / AFRL · Technical Lead</p>
-      </header>
+<section id="background">
+  <div class="section-header"><span class="section-num">01</span><h2>Background &amp; Motivation</h2></div>
+  <p>Machine learning object detection models are only as good as the data they are trained on. Acquiring large volumes of precisely labeled satellite imagery is costly and labor-intensive. High-quality, annotated geographic information system (GIS) data is notoriously difficult to find, and labeling high-resolution satellite images at scale requires significant human effort.</p>
+  <p>The project&rsquo;s central hypothesis was that a Conditional Generative Adversarial Network (CGAN) could produce realistic, pre-labeled synthetic satellite images that, when used to augment sparse real datasets, would improve standard object detection model performance and reduce manual annotation burden.</p>
+  <div class="fig-wrap">
+    <img src="images/image_001.jpg" alt="Generalized CGAN Architecture" class="">
+    <div class="fig-cap"><strong>Figure 1.</strong> Generalized CGAN Architecture. A Generator produces synthetic images from a conditional feature input; a Discriminator judges real vs. fake and feeds adversarial loss back to refine the Generator over successive training iterations.</div>
+  </div>
+  <p>GANs consist of two competing neural networks. The <strong>Generator</strong> learns to produce increasingly convincing fakes; the <strong>Discriminator</strong> learns to catch them. Introducing conditional inputs to this framework allows the Generator to be steered: object classes, densities, and biome types can be specified at generation time, producing annotated output without any manual labeling.</p>
+</section>
 
-      <section class="project-section" aria-labelledby="overview-heading">
-        <h2 id="overview-heading">Overview</h2>
-        <p>
-          CGAN / Eikon is an AFRL-funded synthetic satellite imagery generation effort aimed
-          at augmenting labeled training data for object detection. The program addressed a
-          core constraint in overhead imagery AI: labeled satellite data is expensive,
-          access-controlled, and sparse — making it difficult to train detectors that
-          generalize across geography, sensor, and seasonal conditions.
-        </p>
-        <p>
-          The project developed controllable generation pipelines for realistic synthetic
-          overhead imagery and systematically evaluated whether training on synthetic data
-          improves or degrades detector performance across a large grid of model configurations.
-        </p>
-      </section>
+<section id="methods">
+  <div class="section-header"><span class="section-num">02</span><h2>Methods &amp; Pipeline</h2></div>
 
-      <section class="project-section" aria-labelledby="approach-heading">
-        <h2 id="approach-heading">Technical Approach</h2>
-        <ul>
-          <li>Conditional GAN architecture for controlled synthetic imagery generation from semantic feature maps, enabling targeted generation of specific terrain types and object configurations</li>
-          <li>map2sat translation pipeline (semantic map → satellite imagery) as the primary generation approach, producing photorealistic overhead imagery from vector geospatial inputs</li>
-          <li>Feature generation modules for roads, water bodies, biomes, and building footprints, supporting controllable scene composition</li>
-          <li>Systematic augmentation experiments across 300 Faster R-CNN model variants and 220 YOLO model variants, each trained with varying ratios of real versus synthetic data to characterize augmentation effects</li>
-          <li>Reusable testing infrastructure for ongoing evaluation of synthetic-versus-real training tradeoffs across different detector architectures and data regimes</li>
-        </ul>
-      </section>
+  <h3>Dataset Selection</h3>
+  <p>Six high-quality satellite image datasets were evaluated before selecting one for training and evaluation.</p>
+  <div class="dataset-grid">
+    <div class="dataset-card selected"><h4>xView</h4><p>~1,000 high-res images &bull; 600,000 labeled features &bull; 60 object classes &bull; DIU/NGA</p></div>
+    <div class="dataset-card"><h4>FMoW</h4><p>10,000 scenes &bull; 83,000 features &bull; 62 categories &bull; RGB + 8-band &bull; IARPA</p></div>
+    <div class="dataset-card"><h4>DSTL</h4><p>25 large 1km&sup2; images &bull; 77,000 features &bull; 30 classes &bull; includes roadways</p></div>
+    <div class="dataset-card"><h4>DOTA</h4><p>2,000 images &bull; 270,000 features &bull; 18 classes &bull; multi-source variability</p></div>
+    <div class="dataset-card"><h4>ISPRS Benchmark</h4><p>15,000 high-res images &bull; 310,000 features &bull; 37 classes &bull; research only</p></div>
+    <div class="dataset-card"><h4>AID</h4><p>10,000 Google Earth images &bull; 30 land-use classes &bull; Chinese university collaboration</p></div>
+  </div>
+  <div class="callout"><p>xView was selected for its consistently high image resolution, 60 object classes, and 600,000 labeled features. Labels were augmented to add cloud, biome, and road annotations required to control generated image content.</p></div>
 
-      <section class="project-section" aria-labelledby="results-heading">
-        <h2 id="results-heading">Results</h2>
-        <ul>
-          <li>Delivered 300 Faster R-CNN and 220 YOLO model variants with characterization of synthetic augmentation effects across data ratios</li>
-          <li>Identified conditions under which synthetic augmentation improves versus degrades detector performance, informing data collection strategy for follow-on programs</li>
-          <li>Reusable evaluation infrastructure delivered for continued program use</li>
-        </ul>
-      </section>
+  <h3>Data Preprocessing &amp; Feature Images</h3>
+  <p>To condition the CGAN, each satellite image was paired with a simplified &ldquo;feature image&rdquo; encoding bounding boxes, biome regions (using distinct colors per class), road overlays sourced from Google Maps, and cloud masks. These feature images are the direct inputs to the Generator during both training and inference.</p>
 
-      <section class="project-section" aria-labelledby="stack-heading">
-        <h2 id="stack-heading">Stack</h2>
-        <ul class="project-tags" role="list">
-          <li class="tag">Conditional GAN</li>
-          <li class="tag">Faster R-CNN</li>
-          <li class="tag">YOLO</li>
-          <li class="tag">PyTorch</li>
-          <li class="tag">Satellite Imagery</li>
-          <li class="tag">Computer Vision</li>
-        </ul>
-      </section>
+  <div class="fig-wrap fig-pair">
+    <div class="fig-img"><img src="images/image_002.jpg" alt="Sample xView satellite image" class=""></div>
+    <div class="fig-img"><img src="images/image_003.jpg" alt="Feature image generated from xView image" class=""></div>
+    <div class="fig-cap" style="grid-column: 1/-1"><strong>Figures 2&ndash;3.</strong> Left: original xView satellite image. Right: corresponding feature image encoding buildings (pink/orange), trees (dark green), fields (yellow-green), dirt (brown), and clouds (gray).</div>
+  </div>
 
+  <div class="fig-wrap">
+    <img src="images/image_004.jpg" alt="xView image with road masks overlay" class="">
+    <div class="fig-cap"><strong>Figure 4.</strong> xView image with Google Maps road mask overlay aligned for training. Road data is extracted and projected onto the satellite image coordinate space to add road features to the training input.</div>
+  </div>
+
+  <h3>Synthetic Image Generation (map2sat)</h3>
+  <p>The core map2sat model translates feature images into photorealistic satellite imagery, built on the pix2pix architecture. Four architectural variants were implemented and compared:</p>
+  <ul class="content-list">
+    <li><strong>Base pix2pix (map2sat):</strong> Encoder-decoder with skip connections; the Phase I baseline and best overall performer.</li>
+    <li><strong>SPADE:</strong> Residual SPADE blocks feed the feature image into each normalization layer to reduce information loss, based on Marin &amp; Escalera (2021).</li>
+    <li><strong>Residual Block:</strong> Reduced encoder with a 32&times;32 bottleneck and four residual blocks for improved gradient propagation.</li>
+    <li><strong>Pix2pixHD:</strong> Multi-scale approach with two generators (coarse + detail) and three discriminators at different image scales.</li>
+  </ul>
+  <p>Three custom loss functions were introduced: <strong>feature matching</strong> (aligns internal activations for real and synthetic images), <strong>perceptual loss</strong> (aligns activations in a pre-trained object detector), and an <strong>object detection loss</strong> (tests object recognizability). This combination is a novel contribution not present in prior literature.</p>
+
+  <h3>Feature Image Generation Pipeline</h3>
+  <p>To support fully synthetic generation without real image inputs, a three-stage feature image generator was built: (1) road and water features drawn from a library of real maps; (2) biome generation via a second CGAN mapping coverage statistics to feature maps; and (3) object placement using probability distributions derived from real-world object spacing and biome affinity. Building footprints were matched from a real library and rotated to align with local road geometry.</p>
+
+  <div class="fig-wrap">
+    <img src="images/image_005.jpg" alt="Object placement in feature images" class="">
+    <div class="fig-cap"><strong>Figure 5.</strong> Object placement in feature images. Biome colors: roads (white), dirt (maroon), grass (light green), trees (dark green). Green and blue squares mark car and building center positions; black points are probability-maximization sampling locations.</div>
+  </div>
+
+  <div class="fig-wrap">
+    <img src="images/image_006.jpg" alt="Feature images with building footprint" class="">
+    <div class="fig-cap"><strong>Figure 6.</strong> Building footprint placement. Left: original feature image. Right: a synthetic building footprint added next to a road, rotated and scaled to match the road contour and angle.</div>
+  </div>
+
+  <h3>Augmentation Testing Pipeline</h3>
+  <p>A novel automated testing pipeline was developed to run batches of augmentation experiments across all hyperparameter combinations. Each test trained an object detector twice: once on real images only, and once on real images plus CGAN-generated synthetic images. Over 50 experiments were run, each involving more than 100 model training iterations across Faster R-CNN and YOLO architectures.</p>
+</section>
+
+<section id="metrics">
+  <div class="section-header"><span class="section-num">03</span><h2>Evaluation Metrics</h2></div>
+  <p>Three families of metrics assessed both synthetic image quality and downstream object detection performance.</p>
+  <div class="metrics-grid">
+    <div class="metric-cell header">Category</div>
+    <div class="metric-cell header">Metrics</div>
+    <div class="metric-cell header">Purpose</div>
+    <div class="metric-cell"><div class="cat">Similarity</div></div>
+    <div class="metric-cell"><div class="names">MSE, PSNR, SSIM</div></div>
+    <div class="metric-cell"><div class="desc">Pixel-level comparison to ground truth; quantifies reconstruction fidelity when a paired real image is available.</div></div>
+    <div class="metric-cell"><div class="cat">Semantic</div></div>
+    <div class="metric-cell"><div class="names">Segmentation IoU</div></div>
+    <div class="metric-cell"><div class="desc">Region and object-level quality assessed by an independently trained model against ground-truth labels.</div></div>
+    <div class="metric-cell"><div class="cat">Realism</div></div>
+    <div class="metric-cell"><div class="names">Kappa Score</div></div>
+    <div class="metric-cell"><div class="desc">Population-level realism vs. real images. Adjusts for class imbalance; used when no paired ground truth exists.</div></div>
+    <div class="metric-cell"><div class="cat">Detection</div></div>
+    <div class="metric-cell"><div class="names">Precision, Recall, Accuracy</div></div>
+    <div class="metric-cell"><div class="desc">Object detection performance on held-out test images; the primary measure of augmentation benefit.</div></div>
+  </div>
+</section>
+
+<section id="results">
+  <div class="section-header"><span class="section-num">04</span><h2>Results</h2></div>
+
+  <h3>CGAN Image Quality</h3>
+  <p>The map2sat model produced visually plausible synthetic satellite images across multiple biome types. Iterative hyperparameter tuning found that normalized loss weights improved MSE from 99.15 to 66.49 and Kappa from 0.47 to 0.49. The original map2sat architecture outperformed all variants on most metrics.</p>
+
+  <table class="arch-table">
+    <thead><tr><th>Metric</th><th>Map2Sat</th><th>SPADE</th><th>Residual Block</th></tr></thead>
+    <tbody>
+      <tr><td>MSE</td><td class="best">66.59</td><td>74.81</td><td>78.05</td></tr>
+      <tr><td>PSNR</td><td class="best">29.93</td><td>29.41</td><td>29.22</td></tr>
+      <tr><td>SSIM</td><td class="best">0.537</td><td>0.456</td><td>0.415</td></tr>
+      <tr><td>Seg. IoU</td><td class="best">0.414</td><td>0.365</td><td>0.335</td></tr>
+      <tr><td>Kappa</td><td class="best">0.490</td><td>0.436</td><td>0.409</td></tr>
+      <tr><td>Precision</td><td>0.521</td><td>0.540</td><td class="best">0.577</td></tr>
+      <tr><td>Recall</td><td class="best">0.685</td><td>0.536</td><td>0.442</td></tr>
+    </tbody>
+  </table>
+
+  <div class="fig-wrap">
+    <img src="images/image_007.jpg" alt="Map2sat hyperparameter testing results" class="">
+    <div class="fig-cap"><strong>Figure 7.</strong> Map2sat model hyperparameter testing results. Left: MSE (lower is better). Right: Kappa score (higher is better). Normalized weights (third condition) achieved the best combination: MSE 66.49 vs. 99.15 baseline.</div>
+  </div>
+
+  <div class="fig-wrap">
+    <img src="images/image_008.jpg" alt="CGAN model output examples" class="">
+    <div class="fig-cap"><strong>Figure 8.</strong> CGAN model output examples. Left column: semantic feature input maps. Center column: real xView satellite images. Right column: corresponding CGAN-generated synthetic images. Rows show urban, rural, desert, and coastal environments.</div>
+  </div>
+
+  <h3>Object Detection Augmentation Tests</h3>
+  <p>Both Faster R-CNN (15 randomized trials, 300 total models) and YOLO (11 trials, 220 models) were tested with real training sets of 10, 20, 50, and 100 images, each augmented with 0 to 100 synthetic images.</p>
+
+  <div class="result-highlight">
+    <div class="rh-cell"><span class="rh-label">Faster R-CNN models trained</span><span class="rh-val">300</span><span class="rh-desc">15 randomized trials &times; 4 real set sizes &times; 5 synthetic amounts</span></div>
+    <div class="rh-cell"><span class="rh-label">YOLO models trained</span><span class="rh-val">220</span><span class="rh-desc">11 randomized trials &times; 4 real set sizes &times; 5 synthetic amounts</span></div>
+    <div class="rh-cell"><span class="rh-label">Augmentation benefit observed</span><span class="rh-val" style="color:var(--accent2)">None</span><span class="rh-desc">Synthetic data caused performance to stagnate or slightly decrease across both architectures</span></div>
+    <div class="rh-cell"><span class="rh-label">Real data benefit confirmed</span><span class="rh-val" style="color:#16a34a">Yes</span><span class="rh-desc">Adding more real images consistently improved detection performance, validating the pipeline</span></div>
+  </div>
+
+  <div class="fig-wrap">
+    <img src="images/image_009.jpg" alt="Faster R-CNN augmentation test results" class="">
+    <div class="fig-cap"><strong>Figure 9.</strong> Faster R-CNN augmentation test results (Kappa and Segmentation IoU). Horizontal axis is number of synthetic images added. Lines represent real dataset sizes of 10, 20, 50, and 100. Flat or declining trends confirm synthetic images did not improve performance.</div>
+  </div>
+
+  <div class="fig-wrap fig-pair">
+    <div class="fig-img"><img src="images/image_010.jpg" alt="YOLO Kappa augmentation test results" class=""></div>
+    <div class="fig-img"><img src="images/image_011.jpg" alt="YOLO IoU augmentation test results" class=""></div>
+    <div class="fig-cap" style="grid-column: 1/-1"><strong>Figure 10.</strong> YOLO augmentation test results. Left: Kappa scores. Right: Segmentation IoU. Higher variance than Faster R-CNN; a minor improvement in the 20-real-image condition was not consistently reproduced elsewhere.</div>
+  </div>
+</section>
+
+<section id="conclusions">
+  <div class="section-header"><span class="section-num">05</span><h2>Conclusions</h2></div>
+  <p>The core hypothesis was not validated. CGAN-generated synthetic images, even after extensive hyperparameter tuning and architectural variation, were not sufficiently realistic to benefit object detection model training. The xView dataset&rsquo;s complexity was itself a confound: each image contained so many labeled objects that models could learn effectively from very few images, diminishing the marginal value of synthetic augmentation.</p>
+  <p>Two significant contributions emerged independently of the augmentation result:</p>
+  <ul class="content-list">
+    <li><strong>Feature Image Generator:</strong> A principled, probabilistic approach to generating semantically consistent input images with controllable biome, road, waterway, and object-class distributions.</li>
+    <li><strong>Augmentation Testing Pipeline:</strong> A reusable, automated framework for evaluating how dataset composition affects object detection model performance, applicable independently of any synthetic data source.</li>
+  </ul>
+</section>
+
+<section id="diffusion">
+  <div class="section-header"><span class="section-num">06</span><h2>Diffusion Models as a Successor Architecture</h2></div>
+
+  <p>Following the Phase II work, VISIMO conducted an IR&amp;D investigation into replacing the CGAN with a Stable Diffusion (SD) model for the same synthetic satellite imagery task. The effort, documented in the <em>SD-ISALD Final Report</em>, was directly motivated by limitations observed in the CGAN work and aimed to determine whether a diffusion-based backbone could achieve the realism threshold needed to improve object detection performance.</p>
+
+  <h3>Why CGANs Fall Short</h3>
+  <p>The IR&amp;D report identifies two structural problems with the CGAN approach that diffusion models are specifically designed to avoid:</p>
+  <ul class="content-list">
+    <li><strong>Mode collapse:</strong> CGAN training is an inherently unstable adversarial process. When the generator consistently fools the discriminator, it converges to a narrow range of outputs rather than drawing from the full image distribution. This limits the diversity of any synthetic dataset produced.</li>
+    <li><strong>Limited diversity:</strong> Even when mode collapse is avoided, GANs have been shown empirically to produce less diverse image samples than diffusion models (Dhariwal &amp; Nichol, 2021).</li>
+  </ul>
+  <p>Stable diffusion models use an iterative denoising process (DDPM scheduler) that is substantially more stable to train and naturally produces more varied outputs, as the model learns to predict and reverse applied noise rather than to directly fool a discriminator.</p>
+
+  <h3>Architecture</h3>
+  <p>VISIMO experimented with three generation approaches using HuggingFace&rsquo;s diffusers library: unconditional generation, conditional generation guided by feature maps, and text-based image-to-image generation. The conditional approach most closely mirrors the CGAN pipeline. A UNet with skip connections, residual blocks, and attention layers takes a noisy image concatenated with a feature map as input and predicts the applied noise; reversing this process iteratively produces a synthetic satellite image conditioned on the input map. A separate text-guided pipeline (&ldquo;StableDiffusionImg2ImgPipeline&rdquo; using a pretrained <code>runwayml/stable-diffusion-v1-5</code> model) was also tested with promising results at zero additional training cost, suggesting potential as a coarse global generator feeding a fine-detail local generator.</p>
+
+  <div class="callout"><p>The same xView dataset and feature map preprocessing pipeline from Phase II were reused, enabling a direct comparison of CGAN and SD outputs on identical inputs.</p></div>
+
+  <h3>Image Quality Results</h3>
+  <p>Because stable diffusion models draw from a wider output distribution than CGANs, pixel-level similarity metrics (MSE, PSNR, SSIM) are not applicable for direct comparison. Instead, the IR&amp;D evaluation used Fréchet Inception Distance (FID) and Kernel Inception Distance (KID), which compare feature distributions extracted by an InceptionV3 model across real and synthetic image populations. Lower FID and KID scores indicate higher image quality.</p>
+
+  <table class="arch-table">
+    <thead><tr><th>Model</th><th>FID</th><th>KID Mean</th><th>KID Std. Dev.</th></tr></thead>
+    <tbody>
+      <tr><td>CGAN</td><td>274.97</td><td>0.200</td><td>0.060</td></tr>
+      <tr><td class="best" style="font-weight:600">Stable Diffusion</td><td class="best">149.27</td><td class="best">0.065</td><td class="best">0.045</td></tr>
+    </tbody>
+  </table>
+
+  <p>The stable diffusion model achieved an FID score 45.7% lower than the CGAN and a KID score 67.5% lower, indicating substantially higher image quality and better structural alignment with the real xView dataset distribution.</p>
+
+  <h3>Augmentation Test Results</h3>
+  <p>Augmentation tests were run using Faster R-CNN across combinations of 10, 20, 50, and 100 real images paired with 0, 25, 50, 75, and 100 synthetic images. Unlike the CGAN results, where synthetic data caused performance to stagnate or decline, the SD results showed clear improvement when real training data was scarce. A second round of tests focused on the data-scarce regime (1, 5, and 10 real images) produced the most significant findings.</p>
+
+  <div class="result-highlight">
+    <div class="rh-cell">
+      <span class="rh-label">FID improvement over CGAN</span>
+      <span class="rh-val" style="color:#16a34a">45.7%</span>
+      <span class="rh-desc">SD achieves FID 149.27 vs CGAN 274.97 on identical xView inputs</span>
     </div>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container">
-      <ul class="footer-links" role="list">
-        <li><a href="mailto:joshtmartin99@gmail.com">Email</a></li>
-        <li><a href="https://github.com/JTM119" target="_blank" rel="noopener">GitHub</a></li>
-        <li><a href="https://www.linkedin.com/in/joshua-martin-333456192/" target="_blank" rel="noopener">LinkedIn</a></li>
-      </ul>
+    <div class="rh-cell">
+      <span class="rh-label">KID improvement over CGAN</span>
+      <span class="rh-val" style="color:#16a34a">67.5%</span>
+      <span class="rh-desc">SD KID mean 0.065 vs CGAN 0.200</span>
     </div>
-  </footer>
+    <div class="rh-cell">
+      <span class="rh-label">Augmentation benefit (scarce data)</span>
+      <span class="rh-val" style="color:#16a34a">Yes</span>
+      <span class="rh-desc">Adding SD synthetic images improved Kappa and IOU when real images numbered 1&ndash;10</span>
+    </div>
+    <div class="rh-cell">
+      <span class="rh-label">Augmentation benefit (sufficient data)</span>
+      <span class="rh-val" style="color:var(--mid)">Mixed</span>
+      <span class="rh-desc">Results with 20+ real images were inconsistent; further validation needed</span>
+    </div>
+  </div>
+
+  <p>The most striking result came from the extreme data-scarcity tests. With only 1 real image and no synthetic data, the Kappa score was 0 (the model failed entirely). Adding 25 synthetic images raised it to 0.55. With 5 real images and 25 synthetic images, Kappa rose from 0.19 to 0.57. These results demonstrate that stable diffusion synthetic imagery can provide a meaningful training signal precisely where labeled satellite data is most difficult to obtain.</p>
+
+  <div class="callout"><p>A key caveat: the CGAN augmentation tests were averaged across 11 independent trials; the SD augmentation tests were run only once due to the substantially longer training time of diffusion models. Additional runs are needed to confirm statistical reliability of the improvements observed.</p></div>
+
+  <h3>Remaining Work</h3>
+  <p>The IR&amp;D report identifies a hyperparameter search covering 972 model configurations (crop size, preprocessing value range, model depth, attention block count, attention heads, timestep embedding type, and loss function) that could not be completed within the IR&amp;D timeline due to training cost. Completing this search is the primary recommended next step. Additional directions include UNet architecture alternatives and extending the generation pipeline to support object-class-specific generation, for which preprocessing work is already complete.</p>
+</section>
+
+<section id="recommendations">
+  <div class="section-header"><span class="section-num">07</span><h2>Recommendations</h2></div>
+  <p>The team outlined a stepwise complexity ladder for future development, beginning with simple synthetic shapes and gradually scaling to full multi-class, multi-biome generation. Additional directions include:</p>
+  <ol class="rec-list">
+    <li><div class="rec-text"><strong>Stepwise complexity testing:</strong> Begin with simple colored shapes on single-color backgrounds, then progressively add symbolic transformations, one-hot encodings, multi-class variance, realistic backgrounds, and finally full xView-scale generation.</div></li>
+    <li><div class="rec-text"><strong>Updated literature review:</strong> The GAN field advances rapidly. New architectures, loss functions, and training procedures published since the project began may directly address the shortcomings identified here.</div></li>
+    <li><div class="rec-text"><strong>Diffusion model investigation:</strong> Diffusion models offer a more stable training process than GAN-based architectures and have demonstrated competitive image quality, representing a strong alternative backbone for synthetic satellite imagery generation.</div></li>
+    <li><div class="rec-text"><strong>CGAN-based object removal:</strong> Pix2PixHD with Canny edge feature images showed promise for removing sensitive objects from satellite imagery without disturbing surrounding context.</div></li>
+    <li><div class="rec-text"><strong>Satellite object augmentation:</strong> The reverse scenario adds synthetic objects to published satellite images for tactical or classification-management purposes.</div></li>
+  </ol>
+
+  <div class="fig-wrap fig-pair">
+    <div class="fig-img"><img src="images/image_012.jpg" alt="CGAN-based object removal" class=""></div>
+    <div class="fig-img"><img src="images/image_013.jpg" alt="CGAN-based object augmentation" class=""></div>
+    <div class="fig-cap" style="grid-column: 1/-1"><strong>Figure 11.</strong> Left: CGAN-based object removal. Column A shows original imagery; Column B shows scenes with sensitive objects removed using Pix2PixHD. Right: CGAN-based object augmentation adding two aircraft (yellow arrows) to an existing satellite scene.</div>
+  </div>
+
+  <div class="fig-wrap">
+    <img src="images/image_014.jpg" alt="CGAN-based object removal pipeline" class="">
+    <div class="fig-cap"><strong>Figure 12.</strong> Object removal pipeline: input image &rarr; mask the target object &rarr; Canny edge feature image &rarr; Pix2PixHD &rarr; output with object seamlessly removed.</div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div>DISTRIBUTION STATEMENT B &mdash; U.S. Government agencies only.<br>SBIR Data Rights &bull; Expires 24 November 2027</div>
+    <div style="text-align:right">AFRL/SBRK &bull; Wright-Patterson AFB, OH 45433</div>
+  </div>
+</footer>
 
 </body>
 </html>

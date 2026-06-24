@@ -1,95 +1,557 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MVPT — Joshua Martin</title>
-  <link rel="stylesheet" href="/static/css/reset.css" />
-  <link rel="stylesheet" href="/static/css/typography.css" />
-  <link rel="stylesheet" href="/static/css/main.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MVPT — Model Validation via Precomputed Transformations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --space: #0a0f1c;
+  --space-mid: #111827;
+  --space-border: #1e2d45;
+  --teal: #1adfaa;
+  --teal-dim: #0f9e78;
+  --teal-bg: rgba(26,223,170,0.07);
+  --teal-border: rgba(26,223,170,0.2);
+  --text: #e8eaf0;
+  --text-mid: #9ba3b8;
+  --text-dim: #5a6478;
+  --white: #f0f2f8;
+  --amber: #f0a940;
+  --amber-bg: rgba(240,169,64,0.08);
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'IBM Plex Sans', system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--space); color: var(--text); font-family: var(--sans); font-size: 15px; line-height: 1.7; }
+
+.layout { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; max-width: 1080px; margin: 0 auto; }
+
+.sidebar { position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 2.5rem 1.5rem 2rem 0; border-right: 1px solid var(--space-border); display: flex; flex-direction: column; }
+.sidebar-logo { font-family: var(--mono); font-size: 0.7rem; color: var(--teal); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.4rem; }
+.sidebar-title { font-size: 0.85rem; font-weight: 600; color: var(--white); line-height: 1.3; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--space-border); }
+.nav-label { font-family: var(--mono); font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 0.5rem; margin-top: 1.25rem; display: block; }
+nav a { display: block; font-size: 0.8rem; color: var(--text-mid); text-decoration: none; padding: 0.3rem 0 0.3rem 0.75rem; margin-left: -0.75rem; transition: color 0.15s; border-left: 2px solid transparent; }
+nav a:hover { color: var(--teal); }
+nav a.active { color: var(--teal); border-left-color: var(--teal); }
+.sidebar-meta { margin-top: auto; padding-top: 1.5rem; border-top: 1px solid var(--space-border); }
+.meta-row { font-family: var(--mono); font-size: 0.65rem; color: var(--text-dim); margin-bottom: 0.35rem; line-height: 1.4; }
+.meta-row span { color: var(--text-mid); }
+
+main { padding: 0 3rem 4rem 3rem; }
+
+.hero { padding: 3rem 0 2.5rem; border-bottom: 1px solid var(--space-border); margin-bottom: 3rem; }
+.hero-eyebrow { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; }
+.eyebrow-tag { font-family: var(--mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em; padding: 0.2rem 0.6rem; border: 1px solid var(--teal-border); color: var(--teal); border-radius: 3px; }
+.eyebrow-sep { color: var(--text-dim); }
+.eyebrow-info { font-family: var(--mono); font-size: 0.65rem; color: var(--text-dim); }
+h1 { font-family: var(--sans); font-size: 2rem; font-weight: 300; line-height: 1.2; color: var(--white); margin-bottom: 0.4rem; letter-spacing: -0.01em; }
+h1 strong { font-weight: 600; }
+.hero-sub { font-size: 0.9rem; color: var(--text-mid); max-width: 520px; margin-bottom: 2rem; }
+
+.fccv-display { display: flex; align-items: flex-end; gap: 3rem; padding: 1.5rem 2rem; background: var(--teal-bg); border: 1px solid var(--teal-border); border-radius: 4px; margin-bottom: 2rem; flex-wrap: wrap; }
+.fccv-main { display: flex; flex-direction: column; }
+.fccv-label { font-family: var(--mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--teal-dim); margin-bottom: 0.2rem; }
+.fccv-number { font-family: var(--mono); font-size: 4rem; font-weight: 600; color: var(--teal); line-height: 1; letter-spacing: -0.02em; }
+.fccv-unit { font-family: var(--mono); font-size: 1rem; color: var(--teal-dim); }
+.fccv-bar-wrap { flex: 1; min-width: 200px; }
+.fccv-bar-label { font-family: var(--mono); font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+.fccv-bar-track { height: 8px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: visible; margin-bottom: 0.35rem; position: relative; }
+.fccv-bar-fill { height: 100%; width: 95%; background: var(--teal); border-radius: 2px; }
+.fccv-benchmark { position: absolute; left: 90%; top: -5px; bottom: -5px; width: 1px; background: var(--amber); }
+.fccv-benchmark-line { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 0.6rem; color: var(--text-dim); }
+.fccv-benchmark-line .mark { color: var(--amber); }
+.fccv-note { font-size: 0.75rem; color: var(--text-dim); margin-top: 0.6rem; font-family: var(--mono); line-height: 1.5; }
+
+.hero-stats { display: flex; gap: 2rem; flex-wrap: wrap; }
+.hero-stat { display: flex; flex-direction: column; }
+.hero-stat-val { font-family: var(--mono); font-size: 1.4rem; font-weight: 600; color: var(--white); line-height: 1; }
+.hero-stat-key { font-family: var(--mono); font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.25rem; }
+
+section { margin-bottom: 3.5rem; }
+.section-head { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--space-border); }
+h2 { font-family: var(--sans); font-size: 1rem; font-weight: 600; color: var(--white); letter-spacing: 0.01em; }
+.section-num { font-family: var(--mono); font-size: 0.65rem; color: var(--text-dim); }
+h3 { font-size: 0.85rem; font-weight: 600; color: var(--text); margin-bottom: 0.5rem; margin-top: 1.25rem; }
+p { color: var(--text-mid); font-size: 0.88rem; margin-bottom: 0.75rem; }
+p:last-child { margin-bottom: 0; }
+p strong { color: var(--text); font-weight: 500; }
+
+.data-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin: 1rem 0; }
+.data-table th { font-family: var(--mono); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); text-align: left; padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--space-border); font-weight: 400; }
+.data-table td { padding: 0.55rem 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--text-mid); vertical-align: top; }
+.data-table td:first-child { color: var(--text); }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
+.num { font-family: var(--mono); color: var(--teal) !important; }
+.num-amber { font-family: var(--mono); color: var(--amber) !important; }
+.num-white { font-family: var(--mono); color: var(--white) !important; }
+.pass { font-family: var(--mono); font-size: 0.65rem; color: var(--teal); background: var(--teal-bg); border: 1px solid var(--teal-border); padding: 0.1rem 0.4rem; border-radius: 3px; }
+
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1px; border: 1px solid var(--space-border); border-radius: 4px; overflow: hidden; margin: 1rem 0; }
+.stat-cell { background: var(--space-mid); padding: 1rem; }
+.stat-cell-val { font-family: var(--mono); font-size: 1.4rem; font-weight: 600; color: var(--teal); line-height: 1; margin-bottom: 0.3rem; }
+.stat-cell-val.amber { color: var(--amber); }
+.stat-cell-label { font-family: var(--mono); font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; line-height: 1.4; }
+
+.callout { background: var(--teal-bg); border-left: 3px solid var(--teal); padding: 1rem 1.25rem; border-radius: 0 4px 4px 0; margin: 1rem 0; font-size: 0.85rem; color: var(--text-mid); }
+.callout strong { color: var(--text); font-weight: 500; }
+.callout-amber { background: var(--amber-bg); border-left-color: var(--amber); }
+
+.algo-steps { margin: 1rem 0; }
+.algo-step { display: flex; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); align-items: flex-start; }
+.algo-step:last-child { border-bottom: none; }
+.algo-n { font-family: var(--mono); font-size: 0.7rem; color: var(--teal); background: var(--teal-bg); border: 1px solid var(--teal-border); width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 3px; flex-shrink: 0; margin-top: 1px; }
+.algo-body { flex: 1; }
+.algo-title { font-size: 0.85rem; font-weight: 500; color: var(--text); margin-bottom: 0.2rem; }
+.algo-desc { font-size: 0.8rem; color: var(--text-mid); line-height: 1.5; }
+
+.tag-list { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.75rem 0; }
+.tag { font-family: var(--mono); font-size: 0.68rem; padding: 0.2rem 0.55rem; background: var(--space-mid); border: 1px solid var(--space-border); color: var(--text-mid); border-radius: 3px; }
+
+.phase2-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; border: 1px solid var(--space-border); border-radius: 4px; overflow: hidden; margin: 1rem 0; }
+.phase2-cell { background: var(--space-mid); padding: 1rem; }
+.phase2-to { font-family: var(--mono); font-size: 0.62rem; color: var(--teal); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem; }
+.phase2-title { font-size: 0.85rem; font-weight: 500; color: var(--text); margin-bottom: 0.4rem; }
+.phase2-desc { font-size: 0.78rem; color: var(--text-mid); line-height: 1.5; }
+
+@media (max-width: 768px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  main { padding: 1.5rem; }
+  .fccv-display { flex-direction: column; gap: 1.5rem; }
+  h1 { font-size: 1.5rem; }
+  .phase2-grid { grid-template-columns: 1fr; }
+}
+</style>
+<style>
+/* ── Site primary nav ── */
+.pnav{height:56px;border-bottom:1px solid #cdd8ea;background:rgba(238,243,251,0.92);backdrop-filter:blur(10px);position:sticky;top:0;z-index:9999;display:flex;align-items:center}
+.pnav-inner{width:100%;max-width:1200px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.pnav-logo{font-family:'Lora',Georgia,serif;font-size:1.125rem;font-weight:600;color:#0f172a;text-decoration:none;letter-spacing:-0.01em}
+.pnav-list{display:flex;gap:1.5rem;list-style:none}
+.pnav-list a{font-size:0.875rem;font-weight:500;color:#5c6b82;text-decoration:none;transition:color 150ms}
+.pnav-list a:hover,.pnav-list a[aria-current]{color:#2563eb;text-decoration:none}
+@media(max-width:600px){.pnav-logo{font-size:1rem}.pnav-list{gap:1rem}}
+/* ── Silva-style override ── */
+:root{
+  --space:#F7F5F0;--space-mid:#ffffff;--space-border:#A8CFB0;
+  --teal:#2E6B3E;--teal-dim:#1A3D28;
+  --teal-bg:rgba(46,107,62,0.06);--teal-border:rgba(46,107,62,0.2);
+  --text:#1C2319;--text-mid:#3D4A3A;--text-dim:#6B7A67;
+  --white:#1C2319;
+  --amber:#C8860A;--amber-bg:rgba(200,134,10,0.08);
+}
+body{background:var(--space);color:var(--text);font-family:Georgia,"Times New Roman",serif}
+/* Convert sidebar to horizontal top bar */
+.layout{display:block!important}
+.sidebar{position:sticky!important;top:56px!important;width:100%!important;height:auto!important;flex-direction:row!important;overflow-x:auto!important;scrollbar-width:none!important;align-items:center!important;padding:0 max(1rem,calc(50% - 430px))!important;border-right:none!important;border-bottom:1px solid rgba(255,255,255,0.08)!important;background:#1A3D28!important;z-index:100!important}
+.sidebar::-webkit-scrollbar{display:none}
+.sidebar-logo,.sidebar-title{display:none!important}
+.nav-label{display:none!important}
+.sidebar-meta{display:none!important}
+.sidebar nav{display:flex!important;gap:0!important}
+.sidebar nav a{color:#8FBA9A!important;border-left:none!important;border-bottom:2px solid transparent!important;white-space:nowrap!important;padding:0.65rem 1rem!important}
+.sidebar nav a:hover,.sidebar nav a.active{color:#FFFFFF!important;border-bottom-color:#4A9058!important;border-left:none!important;background:rgba(74,144,88,0.08)!important}
+h1{color:#1A3D28}
+</style>
 </head>
 <body>
 
-  <nav class="site-nav" aria-label="Main navigation">
-    <div class="container">
-      <a href="/" class="nav-logo">Joshua Martin</a>
-      <ul class="nav-links" role="list">
-        <li><a href="/">Home</a></li>
-        <li><a href="/about/">About</a></li>
-        <li><a href="/projects/">Projects</a></li>
-      </ul>
-    </div>
+<nav class="pnav" aria-label="Site navigation">
+  <div class="pnav-inner">
+    <a href="/" class="pnav-logo">Joshua Martin</a>
+    <ul class="pnav-list" role="list">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about/">About</a></li>
+      <li><a href="/projects/" aria-current="page">Projects</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="layout">
+
+<aside class="sidebar">
+  <div class="sidebar-logo">NASA SBIR</div>
+  <div class="sidebar-title">Model Validation via Precomputed Transformations</div>
+  <span class="nav-label">Overview</span>
+  <nav>
+    <a href="#overview" class="active">Abstract</a>
+    <a href="#objectives">Technical objectives</a>
   </nav>
+  <span class="nav-label">Technical work</span>
+  <nav>
+    <a href="#literature">Literature survey (TO1)</a>
+    <a href="#regime">Regime separation</a>
+    <a href="#model">Forecasting model</a>
+    <a href="#transformations">Transformations</a>
+    <a href="#fccv">FCCV results</a>
+  </nav>
+  <div class="sidebar-meta">
+    <div class="meta-row">Agency <span>NASA / NSSC</span></div>
+    <div class="meta-row">Phase <span>I</span></div>
+    <div class="meta-row">Period <span>Oct 2025 – Mar 2026</span></div>
+    <div class="meta-row" style="margin-top:0.5rem">My Role <span style="color:var(--amber)">Technical Contributor</span></div>
+  </div>
+</aside>
 
-  <main>
-    <div class="container">
+<main>
 
-      <a href="/projects/" class="back-link">← All projects</a>
-
-      <header class="page-header">
-        <h1>MVPT</h1>
-        <p>NASA SBIR · Technical Contributor</p>
-      </header>
-
-      <section class="project-section" aria-labelledby="overview-heading">
-        <h2 id="overview-heading">Overview</h2>
-        <p>
-          MVPT (Model Validation via Precomputed Transformations) is a model-agnostic method
-          for predicting whether an AI model's validation results will transfer to novel mission
-          data — without rerunning the full model. Instead of re-executing expensive inference,
-          MVPT uses fast vector lookup against a precomputed embedding database to estimate
-          validation status, enabling rapid triage of new data against known model behavior.
-        </p>
-        <p>
-          The approach is particularly relevant for space mission contexts, where computational
-          budgets are constrained, ground-in-the-loop validation cycles are slow, and
-          distributional shift from mission data relative to training data is common.
-        </p>
-      </section>
-
-      <section class="project-section" aria-labelledby="approach-heading">
-        <h2 id="approach-heading">Technical Approach</h2>
-        <ul>
-          <li>Proof of concept on DSCOVR L1 solar wind data using a TCN with Student-t likelihood head for probabilistic forecasting</li>
-          <li>Penultimate-layer embeddings extracted from validation-set inputs and indexed using HNSW (Hierarchical Navigable Small World) approximate nearest-neighbor search for sub-millisecond retrieval</li>
-          <li>SoftMax-weighted validation status estimation from nearest neighbors in the embedding space, producing a calibrated validation confidence score for new input windows</li>
-          <li>Volatile-regime grouping to stress-test validation generalization under distributional shift — evaluating whether validation status predictions hold across structurally distinct solar wind regimes</li>
-        </ul>
-      </section>
-
-      <section class="project-section" aria-labelledby="results-heading">
-        <h2 id="results-heading">Results</h2>
-        <ul>
-          <li>FCCV (Fraction of Correctly Classified Validation windows) of 0.95 ± 0.05</li>
-          <li>Correctly predicted validation status for 19 of 20 independent volatile-regime groups</li>
-          <li>Completed all Phase I objectives at 83% budget utilization</li>
-        </ul>
-      </section>
-
-      <section class="project-section" aria-labelledby="stack-heading">
-        <h2 id="stack-heading">Stack</h2>
-        <ul class="project-tags" role="list">
-          <li class="tag">PyTorch</li>
-          <li class="tag">TCN</li>
-          <li class="tag">HNSW</li>
-          <li class="tag">Time Series</li>
-          <li class="tag">Probabilistic Forecasting</li>
-          <li class="tag">Python</li>
-        </ul>
-      </section>
-
+  <div class="hero" id="overview">
+    <div class="hero-eyebrow">
+      <span class="eyebrow-tag">Phase I</span>
+      <span class="eyebrow-sep">/</span>
+      <span class="eyebrow-info">03/2026</span>
     </div>
-  </main>
+    <h1><strong>MVPT</strong> — Model Validation via<br>Precomputed Transformations</h1>
+    <p class="hero-sub">A method for predicting the validation state of AI models facing novel mission data, enabling autonomous systems to recall precomputed validation results without recomputing during flight.</p>
 
-  <footer class="site-footer">
-    <div class="container">
-      <ul class="footer-links" role="list">
-        <li><a href="mailto:joshtmartin99@gmail.com">Email</a></li>
-        <li><a href="https://github.com/JTM119" target="_blank" rel="noopener">GitHub</a></li>
-        <li><a href="https://www.linkedin.com/in/joshua-martin-333456192/" target="_blank" rel="noopener">LinkedIn</a></li>
-      </ul>
+    <div class="fccv-display">
+      <div class="fccv-main">
+        <span class="fccv-label">Final FCCV</span>
+        <div><span class="fccv-number">0.95</span><span class="fccv-unit"> ± 0.05</span></div>
+        <span style="font-family:var(--mono);font-size:0.62rem;color:var(--teal-dim);margin-top:0.35rem">Fraction of Correctly Computed Validations</span>
+      </div>
+      <div class="fccv-bar-wrap">
+        <div class="fccv-bar-label">Score vs. benchmark (0.9)</div>
+        <div class="fccv-bar-track">
+          <div class="fccv-bar-fill"></div>
+          <div class="fccv-benchmark"></div>
+        </div>
+        <div class="fccv-benchmark-line">
+          <span>0.0</span><span class="mark">▲ 0.9 min</span><span>1.0</span>
+        </div>
+        <p class="fccv-note">19/20 test groups matched ground truth · mean diff 1.04 SD · SD 0.22 · only 5% expected outside 1.5× threshold</p>
+      </div>
     </div>
-  </footer>
 
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="hero-stat-val">0.979</span><span class="hero-stat-key">ML model applicability</span></div>
+      <div class="hero-stat"><span class="hero-stat-val">0.870</span><span class="hero-stat-key">Validation method applicability</span></div>
+      <div class="hero-stat"><span class="hero-stat-val">0.89</span><span class="hero-stat-key">Data modality applicability</span></div>
+      <div class="hero-stat"><span class="hero-stat-val">83%</span><span class="hero-stat-key">Budget utilized</span></div>
+    </div>
+  </div>
+
+  <section>
+    <p>MVPT addresses the difficulty of validating AI models against novel, previously unseen data during a space mission. Rather than recomputing validation results on-board in real time, MVPT precomputes a database of expected model performance across a wide variety of data transformations before launch. When an autonomous system encounters new data mid-mission, it retrieves the most similar precomputed result from that database — instantly estimating whether the model will perform reliably without the computational overhead of direct validation.</p>
+    <p>This increases AI model reliability, allows missions to adapt to changing data conditions, and reduces the computational cost and physical footprint of mission hardware.</p>
+  </section>
+
+  <section id="objectives">
+    <div class="section-head"><span class="section-num">01</span><h2>Technical objectives</h2></div>
+    <table class="data-table">
+      <thead><tr><th>Objective</th><th>Goal</th><th>Criterion</th><th>Result</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>TO1 — Literature survey</td>
+          <td>Compatibility of NASA-relevant AI models, validation methods, and data modalities with MVPT</td>
+          <td class="num">≥ 0.9</td><td class="num">0.9 across all three</td><td><span class="pass">Complete</span></td>
+        </tr>
+        <tr>
+          <td>TO2 — Description of approach</td>
+          <td>Working proof-of-concept on real NASA solar wind data</td>
+          <td class="num">FCCV ≥ 0.95</td><td class="num">0.95 ± 0.05</td><td><span class="pass">Complete</span></td>
+        </tr>
+        <tr>
+          <td>TO3 — Phase II test plan</td>
+          <td>Establish scenario, dataset, models, and validation methods for Phase II simulation</td>
+          <td>Scenario + test plan</td><td>Dragonfly-class rotorcraft; FROST; UE5</td><td><span class="pass">Complete</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:0.8rem">All three objectives completed at 100%. Project utilized 83% of prescribed budget with no problems recorded.</p>
+  </section>
+
+  <section id="literature">
+    <div class="section-head"><span class="section-num">02</span><h2>TO1 — Literature survey &amp; applicability</h2></div>
+    <p>Three hierarchical taxonomies were developed covering ML validation methods, ML model families, and data modalities used across NASA missions. Sources included NASA technical reports, NIST publications, major aerospace/geoscience conferences, arXiv, NASA ADS, and Google Scholar. Three independent reviewers rated each item on a 1–4 compatibility scale with required source references and documented reasoning per score.</p>
+
+    <h3>Rating scale</h3>
+    <table class="data-table">
+      <thead><tr><th>Score</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td>Generally incompatible — only applicable in specific cases or requires substantial MVPT modification</td></tr>
+        <tr><td class="num">2</td><td>Slightly incompatible — incompatible in a non-miniscule fraction of cases or requires some modification</td></tr>
+        <tr><td class="num">3</td><td>Typically compatible — incompatibility would be rare edge cases</td></tr>
+        <tr><td class="num">4</td><td>Always compatible; incompatibilities exceedingly rare</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Applicability results</h3>
+    <table class="data-table">
+      <thead><tr><th>Category</th><th>Applicability fraction</th><th>Benchmark</th><th>Reviewer agreement</th></tr></thead>
+      <tbody>
+        <tr><td>ML models</td><td class="num">0.979 ± 0.015</td><td class="num">≥ 0.9</td><td>SD &gt; 1.0 in 4% of items</td></tr>
+        <tr><td>Validation methods</td><td class="num">0.870 ± 0.046</td><td class="num">≥ 0.9</td><td>SD &gt; 1.0 in 6% of items</td></tr>
+        <tr><td>Data modalities</td><td class="num">0.89 ± 0.044</td><td class="num">≥ 0.9</td><td>SD &gt; 1.0 in 0% of items</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Notable incompatible items</h3>
+    <table class="data-table">
+      <thead><tr><th>Item</th><th>Type</th><th>Primary concern</th></tr></thead>
+      <tbody>
+        <tr><td>Neural ODE / Neural SDE for dynamics</td><td>ML</td><td>Strict training data limitations constrain applicable transformations</td></tr>
+        <tr><td>Complex Valued CNNs</td><td>ML</td><td>Normal transformation methods may not function on complex values</td></tr>
+        <tr><td>Neuromorphic / spiking models</td><td>ML</td><td>Hardware specificity and temporal activation timing complicate precomputation</td></tr>
+        <tr><td>Cross-source validation methods</td><td>VM</td><td>Validation data from completely different source than training (e.g., satellite-to-ground calibration)</td></tr>
+        <tr><td>Human-analysis validation methods</td><td>VM</td><td>Infeasible to scale to the number of validations required by MVPT</td></tr>
+        <tr><td>Plots, diagrams, CAD files, executables</td><td>DM</td><td>Not easily incorporated into mathematical transformation models</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="poc">
+    <div class="section-head"><span class="section-num">03</span><h2>TO2 — Proof of concept: DSCOVR solar wind data</h2></div>
+    <p>The proof-of-concept used solar wind data from the <strong>Deep Space Climate Observatory (DSCOVR)</strong> spacecraft, recorded at one-minute cadence. The dataset spans years of observations with natural periods of low (quiet) and high (volatile) solar activity. All software was written in Python.</p>
+    <div class="callout">
+      <strong>Demonstration scenario:</strong> A neural network trained exclusively on quiet solar wind data is asked to forecast the next 30 minutes of magnetic field strength. MVPT estimates in advance how that model will perform when exposed to a volatile solar storm — without rerunning validation on-board.
+    </div>
+  </section>
+
+  <section id="regime">
+    <div class="section-head"><span class="section-num">04</span><h2>Regime separation</h2></div>
+    <p>A Hidden Markov Model (HMM) was fitted to rolling volatility features of the magnetic field magnitude to classify each time point as quiet or volatile. Features: first difference of magnetic field magnitude, short and long window rolling standard deviations, and long window variability of the first difference. Post-processing applied a rolling average and minimum-duration constraint to suppress short transient flips.</p>
+
+    <div class="stat-grid">
+      <div class="stat-cell"><div class="stat-cell-val">9,033 h</div><div class="stat-cell-label">Quiet regime total hours</div></div>
+      <div class="stat-cell"><div class="stat-cell-val">79.1%</div><div class="stat-cell-label">Quiet regime prevalence</div></div>
+      <div class="stat-cell"><div class="stat-cell-val amber">2,388 h</div><div class="stat-cell-label">Volatile regime total hours</div></div>
+      <div class="stat-cell"><div class="stat-cell-val amber">20.9%</div><div class="stat-cell-label">Volatile regime prevalence</div></div>
+    </div>
+
+    <h3>Statistical separation between regimes (volatile / quiet ratios)</h3>
+    <table class="data-table">
+      <thead><tr><th>Feature</th><th>Mean ratio</th><th>Median ratio</th><th>STDV ratio</th><th>Cohen's d</th><th>KS distance</th></tr></thead>
+      <tbody>
+        <tr><td>Proton density (n/cc)</td><td class="num">1.67</td><td class="num">1.58</td><td class="num">2.01</td><td class="num">0.93</td><td class="num">0.32</td></tr>
+        <tr><td>Magnetic field (nT)</td><td class="num">1.40</td><td class="num">1.38</td><td class="num">1.68</td><td class="num">0.83</td><td class="num">0.32</td></tr>
+        <tr><td>Temperature (K)</td><td class="num">1.70</td><td class="num">1.72</td><td class="num">1.75</td><td class="num">0.75</td><td class="num">0.24</td></tr>
+        <tr><td>Flow speed</td><td class="num">1.03</td><td class="num">1.05</td><td class="num">0.89</td><td class="num">0.14</td><td class="num">0.13</td></tr>
+      </tbody>
+    </table>
+    <p>Proton density, magnetic field strength, and temperature all increased 40–70% in volatile periods (large Cohen's d and KS distance). Flow speed showed only a small effect — the volatile regime is characterized by stronger magnetic fields and higher plasma density, not simply faster wind. This motivated using <strong>magnetic field strength</strong> as the primary prediction variable.</p>
+  </section>
+
+  <section id="model">
+    <div class="section-head"><span class="section-num">05</span><h2>Forecasting model architecture</h2></div>
+    <p>The model produces probabilistic predictions of magnetic field strength over a 30-minute horizon using a 3-hour historical context window of magnetic field, wind speed, temperature, and proton density. Trained exclusively on quiet data.</p>
+
+    <div class="algo-steps">
+      <div class="algo-step">
+        <div class="algo-n">1</div>
+        <div class="algo-body">
+          <div class="algo-title">TCN encoder</div>
+          <div class="algo-desc">Temporal Convolutional Network processes the 3-hour history window. Dilated causal convolutions preserve temporal ordering while capturing patterns at multiple time scales. Produces a compact latent representation summarizing recent system dynamics.</div>
+        </div>
+      </div>
+      <div class="algo-step">
+        <div class="algo-n">2</div>
+        <div class="algo-body">
+          <div class="algo-title">Parameter head → time-varying Student-t distribution</div>
+          <div class="algo-desc">Maps the latent representation to coefficients (location, scale, degrees of freedom) of a Student-t distribution evolving across the 30-minute forecast horizon. Student-t chosen for robustness to heavy-tailed solar wind fluctuations. Degrees of freedom controls tail heaviness.</div>
+        </div>
+      </div>
+      <div class="algo-step">
+        <div class="algo-n">3</div>
+        <div class="algo-body">
+          <div class="algo-title">Likelihood-based training</div>
+          <div class="algo-desc">Trained by maximizing the likelihood of observed future measurements under the predicted distribution. Couples prediction errors across lead times and promotes stable parameter trajectories across the forecast window.</div>
+        </div>
+      </div>
+    </div>
+
+    <h3>Horizon selection — stationarity analysis (Wasserstein distance)</h3>
+    <table class="data-table">
+      <thead><tr><th>Horizon (min)</th><th>20th quantile</th><th>50th quantile</th><th>80th quantile</th></tr></thead>
+      <tbody>
+        <tr><td>30</td><td class="num">0.0969</td><td class="num">0.2064</td><td class="num-amber">0.4286</td></tr>
+        <tr><td>60</td><td class="num">0.1166</td><td class="num">0.2696</td><td class="num-amber">0.6029</td></tr>
+        <tr><td>120</td><td class="num">0.2105</td><td class="num">0.4063</td><td class="num-amber">0.7291</td></tr>
+        <tr><td>240</td><td class="num">0.3068</td><td class="num">0.5406</td><td class="num-amber">0.9080</td></tr>
+      </tbody>
+    </table>
+    <p>The stationarity threshold was set at the 95th percentile of the 30-minute horizon (0.298). In every case the 80th quantile band exceeded this threshold, confirming no single predictive distribution remains reliable across the full record. 30 minutes was selected as the most conservative practical horizon.</p>
+
+    <h3>Model performance: quiet vs. volatile data</h3>
+    <table class="data-table">
+      <thead><tr><th>Regime</th><th>NLL</th><th>CRPS</th><th>Coverage 90</th><th>Coverage 50</th></tr></thead>
+      <tbody>
+        <tr><td>Quiet — nominal (in-distribution)</td><td class="num">0.441</td><td class="num">0.289</td><td class="num">89.54%</td><td class="num">50.52%</td></tr>
+        <tr><td>Volatile — out of sample</td><td class="num-amber">1.537</td><td class="num-amber">0.668</td><td class="num">90.66%</td><td class="num">51.52%</td></tr>
+      </tbody>
+    </table>
+    <p>Coverage statistics remain near nominal even during volatile periods — the model correctly widens its uncertainty intervals when accuracy degrades. This is optimal for MVPT: performance is neither so poor nor so perfect that it would be insensitive to data transformation.</p>
+  </section>
+
+  <section id="transformations">
+    <div class="section-head"><span class="section-num">06</span><h2>Data transformations</h2></div>
+    <p>A large database of synthetic distribution shifts was constructed by applying transformations to the quiet training data. Perturbation combinations limited to order three to maintain computational feasibility (~24 hours of processing on a typical laptop).</p>
+
+    <table class="data-table">
+      <thead><tr><th>Class</th><th>Methods</th></tr></thead>
+      <tbody>
+        <tr><td>Marginal distribution</td><td>Mean shift, linear drift, variance scaling, heteroscedastic scaling, nonlinear warping, quantile remapping, feature rotations</td></tr>
+        <tr><td>Temporal structure</td><td>Autoregressive modification, spectral tilt, band amplification, time warping, block shuffling</td></tr>
+        <tr><td>Joint distribution (multivariate)</td><td>Covariance scaling, low-rank perturbations, conditional noise</td></tr>
+        <tr><td>Structural / support</td><td>Clipping (sensor saturation), quantization (limited resolution), missingness (sensor dropout / data corruption), outlier bursts</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Embeddings and vector lookup</h3>
+    <div class="algo-steps">
+      <div class="algo-step">
+        <div class="algo-n">1</div>
+        <div class="algo-body">
+          <div class="algo-title">Penultimate layer embeddings</div>
+          <div class="algo-desc">Each evaluated dataset is embedded using the penultimate layer activations of the forecasting model, capturing the model's internal functional geometry rather than raw data similarity. Datasets processed similarly by the model will have similar embeddings regardless of surface-level differences.</div>
+        </div>
+      </div>
+      <div class="algo-step">
+        <div class="algo-n">2</div>
+        <div class="algo-body">
+          <div class="algo-title">HNSW approximate nearest neighbor index</div>
+          <div class="algo-desc">Embeddings stored in a Hierarchical Navigable Small World (HNSW) graph via hnswlib. Normalized vectors enable efficient cosine similarity search across millions of entries. Future deployments may use Qdrant, Milvus, or Weaviate for persistence and distributed scaling.</div>
+        </div>
+      </div>
+      <div class="algo-step">
+        <div class="algo-n">3</div>
+        <div class="algo-body">
+          <div class="algo-title">SoftMax-weighted retrieval</div>
+          <div class="algo-desc">For a new dataset, the 100 most similar vectors are retrieved by cosine similarity. Similarity scores are converted to SoftMax weights so closest neighbors contribute most strongly. Weighted averages produce point estimates for NLL, CRPS, and coverage; dispersion among neighbors estimates uncertainty.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="fccv">
+    <div class="section-head"><span class="section-num">07</span><h2>FCCV computation and final results</h2></div>
+    <p>The Fraction of Correctly Computed Validations (FCCV) measures how often MVPT correctly predicts whether a model passes or fails validation on a transformed dataset.</p>
+
+    <div class="callout callout-amber">
+      Cutoff set at <strong>1.5× the standard deviation of the MAE CRPS distribution</strong> — an extremely conservative threshold implying only a 68% probability that MAE CRPS truly exceeds the cutoff. Actual NASA missions would require greater confidence; this conservatism understates true FCCV performance.
+    </div>
+
+    <p>The volatile dataset was divided into 20 groups via k-means clustering in the embedding vector space (ensuring independent tests). For each group, MVPT's predicted MAE CRPS was compared against ground truth. If the absolute difference fell within 1.5× the ground truth standard deviation, both values lie on the same side of the cutoff — a match.</p>
+
+    <div class="stat-grid">
+      <div class="stat-cell"><div class="stat-cell-val">20</div><div class="stat-cell-label">Independent test groups (k-means)</div></div>
+      <div class="stat-cell"><div class="stat-cell-val">19/20</div><div class="stat-cell-label">Groups matching ground truth</div></div>
+      <div class="stat-cell"><div class="stat-cell-val">1.04</div><div class="stat-cell-label">Mean group difference (SD units)</div></div>
+      <div class="stat-cell"><div class="stat-cell-val">0.22</div><div class="stat-cell-label">SD of group differences</div></div>
+    </div>
+
+    <h3>MVPT prediction accuracy (MAE on volatile regime)</h3>
+    <table class="data-table">
+      <thead><tr><th>Metric</th><th>MAE score</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td>NLL MAE</td><td class="num-amber">2.298</td><td>Higher MAE expected; NLL more sensitive to distribution shape</td></tr>
+        <tr><td>CRPS MAE</td><td class="num">0.989</td><td>Primary metric for cutoff determination</td></tr>
+        <tr><td>Coverage 90 MAE</td><td class="num-amber">0.365</td><td>Inflated by outlier transformations with magnitude shifts &gt;×1000</td></tr>
+        <tr><td>Coverage 50 MAE</td><td class="num-amber">0.164</td><td>Same outlier effect; majority of predictions near 0 error</td></tr>
+      </tbody>
+    </table>
+    <p>Coverage MAE outliers result from large-magnitude transformations (shift &gt;×1000). Normalization in the ML model causes these to produce embeddings that are structurally similar to nominal cases, while being distributionally extreme. Filtering outlier embeddings from the lookup table resolves the issue.</p>
+
+    <div class="callout">
+      <strong>Final FCCV = 0.95 ± 0.05.</strong> Assuming the 20 group differences are normally distributed, only 5% of values are expected outside the conservative 1.5× threshold. MVPT meets its benchmark and is technically feasible for estimating the validation state of ML models in autonomous space systems.
+    </div>
+  </section>
+
+  <section id="scenario">
+    <div class="section-head"><span class="section-num">08</span><h2>Phase II mission scenario selection</h2></div>
+    <p>Upcoming NASA missions launching or arriving by 2028 were scored on three dimensions (1–3 each) to identify where MVPT provides the greatest benefit. NASA researchers Ken Hibbard, Terry Fong, and Michael Dalal were interviewed as part of scenario selection.</p>
+
+    <h3>Mission scoring (38 missions evaluated)</h3>
+    <table class="data-table">
+      <thead><tr><th>Dimension</th><th>Score 1</th><th>Score 2</th><th>Score 3</th></tr></thead>
+      <tbody>
+        <tr><td>Required autonomy</td><td>Directly human-controlled</td><td>Human-directed but carries autonomous instructions</td><td>Must operate fully autonomously</td></tr>
+        <tr><td>Communication with Earth</td><td>Near-constant, second-scale delays</td><td>Variable contact, minute-scale delays</td><td>Isolated; Earth resources unavailable for hours</td></tr>
+        <tr><td>Relative risk</td><td>Routine / well-established</td><td>Established tech used in new ways</td><td>Novel technologies or inherently risky</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Top-scoring missions (9/9)</h3>
+    <div class="tag-list">
+      <span class="tag">Dragonfly (9)</span><span class="tag">Europa Clipper (9)</span><span class="tag">JUICE (9)</span><span class="tag">Escapade (9)</span><span class="tag">Dreamchaser 1 (9)</span><span class="tag">Griffin 1 (7)</span><span class="tag">VIPER (7)</span><span class="tag">Psyche (7)</span>
+    </div>
+
+    <h3>Selected: rotorcraft navigation camera (Dragonfly-class)</h3>
+    <p>Signal delay is too long for Earth to react to in-flight issues, requiring full autonomy. Three distinct AI task types can be tested on the same data, and existing datasets and simulation tools are available. The scenario is relevant to upcoming missions including Dragonfly and lunar landers inspecting landing areas.</p>
+
+    <h3>FROST dataset</h3>
+    <p>11 images of 5m × 5m areas at 4 locations in Death Valley and the Atacama Desert. Each image is 2048 × 2048 pixels with a 2.5mm resolution LiDAR DEM. Unreal Engine 5 will simulate a larger dataset: 500 training images from one location, 25 sets of 20 images as novel test data.</p>
+
+    <h3>Phase II AI tasks</h3>
+    <table class="data-table">
+      <thead><tr><th>Task</th><th>Description</th><th>Model</th><th>Validation metric</th></tr></thead>
+      <tbody>
+        <tr><td>Height Variance Estimation (HVE)</td><td>Detect flat landing areas by estimating terrain height variance from camera image</td><td>Deeplabv3+</td><td>Pixel-wise accuracy, precision, recall</td></tr>
+        <tr><td>Hazard Detection</td><td>Detect obstacles that could damage or tip the rotorcraft; optimize for high recall</td><td>YOLO26</td><td>Precision, recall</td></tr>
+        <tr><td>Feature Tracking</td><td>Track landscape features to determine position (no GPS available)</td><td>Sparse Optical Flow</td><td>Endpoint error</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Image domain transformations for Phase II</h3>
+    <table class="data-table">
+      <thead><tr><th>Transformation</th><th>Rationale</th></tr></thead>
+      <tbody>
+        <tr><td>Color / atmospheric changes</td><td>Different coloration of hazards or atmospheric properties can disrupt color-dependent models</td></tr>
+        <tr><td>Downsampling / upsampling</td><td>As rotorcraft altitude changes, apparent feature size changes relative to camera resolution</td></tr>
+        <tr><td>Shadows</td><td>Vary with time of day, season, atmosphere, and planetary light sources; generated via UE5 or per-pixel DEM computation</td></tr>
+        <tr><td>Neural Style Transfer (NST)</td><td>Applies texture and color from existing moon/Mars/asteroid imagery so models trained on Earth-analog data generalize to novel planetary surfaces</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="phase2-plan">
+    <div class="section-head"><span class="section-num">09</span><h2>Phase II technical objectives</h2></div>
+    <div class="phase2-grid">
+      <div class="phase2-cell">
+        <div class="phase2-to">TO1</div>
+        <div class="phase2-title">Simulate training &amp; mission data</div>
+        <div class="phase2-desc">Create a mission-relevant dataset with raw data and ground truth labels. Training data builds MVPT's precomputed validation space; novel mission data with varying properties tests generalization across conditions.</div>
+      </div>
+      <div class="phase2-cell">
+        <div class="phase2-to">TO2</div>
+        <div class="phase2-title">Validate MVPT accuracy &amp; reliability</div>
+        <div class="phase2-desc">Demonstrate both accuracy (closeness of estimated vs. true validation status) and reliability (consistent results across similar but non-identical novel datasets). Multiple sets of similar novel data required.</div>
+      </div>
+      <div class="phase2-cell">
+        <div class="phase2-to">TO3</div>
+        <div class="phase2-title">Validate computational requirements</div>
+        <div class="phase2-desc">Run mission-side MVPT software in an environment mimicking a deep-space computer (e.g., RAD750). Measure memory, storage, and processing time against spacecraft specifications.</div>
+      </div>
+      <div class="phase2-cell">
+        <div class="phase2-to">TO4</div>
+        <div class="phase2-title">Create mission-ready software package</div>
+        <div class="phase2-desc">Ground-side: Python/MATLAB/Julia APIs, auto-managed multiprocessing, user-importable datasets. Mission-side: low-impact, NASA security-compliant, API access in C, C++, and Virtual Machine Language (VML).</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<script>
+const allSections = document.querySelectorAll('section[id], div.hero[id]');
+const navLinks = document.querySelectorAll('nav a');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(a => a.classList.remove('active'));
+      const active = document.querySelector(`nav a[href="#${entry.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { rootMargin: '-10% 0px -80% 0px' });
+allSections.forEach(s => observer.observe(s));
+</script>
 </body>
 </html>

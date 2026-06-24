@@ -1,10 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
 
 :root {
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-serif: 'Lora', Georgia, serif;
+  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Menlo', 'Consolas', monospace;
 
-  --text-xs:   0.75rem;
+  --text-xs:   0.72rem;
   --text-sm:   0.875rem;
   --text-base: 1rem;
   --text-lg:   1.125rem;
@@ -15,8 +15,9 @@
 
   --leading-tight:  1.25;
   --leading-normal: 1.6;
-  --leading-loose:  1.8;
+  --leading-loose:  1.75;
 
+  --weight-light:    300;
   --weight-normal:   400;
   --weight-medium:   500;
   --weight-semibold: 600;
@@ -31,13 +32,13 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
   line-height: var(--leading-tight);
   color: var(--color-heading);
 }
 
-h1 { font-size: var(--text-4xl); font-weight: var(--weight-semibold); }
-h2 { font-size: var(--text-3xl); font-weight: var(--weight-semibold); }
+h1 { font-size: var(--text-4xl); font-weight: var(--weight-semibold); letter-spacing: -0.02em; }
+h2 { font-size: var(--text-3xl); font-weight: var(--weight-semibold); letter-spacing: -0.01em; }
 h3 { font-size: var(--text-2xl); font-weight: var(--weight-normal); }
 h4 { font-size: var(--text-xl);  font-weight: var(--weight-medium); }
 
@@ -49,9 +50,11 @@ p {
 a {
   color: var(--color-accent);
   text-underline-offset: 3px;
+  transition: color 150ms ease;
 }
 
 a:hover {
+  color: var(--color-accent-hover);
   text-decoration: underline;
 }
 
@@ -69,7 +72,7 @@ em {
 }
 
 code {
-  font-family: 'Menlo', 'Consolas', monospace;
+  font-family: var(--font-mono);
   font-size: var(--text-sm);
   background: var(--color-surface);
   padding: 0.1em 0.35em;

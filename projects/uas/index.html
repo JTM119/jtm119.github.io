@@ -1,97 +1,890 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>UAS Certification — Joshua Martin</title>
-  <link rel="stylesheet" href="/static/css/reset.css" />
-  <link rel="stylesheet" href="/static/css/typography.css" />
-  <link rel="stylesheet" href="/static/css/main.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UAS Certification</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:       #0b0f1a;
+    --paper:     #f0f2f5;
+    --sky:       #c8daf0;
+    --signal:    #2563eb;
+    --alert:     #e84545;
+    --ghost:     #8a9ab8;
+    --panel:     #ffffff;
+    --mono:      'Space Mono', monospace;
+    --sans:      'Space Grotesk', sans-serif;
+    --body:      'Inter', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  /* ---- NAV ---- */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2.5rem;
+    height: 52px;
+  }
+  .nav-brand {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--sky);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ghost);
+    text-decoration: none;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: #fff; }
+
+  /* ---- HERO ---- */
+  .hero {
+    background: var(--ink);
+    color: #fff;
+    padding: 5rem 2.5rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(37,99,235,.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* Signature: animated flight-path SVG */
+  .flight-canvas {
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 55%;
+    opacity: .35;
+  }
+  .flight-canvas path {
+    stroke: var(--sky);
+    stroke-width: 1;
+    fill: none;
+    stroke-dasharray: 1200;
+    stroke-dashoffset: 1200;
+    animation: draw 3s ease forwards;
+  }
+  .flight-canvas path:nth-child(2) { animation-delay: .4s; stroke: rgba(200,218,240,.5); }
+  .flight-canvas path:nth-child(3) { animation-delay: .8s; stroke: rgba(200,218,240,.25); }
+  .uas-dot {
+    fill: var(--signal);
+    animation: fly 3s ease forwards;
+    offset-path: path("M 60 280 C 140 240 200 160 320 120 C 440 80 520 100 620 60");
+    offset-distance: 0%;
+  }
+  @keyframes draw {
+    to { stroke-dashoffset: 0; }
+  }
+  @keyframes fly {
+    0%   { offset-distance: 0%; opacity: 0; }
+    10%  { opacity: 1; }
+    100% { offset-distance: 100%; opacity: 1; }
+  }
+
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .2em;
+    color: var(--sky);
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+    position: relative;
+  }
+  .hero h1 {
+    font-family: var(--sans);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    max-width: 620px;
+    position: relative;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--sky);
+  }
+  .hero-sub {
+    margin-top: 1.25rem;
+    max-width: 520px;
+    color: var(--ghost);
+    font-size: .95rem;
+    position: relative;
+  }
+  .hero-meta {
+    margin-top: 2.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    position: relative;
+  }
+  .meta-chip {
+    display: flex;
+    flex-direction: column;
+    gap: .15rem;
+  }
+  .meta-chip .label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: .15em;
+    color: var(--ghost);
+    text-transform: uppercase;
+  }
+  .meta-chip .value {
+    font-family: var(--sans);
+    font-size: .9rem;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  /* ---- LAYOUT ---- */
+  .container {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 2.5rem;
+  }
+
+  section {
+    padding: 4rem 0;
+  }
+  section + section {
+    border-top: 1px solid rgba(0,0,0,.08);
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .2em;
+    color: var(--ghost);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(0,0,0,.1);
+    max-width: 60px;
+  }
+
+  h2 {
+    font-family: var(--sans);
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+  h3 {
+    font-family: var(--sans);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: .4rem;
+  }
+  p { margin-bottom: .85rem; color: #2a3248; }
+
+  /* ---- PROBLEM ---- */
+  .problem-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  .problem-card {
+    background: var(--panel);
+    border: 1px solid rgba(0,0,0,.07);
+    border-radius: 8px;
+    padding: 1.25rem 1.25rem 1.25rem 1rem;
+    border-left: 3px solid var(--alert);
+    font-size: .875rem;
+    color: #2a3248;
+    line-height: 1.6;
+  }
+  .problem-card strong {
+    display: block;
+    font-family: var(--sans);
+    font-size: .8rem;
+    color: var(--alert);
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    margin-bottom: .35rem;
+  }
+
+  /* ---- APPROACH ---- */
+  .approach-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+  .approach-block {
+    background: var(--panel);
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid rgba(0,0,0,.07);
+  }
+  .approach-block h3 {
+    font-family: var(--mono);
+    font-size: .75rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--signal);
+    margin-bottom: .6rem;
+  }
+  .approach-block p { font-size: .875rem; margin: 0; }
+
+  /* ---- OUTCOMES ---- */
+  .outcomes-track {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: rgba(0,0,0,.08);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 2rem;
+  }
+  .outcome-step {
+    background: var(--panel);
+    padding: 1.5rem 1.25rem;
+    position: relative;
+  }
+  .outcome-step .phase-tag {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--ghost);
+    margin-bottom: .5rem;
+  }
+  .outcome-step .phase-num {
+    font-family: var(--sans);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: rgba(0,0,0,.06);
+    line-height: 1;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+  }
+  .outcome-step h3 {
+    font-size: .875rem;
+    font-family: var(--sans);
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: .5rem;
+  }
+  .outcome-step p {
+    font-size: .8rem;
+    color: #4a5568;
+    margin: 0;
+  }
+  .outcome-step .badge {
+    display: inline-block;
+    margin-top: .75rem;
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    background: #d1fae5;
+    color: #065f46;
+    padding: .2rem .5rem;
+    border-radius: 3px;
+  }
+
+  /* ---- TEST CASES ---- */
+  .test-cases {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  .test-card {
+    background: var(--ink);
+    color: #fff;
+    border-radius: 10px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .test-card::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: rgba(37,99,235,.12);
+  }
+  .test-card .tc-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--sky);
+    margin-bottom: .75rem;
+  }
+  .test-card h3 {
+    font-family: var(--sans);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: .75rem;
+  }
+  .test-card p {
+    font-size: .85rem;
+    color: var(--ghost);
+    line-height: 1.65;
+    margin-bottom: .85rem;
+  }
+  .test-card .finding {
+    background: rgba(37,99,235,.2);
+    border-left: 3px solid var(--signal);
+    padding: .75rem 1rem;
+    border-radius: 0 6px 6px 0;
+    font-size: .8rem;
+    color: var(--sky);
+    margin-top: 1rem;
+  }
+  .test-card .finding strong { color: #fff; display: block; margin-bottom: .2rem; font-size: .75rem; text-transform: uppercase; font-family: var(--mono); letter-spacing: .1em; }
+
+  /* Corruption types */
+  .corrupt-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+    margin: .75rem 0;
+  }
+  .corrupt-pill {
+    font-family: var(--mono);
+    font-size: .7rem;
+    padding: .2rem .6rem;
+    border-radius: 4px;
+    background: rgba(200,218,240,.1);
+    color: var(--sky);
+    border: 1px solid rgba(200,218,240,.2);
+  }
+
+  /* ---- APPLICATIONS ---- */
+  .apps-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+  .apps-group h3 {
+    font-family: var(--mono);
+    font-size: .7rem;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--signal);
+    margin-bottom: 1rem;
+    padding-bottom: .5rem;
+    border-bottom: 1px solid rgba(0,0,0,.08);
+  }
+  .app-item {
+    display: flex;
+    gap: .75rem;
+    margin-bottom: .9rem;
+    font-size: .875rem;
+    color: #2a3248;
+    line-height: 1.5;
+  }
+  .app-item::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--signal);
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: .45rem;
+  }
+
+  /* ---- PHASE II ---- */
+  .phase2-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  .phase2-card {
+    background: var(--panel);
+    border: 1px solid rgba(0,0,0,.07);
+    border-radius: 8px;
+    padding: 1.25rem;
+  }
+  .phase2-card .p2-icon {
+    width: 36px; height: 36px;
+    background: rgba(37,99,235,.08);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: .75rem;
+    font-size: 1.1rem;
+  }
+  .phase2-card h3 { font-size: .875rem; margin-bottom: .3rem; }
+  .phase2-card p { font-size: .8rem; color: #4a5568; margin: 0; }
+
+  /* ---- FINDINGS ---- */
+  .findings-list {
+    counter-reset: findings;
+    margin-top: 2rem;
+  }
+  .finding-row {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid rgba(0,0,0,.06);
+    align-items: flex-start;
+  }
+  .finding-row:last-child { border-bottom: none; }
+  .finding-num {
+    font-family: var(--mono);
+    font-size: .75rem;
+    color: var(--signal);
+    flex-shrink: 0;
+    width: 24px;
+    padding-top: .1rem;
+  }
+  .finding-row p { font-size: .9rem; margin: 0; }
+
+  /* ---- COST TABLE ---- */
+  .cost-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.5rem;
+    font-size: .875rem;
+  }
+  .cost-table th {
+    font-family: var(--mono);
+    font-size: .7rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ghost);
+    text-align: left;
+    padding: .5rem 1rem;
+    border-bottom: 2px solid rgba(0,0,0,.1);
+  }
+  .cost-table td {
+    padding: .6rem 1rem;
+    border-bottom: 1px solid rgba(0,0,0,.06);
+    color: #2a3248;
+  }
+  .cost-table tr:last-child td {
+    font-weight: 700;
+    font-family: var(--sans);
+    color: var(--ink);
+    border-bottom: none;
+    border-top: 2px solid rgba(0,0,0,.1);
+  }
+  .cost-table td:last-child { text-align: right; font-family: var(--mono); }
+  .cost-table th:last-child { text-align: right; }
+
+  /* ---- FOOTER ---- */
+  footer {
+    background: var(--ink);
+    color: var(--ghost);
+    padding: 2rem 2.5rem;
+    font-family: var(--mono);
+    font-size: .7rem;
+    letter-spacing: .08em;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 768px) {
+    .approach-cols, .test-cases, .apps-cols { grid-template-columns: 1fr; }
+    .outcomes-track { grid-template-columns: 1fr 1fr; }
+    nav { padding: 0 1.25rem; }
+    .nav-links { display: none; }
+    .hero { padding: 3rem 1.25rem 2.5rem; }
+    .flight-canvas { display: none; }
+    .container { padding: 0 1.25rem; }
+  }
+  @media (max-width: 480px) {
+    .outcomes-track { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .flight-canvas path, .uas-dot { animation: none; }
+    .flight-canvas path { stroke-dashoffset: 0; }
+  }
+</style>
+<style>
+/* ── Site primary nav ── */
+.pnav{height:56px;border-bottom:1px solid #cdd8ea;background:rgba(238,243,251,0.92);backdrop-filter:blur(10px);position:sticky;top:0;z-index:9999;display:flex;align-items:center}
+.pnav-inner{width:100%;max-width:1200px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.pnav-logo{font-family:'Lora',Georgia,serif;font-size:1.125rem;font-weight:600;color:#0f172a;text-decoration:none;letter-spacing:-0.01em}
+.pnav-list{display:flex;gap:1.5rem;list-style:none}
+.pnav-list a{font-size:0.875rem;font-weight:500;color:#5c6b82;text-decoration:none;transition:color 150ms}
+.pnav-list a:hover,.pnav-list a[aria-current]{color:#2563eb;text-decoration:none}
+@media(max-width:600px){.pnav-logo{font-size:1rem}.pnav-list{gap:1rem}}
+/* ── Silva-style override ── */
+body{background:#F7F5F0!important;color:#1C2319!important;font-family:Georgia,"Times New Roman",serif!important}
+nav:not(.pnav){top:56px!important;background:#1A3D28!important;backdrop-filter:none!important;border-bottom:1px solid rgba(255,255,255,0.08)!important}
+.nav-brand{color:#E8F4EA!important}
+.nav-links a{color:#8FBA9A!important}
+.nav-links a:hover{color:#FFFFFF!important}
+nav:not(.pnav){padding-left:max(1.5rem,calc(50% - 430px))!important;padding-right:max(1.5rem,calc(50% - 430px))!important}
+</style>
 </head>
 <body>
 
-  <nav class="site-nav" aria-label="Main navigation">
-    <div class="container">
-      <a href="/" class="nav-logo">Joshua Martin</a>
-      <ul class="nav-links" role="list">
-        <li><a href="/">Home</a></li>
-        <li><a href="/about/">About</a></li>
-        <li><a href="/projects/">Projects</a></li>
-      </ul>
+<nav class="pnav" aria-label="Site navigation">
+  <div class="pnav-inner">
+    <a href="/" class="pnav-logo">Joshua Martin</a>
+    <ul class="pnav-list" role="list">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about/">About</a></li>
+      <li><a href="/projects/" aria-current="page">Projects</a></li>
+    </ul>
+  </div>
+</nav>
+
+<nav>
+  <span class="nav-brand">NASA SBIR Phase I</span>
+  <ul class="nav-links">
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#approach">Approach</a></li>
+    <li><a href="#outcomes">Outcomes</a></li>
+    <li><a href="#tests">Test Cases</a></li>
+    <li><a href="#applications">Applications</a></li>
+    <li><a href="#findings">Findings</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <svg class="flight-canvas" viewBox="0 0 700 360" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M 60 280 C 140 240 200 160 320 120 C 440 80 520 100 640 50"/>
+    <path d="M 60 300 C 160 270 240 200 360 170 C 480 140 560 155 650 130"/>
+    <path d="M 60 260 C 120 220 180 140 290 100 C 400 60 500 85 630 40"/>
+    <circle class="uas-dot" r="5"/>
+  </svg>
+
+  <div class="container">
+    <p class="hero-eyebrow">NASA SBIR Phase I &nbsp;|&nbsp; Jan 25, 2023</p>
+    <h1>Verification &amp; Validation Software for <em>Autonomous UAS Certification</em></h1>
+    <p class="hero-sub">A Testing Environment that certifies AI-driven drones by injecting real failure scenarios into high-fidelity simulation, without a single flight test.</p>
+    <div class="hero-meta">
+      <div class="meta-chip">
+        <span class="label">My Role</span>
+        <span class="value">Technical Contributor</span>
+      </div>
+      <div class="meta-chip">
+        <span class="label">Partner</span>
+        <span class="value">Univ. of Cincinnati</span>
+      </div>
+      <div class="meta-chip">
+        <span class="label">Sponsor</span>
+        <span class="value">NASA (AFRC / NSSC)</span>
+      </div>
+      <div class="meta-chip">
+        <span class="label">Total Cost</span>
+        <span class="value">$166,319</span>
+      </div>
+      <div class="meta-chip">
+        <span class="label">Completion</span>
+        <span class="value">100%</span>
+      </div>
     </div>
-  </nav>
+  </div>
+</header>
 
-  <main>
-    <div class="container">
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="container">
+    <div class="section-label">The Challenge</div>
+    <h2>Why existing certification fails autonomous UAS</h2>
+    <p>FAA and DoD frameworks were built for human pilots and deterministic aircraft. Machine learning models are nondeterministic, opaque to architectural review, and fail in unpredictable ways. The gap between autonomy capability and certification readiness is widening.</p>
 
-      <a href="/projects/" class="back-link">← All projects</a>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <strong>No ML coverage</strong>
+        FAA Part 107 certifies pilots, not aircraft AI. DoD standards require verifying software never yields a dangerous result, which is impossible on a nondeterministic ML model without simulation.
+      </div>
+      <div class="problem-card">
+        <strong>Years-long delays</strong>
+        Average FAA aircraft certification takes 5 to 9 years and hundreds of required flight hours. A cargo UAS must log 100 safe flight hours per software version, repeated on every update.
+      </div>
+      <div class="problem-card">
+        <strong>BVLOS bottleneck</strong>
+        Beyond Visual Line of Sight waivers require case-by-case Secretary of Transportation review, a process too slow for the pace of UAS development.
+      </div>
+      <div class="problem-card">
+        <strong>Rudimentary simulators</strong>
+        Existing tools (Gazebo, AirSim, UAV Toolbox) require users to manually design, run, and analyze every test. None offer automated failure injection with post-test analysis or next-test recommendation.
+      </div>
+      <div class="problem-card">
+        <strong>Black-box AI</strong>
+        ML performance depends on training data variability, not just architecture. It is virtually impossible to judge safety by examining a model's structure alone.
+      </div>
+      <div class="problem-card">
+        <strong>Late-stage cost</strong>
+        Fixing defects discovered in late-stage aerospace development accounts for roughly 95% of all software costs. Current V&amp;V does not catch AI failures until physical flight tests.
+      </div>
+    </div>
+  </div>
+</section>
 
-      <header class="page-header">
-        <h1>UAS Certification</h1>
-        <p>NASA Phase I SBIR (2022–2023) · Technical Contributor</p>
-      </header>
+<!-- APPROACH -->
+<section id="approach">
+  <div class="container">
+    <div class="section-label">Technical Approach</div>
+    <h2>A platform-agnostic Testing Environment</h2>
+    <p>The TE is built on Microsoft AirSim running in Unreal Engine 4. Failures are injected by intercepting sensor data after the simulator generates it but before it reaches the flight controller, keeping the core UAS software untouched and the TE platform-agnostic.</p>
 
-      <section class="project-section" aria-labelledby="overview-heading">
-        <h2 id="overview-heading">Overview</h2>
-        <p>
-          This NASA Phase I SBIR developed a Verification and Validation (V&amp;V) Testing
-          Environment (TE) for certifying autonomous UAS path-planning algorithms, conducted
-          in partnership with the University of Cincinnati. The TE enables systematic injection
-          of sensor and perception failures to evaluate UAS responses under conditions that
-          would be unsafe, impractical, or prohibitively expensive to test in real flight.
-        </p>
-        <p>
-          The certification challenge for autonomous UAS is that traditional flight testing
-          cannot feasibly cover the tail of failure scenarios that regulators require evidence
-          for. Simulation-based TE approaches allow exhaustive failure injection at scale,
-          but must be validated as faithful proxies for real-world behavior. This project
-          developed and validated that proxy relationship.
-        </p>
-      </section>
+    <div class="approach-cols">
+      <div class="approach-block">
+        <h3>The Proctor</h3>
+        <p>A software object that accepts user-defined success and failure criteria, monitors UAS position, velocity, and collision state in real time, enforces time limits, scores each trial, and recommends parameters for the next test based on prior results.</p>
+      </div>
+      <div class="approach-block">
+        <h3>Failure Injection</h3>
+        <p>Sensor data is intercepted between the simulator and the flight controller. Any corruption type (GPS drift, image blur, pixel obscuration) can be applied at any magnitude without touching the UAS's core software, making tests fully reproducible.</p>
+      </div>
+      <div class="approach-block">
+        <h3>Monte Carlo Scoring</h3>
+        <p>Instead of binary pass/fail, each trial receives a numeric score. Hundreds of trials per condition produce a statistical distribution of outcomes, allowing risk to be expressed as probability rather than a threshold.</p>
+      </div>
+      <div class="approach-block">
+        <h3>Faster Than Real Time</h3>
+        <p>Because no human pilot is needed, AirSim can run many simultaneous trials at accelerated speed. The full 80-trial GPS test suite completed in under one hour, compared to dozens of real-world flight hours for equivalent coverage.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-      <section class="project-section" aria-labelledby="approach-heading">
-        <h2 id="approach-heading">Technical Approach</h2>
-        <ul>
-          <li>Microsoft AirSim simulation environment built on Unreal Engine 4, providing high-fidelity flight physics and sensor simulation for multiple UAS platforms and path-planning algorithms</li>
-          <li>GPS corruption injection to test path-planning resilience under navigation failure — simulating satellite outage, spoofing, and degraded signal conditions</li>
-          <li>ML perception input corruption via Gaussian blur and pixel obscuration to simulate camera degradation from environmental conditions or sensor damage</li>
-          <li>Monte Carlo trial methodology: 80 simulated flights per path-planning algorithm under each failure condition, providing statistically robust failure detection rates</li>
-          <li>Cross-validation of TE failure detection rates against independent ML model predictions across five camera corruption conditions, establishing the TE as a reliable proxy for real-world UAS response</li>
-        </ul>
-      </section>
+<!-- OUTCOMES -->
+<section id="outcomes">
+  <div class="container">
+    <div class="section-label">Project Outcomes</div>
+    <h2>Four phases, all completed on time</h2>
 
-      <section class="project-section" aria-labelledby="results-heading">
-        <h2 id="results-heading">Results</h2>
-        <ul>
-          <li>GPS failure detection demonstrated across all path-planning algorithms under test, with statistically robust rates from 80-flight Monte Carlo trials per algorithm</li>
-          <li>TE failure detection rates matched independent ML model predictions across all five camera corruption conditions, validating the TE as a reliable proxy for real-world performance</li>
-        </ul>
-      </section>
+    <div class="outcomes-track">
+      <div class="outcome-step">
+        <span class="phase-num">1</span>
+        <p class="phase-tag">Completed Aug 2022</p>
+        <h3>Project Discovery</h3>
+        <p>Onboarded all VISIMO and UC personnel. Evaluated Gazebo and AirSim; selected AirSim. Compiled a prioritized list of UAS failure modes, identifying GPS failure as the highest-value initial test.</p>
+        <span class="badge">Complete</span>
+      </div>
+      <div class="outcome-step">
+        <span class="phase-num">2</span>
+        <p class="phase-tag">Completed Oct 2022</p>
+        <h3>Build Testing Environment</h3>
+        <p>Built the proctor software. Modified AirSim with a GPS corruption API. Created a custom UE4 scenario with buildings, geofenced zones, and dynamic wind. Validated success/failure detection using manually controlled UAS.</p>
+        <span class="badge">Complete</span>
+      </div>
+      <div class="outcome-step">
+        <span class="phase-num">3</span>
+        <p class="phase-tag">Completed Oct 2022</p>
+        <h3>Integrate Autonomous UAS</h3>
+        <p>Built an autonomous UAS model using MAVSDK (autonomy level 3+). Integrated a ResNet50 computer vision model trained to ~60% accuracy on landing zone classification, giving detectable failure modes.</p>
+        <span class="badge">Complete</span>
+      </div>
+      <div class="outcome-step">
+        <span class="phase-num">4</span>
+        <p class="phase-tag">Completed Jan 2023</p>
+        <h3>Evaluate Effectiveness</h3>
+        <p>Ran ML corruption tests and compared TE-detected failure rates against independent model predictions. TE matched all predicted failures and additionally detected failures that the standalone model analysis missed.</p>
+        <span class="badge">Complete</span>
+      </div>
+    </div>
+  </div>
+</section>
 
-      <section class="project-section" aria-labelledby="stack-heading">
-        <h2 id="stack-heading">Stack</h2>
-        <ul class="project-tags" role="list">
-          <li class="tag">AirSim</li>
-          <li class="tag">Unreal Engine 4</li>
-          <li class="tag">Computer Vision</li>
-          <li class="tag">Monte Carlo</li>
-          <li class="tag">Autonomous Systems</li>
-          <li class="tag">Python</li>
-        </ul>
-      </section>
+<!-- TEST CASES -->
+<section id="tests">
+  <div class="container">
+    <div class="section-label">Test Cases</div>
+    <h2>Two failure scenarios, demonstrated end-to-end</h2>
+
+    <div class="test-cases">
+
+      <div class="test-card">
+        <p class="tc-label">Test Case 01 &mdash; GPS Failure</p>
+        <h3>Navigation Under Sensor Corruption</h3>
+        <p>The UAS was tasked with flying to a waypoint northwest of a building cluster while avoiding a geofenced no-fly zone. At a random point during flight, GPS data was corrupted for 3 to 20 seconds. Dynamic wind was also applied once the UAS moved 10 meters north of its start.</p>
+        <p>Two path-planning algorithms were compared across 80 simulated trials each: a <em style="color:#fff">direct</em> (shortest path) algorithm and a <em style="color:#fff">safe</em> (building-avoidance) algorithm. The TE adaptively increased or decreased wind parameters between trials to isolate the failure boundary.</p>
+        <div class="finding">
+          <strong>Key Finding</strong>
+          The direct algorithm caused frequent building collisions. The safe algorithm eliminated midair collisions but revealed a rare failure mode at 40&ndash;80 m north (before GPS corruption), discovered in under an hour vs. dozens of real flight hours for equivalent data.
+        </div>
+      </div>
+
+      <div class="test-card">
+        <p class="tc-label">Test Case 02 &mdash; ML Camera Corruption</p>
+        <h3>Landing Zone Classification Under Degraded Vision</h3>
+        <p>An aUAS with a ResNet50-based vision model was tasked with classifying a landing zone as safe or obstructed, then landing at the primary or a backup site based on its assessment. Six corruption conditions were tested, 50 trials each:</p>
+        <div class="corrupt-pills">
+          <span class="corrupt-pill">Blur &ndash; 9px kernel</span>
+          <span class="corrupt-pill">Blur &ndash; 81px kernel</span>
+          <span class="corrupt-pill">10% pixel obscuration</span>
+          <span class="corrupt-pill">30% pixel obscuration</span>
+          <span class="corrupt-pill">50% pixel obscuration</span>
+          <span class="corrupt-pill">No corruption (baseline)</span>
+        </div>
+        <p>Results were compared against predictions generated by running the ML model in isolation, independent of flight integration.</p>
+        <div class="finding">
+          <strong>Key Finding</strong>
+          TE-detected failure rates matched all standalone model predictions. Under extreme blurring (81px), the TE found failures the isolated model analysis failed to anticipate, confirming that flight integration reveals failure modes invisible to model-level testing alone.
+        </div>
+      </div>
 
     </div>
-  </main>
+  </div>
+</section>
 
-  <footer class="site-footer">
-    <div class="container">
-      <ul class="footer-links" role="list">
-        <li><a href="mailto:joshtmartin99@gmail.com">Email</a></li>
-        <li><a href="https://github.com/JTM119" target="_blank" rel="noopener">GitHub</a></li>
-        <li><a href="https://www.linkedin.com/in/joshua-martin-333456192/" target="_blank" rel="noopener">LinkedIn</a></li>
-      </ul>
+<!-- APPLICATIONS -->
+<section id="applications">
+  <div class="container">
+    <div class="section-label">Applications</div>
+    <h2>Who benefits and how</h2>
+
+    <div class="apps-cols">
+      <div class="apps-group">
+        <h3>NASA Applications</h3>
+        <div class="app-item">Run-Time Assurance (RTA) certification for complex GNC systems, including AI-infused landing safety systems.</div>
+        <div class="app-item">System-Wide Safety project support: testing UAS responses to large multi-sensor data streams in emergency scenarios.</div>
+        <div class="app-item">Advanced Air Mobility National Campaign: simulating BVLOS operations, vehicle contingencies, and dynamic traffic avoidance.</div>
+        <div class="app-item">Stochastic Robustness Analysis (SRA) via Monte Carlo simulation for drone swarm safety research.</div>
+        <div class="app-item">Cybersecurity simulation including Position, Navigation, and Timing (PNT) spoofing attacks across multi-vehicle corridors.</div>
+      </div>
+      <div class="apps-group">
+        <h3>Commercial &amp; Government Applications</h3>
+        <div class="app-item">Small aUAS manufacturers: rapid design iteration and large-scale simulated flight testing at a fraction of physical prototype costs.</div>
+        <div class="app-item">FAA and NOAA: modeling low-altitude wind effects and developing weather mitigation strategies below 3,000 feet.</div>
+        <div class="app-item">Department of Defense: expediting Certificates of Waiver for UAV NAS access; training, test, and evaluation for surveillance missions.</div>
+        <div class="app-item">Emergency services: sizing aUAS fleets for search and rescue, wildfire response, and medical logistics without physical prototypes.</div>
+        <div class="app-item">Operators: validating mission profiles in custom UE4 environments (e.g., virtual bridge inspection, forestry monitoring).</div>
+      </div>
     </div>
-  </footer>
+  </div>
+</section>
+
+<!-- PHASE II -->
+<section id="phase2">
+  <div class="container">
+    <div class="section-label">Phase II Plans</div>
+    <h2>From proof-of-concept to usable prototype</h2>
+
+    <div class="phase2-grid">
+      <div class="phase2-card">
+        <div class="p2-icon">&#9881;&#65039;</div>
+        <h3>Universal Compatibility</h3>
+        <p>Full compatibility with all commonly used UAS flight control software packages, resolving Phase I's limited hardware coverage.</p>
+      </div>
+      <div class="phase2-card">
+        <div class="p2-icon">&#128202;</div>
+        <h3>KNN Test Advisor</h3>
+        <p>A k-nearest-neighbors algorithm partitions the test parameter space and automatically focuses future trials on failure boundary regions.</p>
+      </div>
+      <div class="phase2-card">
+        <div class="p2-icon">&#128187;</div>
+        <h3>User Interface</h3>
+        <p>A full UI enabling non-technical operators to construct, run, and interpret tests without touching UAS or AI development tooling.</p>
+      </div>
+      <div class="phase2-card">
+        <div class="p2-icon">&#128202;</div>
+        <h3>Visualization Suite</h3>
+        <p>Test result visualizations that surface failure patterns and help policymakers build confidence in opaque ML decision-making systems.</p>
+      </div>
+      <div class="phase2-card">
+        <div class="p2-icon">&#128101;</div>
+        <h3>Customer Testing</h3>
+        <p>Structured alpha and beta testing phases with real end users identified during Phase I customer discovery (30+ stakeholder interviews).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINDINGS -->
+<section id="findings">
+  <div class="container">
+    <div class="section-label">Key Findings</div>
+    <h2>What Phase I established</h2>
+
+    <div class="findings-list">
+      <div class="finding-row">
+        <span class="finding-num">01</span>
+        <p>Faster-than-real-time simulation allows Monte Carlo test batches at a scale that is impractical with physical flight tests. The GPS scenario yielded 80 trials per algorithm in under one hour.</p>
+      </div>
+      <div class="finding-row">
+        <span class="finding-num">02</span>
+        <p>Automated failure injection and post-test analysis surfaces failure modes that traditional V&amp;V and standalone model testing miss. The extreme-blur ML test is the clearest example: failures appeared only when the model was integrated with real flight control software.</p>
+      </div>
+      <div class="finding-row">
+        <span class="finding-num">03</span>
+        <p>The numeric scoring system captures degrees of risk, enabling nuanced safety trade-offs (e.g., low-probability high-impact vs. high-probability low-impact failures) that binary certification thresholds cannot express.</p>
+      </div>
+      <div class="finding-row">
+        <span class="finding-num">04</span>
+        <p>The platform-agnostic architecture, intercepting sensor data between simulator and flight controller, allows the TE to test any UAS on any sensor type without modifying the software under evaluation.</p>
+      </div>
+      <div class="finding-row">
+        <span class="finding-num">05</span>
+        <p>All four project outcomes were completed on time, on budget ($166,319 total), and to NASA assessment standards. The Phase II proposal was submitted alongside this final report.</p>
+      </div>
+    </div>
+
+    <table class="cost-table" style="margin-top:3rem">
+      <thead>
+        <tr>
+          <th>Cost Category</th>
+          <th>Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Direct Labor</td><td>$37,081.85</td></tr>
+        <tr><td>Subcontractors (UC)</td><td>$51,999.10</td></tr>
+        <tr><td>Other Direct Costs</td><td>$6,000.00</td></tr>
+        <tr><td>Overhead</td><td>$23,680.10</td></tr>
+        <tr><td>General &amp; Administrative</td><td>$36,694.28</td></tr>
+        <tr><td>TABA</td><td>$6,500.00</td></tr>
+        <tr><td>Profit</td><td>$4,363.67</td></tr>
+        <tr><td>Total</td><td>$166,319.00</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<footer>
+  <span>NASA SBIR Phase I &mdash; January 25, 2023</span>
+</footer>
 
 </body>
 </html>

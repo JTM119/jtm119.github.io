@@ -1,105 +1,1072 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GRIDview — Joshua Martin</title>
-  <link rel="stylesheet" href="/static/css/reset.css" />
-  <link rel="stylesheet" href="/static/css/typography.css" />
-  <link rel="stylesheet" href="/static/css/main.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GRIDView</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & base ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:         #0C1117;
+  --bg2:        #111722;
+  --bg3:        #161D2B;
+  --border:     #1E2A3E;
+  --blue:       #2D7DD2;
+  --blue-dim:   #1A4A7D;
+  --green:      #00E5A0;
+  --green-dim:  #003D2B;
+  --amber:      #F59E0B;
+  --slate:      #8B9EC7;
+  --text:       #E8EDF5;
+  --text-dim:   #6B7C99;
+  --text-mid:   #A8B8D0;
+  --mono:       'JetBrains Mono', monospace;
+  --display:    'Space Grotesk', sans-serif;
+  --body:       'Inter', sans-serif;
+  --sidebar-w:  220px;
+  --content-max: 860px;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--body);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* ── Layout shell ────────────────────────────────────────── */
+.shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── Sidebar nav ─────────────────────────────────────────── */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 28px 0 24px;
+  z-index: 100;
+}
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 20px 24px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 18px;
+}
+.sidebar-logo-mark {
+  width: 32px; height: 32px;
+  background: var(--blue);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 14px;
+  color: #fff;
+  flex-shrink: 0;
+}
+.sidebar-logo-text {
+  font-family: var(--display);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+.sidebar-logo-sub {
+  font-size: 10px;
+  color: var(--text-dim);
+  font-weight: 400;
+  display: block;
+  margin-top: 1px;
+}
+.nav-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 0 20px 6px;
+  display: block;
+}
+.nav-item {
+  display: block;
+  padding: 7px 20px;
+  font-size: 12.5px;
+  color: var(--text-mid);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  font-family: var(--body);
+  font-weight: 500;
+}
+.nav-item:hover, .nav-item.active {
+  color: var(--text);
+  border-left-color: var(--blue);
+  background: rgba(45,125,210,0.07);
+}
+.sidebar-footer {
+  margin-top: auto;
+  padding: 16px 20px 0;
+  border-top: 1px solid var(--border);
+  font-size: 10.5px;
+  color: var(--text-dim);
+  font-family: var(--mono);
+  line-height: 1.6;
+}
+
+/* ── Main content ────────────────────────────────────────── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  max-width: calc(var(--content-max) + 80px);
+  padding: 0 40px 80px;
+}
+
+/* ── Hero ────────────────────────────────────────────────── */
+.hero {
+  padding: 64px 0 56px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hero-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 24px; height: 1px;
+  background: var(--green);
+}
+.hero-title {
+  font-family: var(--display);
+  font-size: clamp(36px, 5vw, 54px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  max-width: 640px;
+  margin-bottom: 20px;
+}
+.hero-title .accent { color: var(--blue); }
+.hero-subtitle {
+  font-size: 16px;
+  color: var(--text-mid);
+  max-width: 560px;
+  margin-bottom: 36px;
+  line-height: 1.6;
+}
+.hero-meta {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+.hero-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.hero-meta-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-dim);
+}
+.hero-meta-value {
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ── Signature element: animated uncertainty fan ─────────── */
+.fan-container {
+  position: absolute;
+  right: -20px;
+  top: 30px;
+  width: 360px;
+  height: 200px;
+  opacity: 0.35;
+  pointer-events: none;
+}
+@keyframes fan-pulse {
+  0%,100% { transform: scaleY(1); }
+  50%      { transform: scaleY(1.06); }
+}
+@keyframes line-draw {
+  from { stroke-dashoffset: 600; }
+  to   { stroke-dashoffset: 0; }
+}
+.fan-band {
+  animation: fan-pulse 4s ease-in-out infinite;
+  transform-origin: left center;
+}
+.fan-line {
+  stroke-dasharray: 600;
+  stroke-dashoffset: 0;
+  animation: line-draw 2.4s ease-out forwards;
+}
+
+/* ── Stat bar ────────────────────────────────────────────── */
+.stat-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 40px 0;
+  background: var(--bg2);
+}
+.stat-cell {
+  padding: 22px 24px;
+  border-right: 1px solid var(--border);
+}
+.stat-cell:last-child { border-right: none; }
+.stat-num {
+  font-family: var(--display);
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-num.blue { color: var(--blue); }
+.stat-num.amber { color: var(--amber); }
+.stat-label {
+  font-size: 11.5px;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+
+/* ── Section ─────────────────────────────────────────────── */
+.section {
+  padding: 52px 0 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0;
+}
+.section:last-of-type { border-bottom: none; }
+.section-eyebrow {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 16px; height: 1px;
+  background: var(--blue);
+}
+.section-title {
+  font-family: var(--display);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+.section-body {
+  color: var(--text-mid);
+  font-size: 14.5px;
+  line-height: 1.75;
+  max-width: 720px;
+}
+.section-body p { margin-bottom: 14px; }
+.section-body p:last-child { margin-bottom: 0; }
+.section-body strong { color: var(--text); font-weight: 600; }
+
+/* ── Sub-sections ────────────────────────────────────────── */
+.subsection {
+  margin-top: 32px;
+}
+.subsection-title {
+  font-family: var(--display);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.subsection-title::before {
+  content: '';
+  width: 3px; height: 14px;
+  background: var(--blue);
+  border-radius: 2px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.subsection-title.green::before { background: var(--green); }
+.subsection-title.amber::before { background: var(--amber); }
+
+/* ── Model cards ─────────────────────────────────────────── */
+.model-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 28px 0;
+}
+.model-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.model-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.model-card.gp::before   { background: var(--amber); }
+.model-card.bnn::before  { background: var(--blue); }
+.model-card.tcn::before  { background: var(--green); }
+.model-card-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.model-card.gp  .model-card-tag { color: var(--amber); }
+.model-card.bnn .model-card-tag { color: var(--blue); }
+.model-card.tcn .model-card-tag { color: var(--green); }
+.model-card-name {
+  font-family: var(--display);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+.model-card-desc {
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+.model-card-verdict {
+  margin-top: 12px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-family: var(--mono);
+  line-height: 1.5;
+}
+.model-card.gp  .model-card-verdict { background: rgba(245,158,11,0.08); color: var(--amber); }
+.model-card.bnn .model-card-verdict { background: rgba(45,125,210,0.08); color: var(--blue); }
+.model-card.tcn .model-card-verdict { background: rgba(0,229,160,0.08); color: var(--green); }
+
+/* ── Data tables ─────────────────────────────────────────── */
+.table-wrap {
+  margin: 24px 0;
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--mono);
+  font-size: 12px;
+}
+thead tr {
+  background: var(--bg3);
+}
+thead th {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  font-weight: 500;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+tbody tr {
+  border-bottom: 1px solid rgba(30,42,62,0.6);
+  transition: background 0.1s;
+}
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: rgba(45,125,210,0.04); }
+tbody td {
+  padding: 11px 16px;
+  color: var(--text-mid);
+  vertical-align: middle;
+}
+.td-label {
+  color: var(--text);
+  font-weight: 500;
+}
+.td-pos { color: var(--green); }
+.td-neg { color: var(--amber); }
+.td-highlight { color: var(--blue); font-weight: 500; }
+.td-best {
+  color: var(--green);
+  font-weight: 600;
+}
+.td-row-special { background: rgba(0,229,160,0.04); }
+.td-row-warn { background: rgba(245,158,11,0.04); }
+
+/* ── Figures ─────────────────────────────────────────────── */
+.figure {
+  margin: 32px 0;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.figure img {
+  width: 100%;
+  display: block;
+  background: #000;
+}
+.figure-caption {
+  background: var(--bg2);
+  padding: 12px 16px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--text-dim);
+  border-top: 1px solid var(--border);
+  line-height: 1.5;
+}
+.figure-caption strong { color: var(--text-mid); font-weight: 500; }
+
+/* ── Bullet lists ─────────────────────────────────────────── */
+.bullets {
+  list-style: none;
+  margin: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.bullets li {
+  display: flex;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--text-mid);
+  line-height: 1.6;
+}
+.bullets li::before {
+  content: '—';
+  color: var(--blue);
+  flex-shrink: 0;
+  font-family: var(--mono);
+  margin-top: 1px;
+}
+.bullets li strong { color: var(--text); font-weight: 600; }
+
+/* ── Callout box ─────────────────────────────────────────── */
+.callout {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green);
+  border-radius: 0 8px 8px 0;
+  padding: 16px 20px;
+  margin: 20px 0;
+  font-size: 13.5px;
+  color: var(--text-mid);
+  line-height: 1.6;
+}
+.callout strong { color: var(--text); }
+.callout.amber { border-left-color: var(--amber); }
+.callout.blue  { border-left-color: var(--blue); }
+
+/* ── Phase II roadmap ────────────────────────────────────── */
+.roadmap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 24px 0;
+  position: relative;
+}
+.roadmap::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 20px;
+  bottom: 20px;
+  width: 1px;
+  background: var(--border);
+}
+.roadmap-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.roadmap-dot {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--blue);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+.roadmap-content { padding-top: 4px; }
+.roadmap-title {
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.roadmap-desc {
+  font-size: 12.5px;
+  color: var(--text-dim);
+  line-height: 1.55;
+}
+
+/* ── Section padding bottom ──────────────────────────────── */
+.section-inner {
+  padding-bottom: 48px;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 0 20px 60px; }
+  .model-grid { grid-template-columns: 1fr; }
+  .stat-bar { grid-template-columns: repeat(2, 1fr); }
+  .fan-container { display: none; }
+}
+@media (max-width: 500px) {
+  .stat-bar { grid-template-columns: 1fr 1fr; }
+  .hero-meta { flex-direction: column; gap: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fan-band, .fan-line { animation: none; }
+}
+</style>
+<style>
+/* ── Site primary nav ── */
+.pnav{height:56px;border-bottom:1px solid #cdd8ea;background:rgba(238,243,251,0.92);backdrop-filter:blur(10px);position:sticky;top:0;z-index:9999;display:flex;align-items:center}
+.pnav-inner{width:100%;max-width:1200px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.pnav-logo{font-family:'Lora',Georgia,serif;font-size:1.125rem;font-weight:600;color:#0f172a;text-decoration:none;letter-spacing:-0.01em}
+.pnav-list{display:flex;gap:1.5rem;list-style:none}
+.pnav-list a{font-size:0.875rem;font-weight:500;color:#5c6b82;text-decoration:none;transition:color 150ms}
+.pnav-list a:hover,.pnav-list a[aria-current]{color:#2563eb;text-decoration:none}
+@media(max-width:600px){.pnav-logo{font-size:1rem}.pnav-list{gap:1rem}}
+/* ── Silva-style override ── */
+:root{
+  --bg:#F7F5F0;--bg2:#ffffff;--bg3:#EAF2EB;--border:#A8CFB0;
+  --blue:#2E6B3E;--blue-dim:#EAF2EB;--green:#2E6B3E;--green-dim:#EAF2EB;
+  --amber:#C8860A;--slate:#6B7A67;
+  --text:#1C2319;--text-dim:#6B7A67;--text-mid:#3D4A3A;
+}
+body{background:var(--bg);color:var(--text);font-family:Georgia,"Times New Roman",serif}
+/* Convert sidebar to horizontal top bar */
+.sidebar{position:sticky!important;top:56px!important;width:100%!important;height:auto!important;flex-direction:row!important;overflow-x:auto!important;scrollbar-width:none!important;align-items:center!important;padding:0 max(1rem,calc(50% - 430px))!important;border-right:none!important;border-bottom:1px solid rgba(255,255,255,0.08)!important;background:#1A3D28!important;z-index:100!important}
+.sidebar::-webkit-scrollbar{display:none}
+.sidebar-logo{display:none!important}
+.sidebar-footer{display:none!important}
+.nav-label{display:none!important}
+.nav-item{color:#8FBA9A!important;border-left:none!important;border-bottom:2px solid transparent!important;white-space:nowrap!important;padding:0.65rem 1rem!important}
+.nav-item:hover,.nav-item.active{color:#FFFFFF!important;border-bottom-color:#4A9058!important;border-left:none!important;background:rgba(74,144,88,0.08)!important}
+.main{margin-left:0!important;max-width:860px!important;margin-inline:auto!important;padding-inline:2rem!important}
+tbody tr{border-bottom-color:var(--border)}
+</style>
 </head>
 <body>
 
-  <nav class="site-nav" aria-label="Main navigation">
-    <div class="container">
-      <a href="/" class="nav-logo">Joshua Martin</a>
-      <ul class="nav-links" role="list">
-        <li><a href="/">Home</a></li>
-        <li><a href="/about/">About</a></li>
-        <li><a href="/projects/">Projects</a></li>
-      </ul>
+<nav class="pnav" aria-label="Site navigation">
+  <div class="pnav-inner">
+    <a href="/" class="pnav-logo">Joshua Martin</a>
+    <ul class="pnav-list" role="list">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about/">About</a></li>
+      <li><a href="/projects/" aria-current="page">Projects</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Sidebar -->
+<nav class="sidebar" aria-label="Page sections">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-mark">GV</div>
+    <div>
+      <div class="sidebar-logo-text">GRIDView</div>
+      <span class="sidebar-logo-sub">DOE SBIR Phase I</span>
     </div>
-  </nav>
+  </div>
+  <span class="nav-label">Contents</span>
+  <a href="#overview"       class="nav-item active">Overview</a>
+  <a href="#problem"        class="nav-item">Problem Statement</a>
+  <a href="#modeling"       class="nav-item">Technical Modeling</a>
+  <a href="#results"        class="nav-item">Model Results</a>
+  <a href="#decomposition"  class="nav-item">Uncertainty Decomposition</a>
+  <a href="#application"    class="nav-item">Software Application</a>
+  <a href="#operational"    class="nav-item">Operational Value</a>
+  <div class="sidebar-footer">
+    DOE SBIR Phase I<br>Feb 7, 2026
+  </div>
+</nav>
 
-  <main>
-    <div class="container">
+<!-- Main -->
+<main class="main">
 
-      <a href="/projects/" class="back-link">← All projects</a>
+  <!-- Hero -->
+  <section class="hero" id="overview">
+    <div class="hero-eyebrow">DOE SBIR Phase I</div>
+    <h1 class="hero-title">GRID<span class="accent">View</span><br>Uncertainty-Aware<br>Grid Intelligence</h1>
+    <p class="hero-subtitle">An AI-driven visualization platform for dynamic uncertainty quantification and risk-informed grid decision-making. Built for the probabilistic future of energy operations.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Period</span>
+        <span class="hero-meta-value">Jul 2025 &ndash; Feb 2026</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Status</span>
+        <span class="hero-meta-value" style="color:var(--green)">Phase I Complete</span>
+      </div>
+    </div>
 
-      <header class="page-header">
-        <h1>GRIDview</h1>
-        <p>DOE Phase I (2025–2026) · Technical Lead</p>
-      </header>
+    <!-- Animated fan chart (signature element) -->
+    <svg class="fan-container" viewBox="0 0 360 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <!-- 99% band -->
+      <path class="fan-band" d="M0,100 C60,60 120,130 180,80 C240,30 300,110 360,60 L360,160 C300,190 240,120 180,150 C120,180 60,120 0,140 Z" fill="#2D7DD2" opacity="0.15"/>
+      <!-- 90% band -->
+      <path class="fan-band" d="M0,100 C60,70 120,120 180,85 C240,50 300,105 360,70 L360,145 C300,175 240,125 180,140 C120,155 60,115 0,130 Z" fill="#2D7DD2" opacity="0.2"/>
+      <!-- 66% band -->
+      <path class="fan-band" d="M0,100 C60,78 120,112 180,90 C240,68 300,102 360,78 L360,130 C300,162 240,128 180,135 C120,142 60,112 0,120 Z" fill="#00E5A0" opacity="0.15"/>
+      <!-- Center forecast line -->
+      <path class="fan-line" d="M0,100 C60,84 120,108 180,95 C240,82 300,100 360,88" stroke="#00E5A0" stroke-width="2" stroke-linecap="round"/>
+      <!-- Vertical "now" line -->
+      <line x1="230" y1="20" x2="230" y2="190" stroke="#F59E0B" stroke-width="1" stroke-dasharray="4 3" opacity="0.6"/>
+      <text x="234" y="30" font-family="JetBrains Mono, monospace" font-size="9" fill="#F59E0B" opacity="0.7">now</text>
+    </svg>
+  </section>
 
-      <div class="project-detail-img">
-        <img src="/static/img/gridview.jpg" alt="GRIDview simulation panel showing fan charts for wind, solar, and load with uncertainty bands" />
+  <!-- Key stats -->
+  <div class="stat-bar">
+    <div class="stat-cell">
+      <div class="stat-num">27%</div>
+      <div class="stat-label">CRPS improvement over deterministic baseline (TCN)</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num blue">0.72</div>
+      <div class="stat-label">Variance correlation in uncertainty decomposition validation</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">&lt;60s</div>
+      <div class="stat-label">End-to-end system latency, data ingestion through visualization</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num amber">68.3</div>
+      <div class="stat-label">System Usability Scale score (target 80 for Phase II)</div>
+    </div>
+  </div>
+
+  <!-- Problem -->
+  <section class="section" id="problem">
+    <div class="section-inner">
+      <div class="section-eyebrow">Background</div>
+      <h2 class="section-title">The Deterministic Grid Problem</h2>
+      <div class="section-body">
+        <p>The modern electric grid faces mounting variability driven by rapid renewable penetration, shifting demand patterns, and intensifying extreme weather events. Yet the dominant operational tools, including SCADA and EMS platforms, rely on deterministic models that assume static conditions. They provide point forecasts with no explicit uncertainty quantification.</p>
+        <p>Grid operators are forced into a binary choice: apply excessive conservative margins that waste resources, or leave the grid exposed during extreme conditions. Multi-sector interdependencies involving climate variability, economic factors, and distributed energy resources compound the challenge. As solar, wind, and battery storage proliferate, deterministic forecasts become structurally unreliable.</p>
+      </div>
+      <div class="callout blue">
+        <strong>The core gap:</strong> The energy sector requires advanced, risk-aware decision support tools to dynamically model uncertainty in real time and enable informed, adaptive responses to grid instability. GRIDView was built to close that gap.
+      </div>
+    </div>
+  </section>
+
+  <!-- Modeling -->
+  <section class="section" id="modeling">
+    <div class="section-inner">
+      <div class="section-eyebrow">Technical Approach</div>
+      <h2 class="section-title">Three Probabilistic Modeling Approaches</h2>
+      <div class="section-body">
+        <p>Phase I benchmarked three methods on identical datasets, assessing probabilistic accuracy, calibration, and operational suitability side-by-side.</p>
       </div>
 
-      <section class="project-section" aria-labelledby="overview-heading">
-        <h2 id="overview-heading">Overview</h2>
-        <p>
-          GRIDview is an uncertainty-aware decision support prototype for electric grid operations,
-          developed under DOE Phase I SBIR. The platform enables grid operators to make
-          simulation-based decisions informed by calibrated probabilistic forecasts for load,
-          solar, and wind — surfacing not just expected values but full predictive distributions
-          with quantified uncertainty across short planning horizons.
-        </p>
-        <p>
-          The core research question was whether calibrated probabilistic forecasts could be
-          integrated into an operable decision-support interface without sacrificing latency or
-          usability. The result is a system that generates correlated multi-variable scenario
-          draws, renders them as interactive fan charts, and delivers them end-to-end in under
-          one minute.
-        </p>
-      </section>
+      <div class="model-grid">
+        <div class="model-card gp">
+          <div class="model-card-tag">Method 01</div>
+          <div class="model-card-name">Gaussian Process</div>
+          <div class="model-card-desc">Fully probabilistic, nonparametric framework with uncertainty arising naturally from the posterior distribution. Additive kernel composition captures smooth long-horizon structure, periodic behavior, and short-scale variability.</div>
+          <div class="model-card-verdict">Overconservative. Convergence unreliable on complex load dynamics. Serves as probabilistic baseline only.</div>
+        </div>
+        <div class="model-card bnn">
+          <div class="model-card-tag">Method 02</div>
+          <div class="model-card-name">Bayesian Neural Network</div>
+          <div class="model-card-desc">Treats model parameters as random variables. Posterior integration over weights captures uncertainty about the learned mapping. Strong for sparse data and structural regime changes.</div>
+          <div class="model-card-verdict">24% CRPS improvement. Strong calibration. Higher training complexity and inference latency than TCN.</div>
+        </div>
+        <div class="model-card tcn">
+          <div class="model-card-tag">Method 03 &mdash; Selected</div>
+          <div class="model-card-name">TCN + Student-t Likelihood Head</div>
+          <div class="model-card-desc">Dilated causal convolutions with exponentially growing receptive field. Separate horizon-specific projection heads. Student-t output distribution handles heavy tails and outliers robustly.</div>
+          <div class="model-card-verdict">27% CRPS improvement. Best calibration. Most computationally efficient. Selected for production.</div>
+        </div>
+      </div>
 
-      <section class="project-section" aria-labelledby="approach-heading">
-        <h2 id="approach-heading">Technical Approach</h2>
-        <ul>
-          <li>Benchmarked Gaussian Processes, Bayesian Neural Networks, and Temporal Convolutional Networks (TCN) with Student-t likelihood heads for probabilistic load, solar, and wind forecasting</li>
-          <li>Selected TCN with Student-t head as primary model based on calibration-accuracy tradeoff across held-out evaluation sets</li>
-          <li>Gaussian copula scenario generation used to draw correlated samples across load, solar, and wind simultaneously — preserving cross-variable dependencies that independent marginal draws would miss</li>
-          <li>Evaluated interval coverage at 90%, 95%, and 99% nominal levels using CRPS as the primary scoring rule</li>
-          <li>FastAPI backend serving model inference; PyTorch for training and serving; React and D3.js for interactive fan chart and confidence band visualization</li>
-          <li>Containerized with Docker, deployed via Azure DevOps CI/CD pipeline</li>
-        </ul>
-      </section>
-
-      <section class="project-section" aria-labelledby="results-heading">
-        <h2 id="results-heading">Results</h2>
-        <ul>
-          <li>27.1% CRPS improvement over deterministic baseline</li>
-          <li>Calibrated coverage at 90%, 95%, and 99% prediction intervals</li>
-          <li>End-to-end latency under one minute from data ingestion to rendered visualization</li>
-        </ul>
-      </section>
-
-      <section class="project-section" aria-labelledby="stack-heading">
-        <h2 id="stack-heading">Stack</h2>
-        <ul class="project-tags" role="list">
-          <li class="tag">PyTorch</li>
-          <li class="tag">FastAPI</li>
-          <li class="tag">React</li>
-          <li class="tag">D3.js</li>
-          <li class="tag">Gaussian Processes</li>
-          <li class="tag">Probabilistic Forecasting</li>
-          <li class="tag">Docker</li>
-          <li class="tag">Azure DevOps</li>
-        </ul>
-      </section>
-
+      <div class="subsection">
+        <div class="subsection-title green">Joint Confidence Intervals via Gaussian Copula</div>
+        <div class="section-body">
+          <p>Load, solar, and wind models are trained independently but the underlying quantities are physically correlated. A Gaussian copula estimated from historical data captures cross-variable dependencies. Monte Carlo simulation draws correlated samples and transforms them through each model's inverse CDF. Net demand distributions derived from these joint scenarios translate directly into operational reserve requirements.</p>
+        </div>
+      </div>
     </div>
-  </main>
+  </section>
 
-  <footer class="site-footer">
-    <div class="container">
-      <ul class="footer-links" role="list">
-        <li><a href="mailto:joshtmartin99@gmail.com">Email</a></li>
-        <li><a href="https://github.com/JTM119" target="_blank" rel="noopener">GitHub</a></li>
-        <li><a href="https://www.linkedin.com/in/joshua-martin-333456192/" target="_blank" rel="noopener">LinkedIn</a></li>
+  <!-- Results -->
+  <section class="section" id="results">
+    <div class="section-inner">
+      <div class="section-eyebrow">Model Evaluation</div>
+      <h2 class="section-title">Uncertainty Modeling Results</h2>
+      <div class="section-body">
+        <p>All models were evaluated on MAE (point accuracy), CRPS (probabilistic accuracy), CRPS improvement over each model's own deterministic baseline, and Prediction Coverage of Interval Probability at three confidence levels.</p>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Gaussian Process</th>
+              <th>Bayesian Neural Network</th>
+              <th>TCN + Likelihood Head</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="td-label">MAE</td>
+              <td>218.618</td>
+              <td>186.523</td>
+              <td class="td-highlight">190.901</td>
+            </tr>
+            <tr>
+              <td class="td-label">CRPS</td>
+              <td>494.886</td>
+              <td>141.025</td>
+              <td class="td-best">139.079</td>
+            </tr>
+            <tr>
+              <td class="td-label">CRPS vs. Det. Baseline</td>
+              <td class="td-neg">&minus;126.4%</td>
+              <td class="td-pos">+24.4%</td>
+              <td class="td-best">+27.1%</td>
+            </tr>
+            <tr>
+              <td class="td-label">PCIP 90%</td>
+              <td>99.97%</td>
+              <td>96.95%</td>
+              <td class="td-highlight">96.81%</td>
+            </tr>
+            <tr>
+              <td class="td-label">PCIP 95%</td>
+              <td>100.00%</td>
+              <td>99.04%</td>
+              <td class="td-highlight">98.98%</td>
+            </tr>
+            <tr>
+              <td class="td-label">PCIP 99%</td>
+              <td>100.00%</td>
+              <td>99.97%</td>
+              <td class="td-highlight">99.94%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout">
+        <strong>Reading the GP results:</strong> Near-perfect PCIP reflects excessively wide prediction intervals, not good calibration. The negative CRPS improvement means its probabilistic output is <em>worse</em> than a simple point estimate. The TCN achieves the tightest, best-calibrated intervals.
+      </div>
+    </div>
+  </section>
+
+  <!-- Decomposition -->
+  <section class="section" id="decomposition">
+    <div class="section-inner">
+      <div class="section-eyebrow">Uncertainty Analysis</div>
+      <h2 class="section-title">Decomposing Aleatory vs. Epistemic Uncertainty</h2>
+      <div class="section-body">
+        <p>Beyond aggregate uncertainty, Phase I explicitly decomposed predictive variance into components with different operational implications:</p>
+      </div>
+      <ul class="bullets">
+        <li><strong>Aleatory uncertainty</strong> reflects inherent process randomness, such as stochastic weather driving wind generation. It cannot be reduced regardless of more data or better models. Operators must <em>manage</em> it.</li>
+        <li><strong>Epistemic uncertainty</strong> reflects limited knowledge or model limitations. It can in principle be reduced through additional data, improved architecture, or better training. It signals where modeling investment pays off.</li>
+      </ul>
+      <div class="section-body">
+        <p>Epistemic uncertainty is estimated as the variance across independently trained ensemble members at each time step. Aleatory uncertainty is the non-negative residual: total squared error minus ensemble variance.</p>
+        <p>To validate this decomposition, a synthetic wind power dataset was generated with a known, time-varying aleatory variance component using a two-stage framework: a Gaussian Process captures the latent smooth signal, and a heteroskedastic Gamma GLM models the residual variance.</p>
+      </div>
+
+      <div class="table-wrap" style="max-width:480px">
+        <table>
+          <thead>
+            <tr><th>Validation Metric</th><th>Value</th><th>Interpretation</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="td-label">Global Variance Ratio</td><td>1.265</td><td class="td-highlight">26% overestimation</td></tr>
+            <tr><td class="td-label">Variance Correlation</td><td>0.7235</td><td class="td-pos">Meaningful tracking</td></tr>
+            <tr><td class="td-label">Regression Slope</td><td>0.8257</td><td class="td-highlight">Mild compression</td></tr>
+            <tr><td class="td-label">Bin 1 Variance Ratio</td><td>1.744</td><td class="td-neg">Inflation in low-var regime</td></tr>
+            <tr><td class="td-label">Bin 10 Variance Ratio</td><td>1.112</td><td class="td-pos">Near-correct at high var</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout amber">
+        <strong>Monotonic calibration pattern:</strong> Overestimation is largest in low-variance regimes and diminishes toward higher-variance bins. This is consistent with theory: a roughly constant modeling-error component has proportionally larger impact when true aleatory variance is small.
+      </div>
+    </div>
+  </section>
+
+  <!-- Application -->
+  <section class="section" id="application">
+    <div class="section-inner">
+      <div class="section-eyebrow">Software Platform</div>
+      <h2 class="section-title">The GRIDView Application</h2>
+      <div class="section-body">
+        <p>GRIDView is deployed as a production-grade, full-stack web application on a modern containerized stack.</p>
+      </div>
+      <ul class="bullets">
+        <li><strong>Backend:</strong> Python, FastAPI, PyTorch. Probabilistic forecasts as Student-t distribution parameters, copula-based joint scenario sampling, and REST APIs for confidence bands.</li>
+        <li><strong>Frontend:</strong> React with Vite, D3.js for interactive fan charts and stacked uncertainty decomposition charts.</li>
+        <li><strong>Infrastructure:</strong> Docker / Docker Compose, nginx reverse proxy, Azure DevOps CI/CD pipeline.</li>
+        <li><strong>Data sources:</strong> GridStatus.io API for grid and market telemetry; Open-Meteo for weather context.</li>
+      </ul>
+
+      <div class="subsection">
+        <div class="subsection-title">Step-guided simulation initialization</div>
+        <div class="section-body">
+          <p>Locked panel indicators guide users through sequential workflow steps: date range selection, parameter configuration, constraint definition, then the live simulation. No step can be skipped, preventing misconfigured runs.</p>
+        </div>
+      </div>
+
+      <div class="figure">
+        <img src="images/image_001.jpg" alt="GRIDView landing page showing step-guided simulation initialization dashboard with locked panels" loading="lazy">
+        <div class="figure-caption"><strong>Figure 1:</strong> GRIDView landing page. Locked panel indicators enforce sequential simulation setup. Step 1 requires date range selection before any further configuration is accessible.</div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title green">Main simulation panel with probabilistic forecasts</div>
+        <div class="section-body">
+          <p>The main panel presents four simultaneous containers: predicted wind generation, predicted solar generation, predicted grid load, and the interval production control panel. All forecast charts include full uncertainty bands. The control table shows exactly how much energy to schedule at configurable confidence levels (default: 99%, 90%, 66%) for each upcoming decision interval.</p>
+        </div>
+      </div>
+
+      <div class="figure">
+        <img src="images/image_002.jpg" alt="GRIDView main simulation panel showing wind, solar, and load probabilistic forecasts with uncertainty bands and decision control table" loading="lazy">
+        <div class="figure-caption"><strong>Figure 2:</strong> Main simulation panel. Wind (top left) and solar (top right) generation forecasts with fan-chart uncertainty bands. Grid load forecast (bottom left). Decision control panel (bottom right) with confidence-level production targets for each interval.</div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title amber">Aleatory / epistemic uncertainty decomposition view</div>
+        <div class="section-body">
+          <p>Each forecast chart includes an expandable dropdown revealing stacked aleatory and epistemic uncertainty components. Operators can see not just how wide the uncertainty band is, but what kind of uncertainty drives it. Epistemic uncertainty suggests modeling improvements could help; aleatory uncertainty must be managed operationally.</p>
+        </div>
+      </div>
+
+      <div class="figure">
+        <img src="images/image_003.jpg" alt="GRIDView with expanded uncertainty decomposition stacked charts showing aleatory and epistemic components for all three forecast variables" loading="lazy">
+        <div class="figure-caption"><strong>Figure 3:</strong> Expanded uncertainty decomposition. Each forecast chart shows stacked aleatory (inherent) and epistemic (reducible) components simultaneously. The constraint violation alert system is also visible in the left panel.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Operational -->
+  <section class="section" id="operational">
+    <div class="section-inner">
+      <div class="section-eyebrow">Decision Simulation</div>
+      <h2 class="section-title">Operational Decision Value</h2>
+      <div class="section-body">
+        <p>A simulation study over January 2024 quantified the financial impact of five production scheduling strategies under penalty scenarios ranging from 2&times; to 5&times; the marginal production cost per MWh underproduced.</p>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Strategy</th>
+              <th>Load Coverage</th>
+              <th>Underproduction (MWh)</th>
+              <th>Total Cost ($M)</th>
+              <th>% Above Perfect Knowledge</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="td-row-special">
+              <td class="td-label">Perfect Knowledge</td>
+              <td class="td-best">100%</td>
+              <td class="td-best">0</td>
+              <td class="td-best">$223.1M</td>
+              <td class="td-best">0%</td>
+            </tr>
+            <tr>
+              <td class="td-label">99% Confidence</td>
+              <td class="td-pos">99.2%</td>
+              <td>132,713</td>
+              <td>$317.1M &ndash; $335.6M</td>
+              <td>46.2% (&plusmn;4.1%)</td>
+            </tr>
+            <tr>
+              <td class="td-label">95% Confidence</td>
+              <td class="td-pos">98.5%</td>
+              <td>243,405</td>
+              <td class="td-highlight">$291.8M &ndash; $325.7M</td>
+              <td class="td-highlight">38.4% (&plusmn;7.7%)</td>
+            </tr>
+            <tr>
+              <td class="td-label">75% Confidence</td>
+              <td>97.1%</td>
+              <td>483,713</td>
+              <td>$278.3M &ndash; $345.7M</td>
+              <td>39.8% (&plusmn;15.1%)</td>
+            </tr>
+            <tr class="td-row-warn">
+              <td class="td-label">Deterministic</td>
+              <td class="td-neg">95.7%</td>
+              <td class="td-neg">716,875</td>
+              <td class="td-neg">$277.9M &ndash; $377.7M</td>
+              <td class="td-neg">47.0% (&plusmn;22.4%)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout green">
+        <strong>Key finding:</strong> The deterministic approach has the lowest raw production cost, but accumulates 716,875 MWh of unmet demand and the widest cost exposure range under penalty. The 95% confidence strategy achieves the best cost range with 98.5% load coverage. Higher confidence levels add predictability; probabilistic scheduling reduces cost variance by up to 18 percentage points compared to deterministic.
+      </div>
+      <div class="section-body">
+        <p>Note: underproduction penalties in this table reflect plant-level financial exposure only, modeled as multiples of marginal production cost. Real-world costs would be substantially higher when including replacement energy procurement, scarcity pricing, contractual penalties, reliability impacts, and system-level consequences.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Commercial -->
+  <section class="section" id="commercial">
+    <div class="section-inner">
+      <div class="section-eyebrow">Market Strategy</div>
+      <h2 class="section-title">Commercialization &amp; Go-to-Market</h2>
+      <div class="section-body">
+        <p>Despite systematic outreach to Entergy, Salt River Project, Arizona Public Service, Georgia Power, DTE Energy, and others, no commercial stakeholder interviews were completed in Phase I. This reflects well-known utility engagement challenges: long response timelines and strict internal approval processes for external research collaboration.</p>
+        <p>Phase II will restructure the engagement strategy with dedicated front-loading of stakeholder interviews in the first four to six weeks before any additional development begins.</p>
+      </div>
+      <ul class="bullets">
+        <li><strong>Primary targets:</strong> ISOs and RTOs with clear mandates for forecasting and reliability analysis, accustomed to research collaboration.</li>
+        <li><strong>Secondary targets:</strong> Large generation operators with significant renewable exposure and direct financial exposure to forecast uncertainty.</li>
+        <li><strong>Positioning:</strong> Decision support platform, not an autonomous control system. Human-in-the-loop throughout.</li>
+        <li><strong>Pricing model:</strong> Enterprise pilot with defined scope and quantifiable success criteria. Pilot case studies to support broader adoption.</li>
+        <li><strong>Data governance:</strong> On-prem, customer-managed cloud, and hybrid deployment options with configurable data boundaries.</li>
       </ul>
     </div>
-  </footer>
+  </section>
 
+  <!-- Conclusions -->
+  <section class="section" id="conclusions">
+    <div class="section-inner">
+      <div class="section-eyebrow">Phase II Roadmap</div>
+      <h2 class="section-title">Conclusions &amp; Future Work</h2>
+      <div class="section-body">
+        <p>Phase I established technical feasibility across all core objectives: calibrated probabilistic forecasting at operational scale, validated uncertainty decomposition, and measured decision-level benefits over deterministic baselines. Phase II will evolve GRIDView from historical simulation toward real-time operational decision support.</p>
+      </div>
+
+      <div class="roadmap">
+        <div class="roadmap-item">
+          <div class="roadmap-dot">01</div>
+          <div class="roadmap-content">
+            <div class="roadmap-title">Real-time data ingestion</div>
+            <div class="roadmap-desc">Transition from replay-based simulation to live operational pipelines. Both streaming and batch update modes, aligned to customer data availability.</div>
+          </div>
+        </div>
+        <div class="roadmap-item">
+          <div class="roadmap-dot">02</div>
+          <div class="roadmap-content">
+            <div class="roadmap-title">Persistent user profiles &amp; savable layouts</div>
+            <div class="roadmap-desc">Role-aware views for planning, operations, and analysis. Repeatable workflows with branch-and-compare scenario capability.</div>
+          </div>
+        </div>
+        <div class="roadmap-item">
+          <div class="roadmap-dot">03</div>
+          <div class="roadmap-content">
+            <div class="roadmap-title">External model ingestion with conformal calibration</div>
+            <div class="roadmap-desc">Standardized interface for third-party or in-house forecasting models. Consistent interval guarantees across heterogeneous modeling approaches.</div>
+          </div>
+        </div>
+        <div class="roadmap-item">
+          <div class="roadmap-dot">04</div>
+          <div class="roadmap-content">
+            <div class="roadmap-title">Optimization under uncertainty</div>
+            <div class="roadmap-desc">Recommended reserve levels and budget allocations satisfying user-defined reliability and cost constraints. All outputs include explicit assumptions and sensitivity information.</div>
+          </div>
+        </div>
+        <div class="roadmap-item">
+          <div class="roadmap-dot">05</div>
+          <div class="roadmap-content">
+            <div class="roadmap-title">Probabilistic alerting &amp; monitoring</div>
+            <div class="roadmap-desc">Threshold conditions based on probabilistic exceedance rather than point forecasts. Early agentic elements (automated diagnostics, drift detection) remain fully advisory.</div>
+          </div>
+        </div>
+        <div class="roadmap-item">
+          <div class="roadmap-dot">06</div>
+          <div class="roadmap-content">
+            <div class="roadmap-title">Enterprise deployment &amp; integration</div>
+            <div class="roadmap-desc">On-prem, customer-managed cloud, and hybrid options. Expanded APIs for planning tools, data warehouses, and reporting systems.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout blue" style="margin-top:28px">
+        <strong>Conclusion:</strong> GRIDView addresses a critical and growing gap in grid decision-making: the ability to reason explicitly about uncertainty, risk, and confidence in an increasingly variable energy system. By aligning rigorous probabilistic modeling with transparent visualization and conservative, human-centered deployment strategy, the platform is well-positioned to support more resilient and economically efficient grid operations as the energy transition continues.
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+// Active nav highlighting on scroll
+const sections = document.querySelectorAll('section[id], div[id]');
+const navItems = document.querySelectorAll('.nav-item');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navItems.forEach(n => n.classList.remove('active'));
+      const active = document.querySelector(`.nav-item[href="#${entry.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { rootMargin: '-30% 0px -60% 0px' });
+
+sections.forEach(s => observer.observe(s));
+</script>
 </body>
 </html>

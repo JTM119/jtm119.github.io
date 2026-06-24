@@ -1,97 +1,546 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EmiFor — Joshua Martin</title>
-  <link rel="stylesheet" href="/static/css/reset.css" />
-  <link rel="stylesheet" href="/static/css/typography.css" />
-  <link rel="stylesheet" href="/static/css/main.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EmiFor | Amine Emission Forecasting Tool</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --black:   #0D1117;
+    --surface: #161B22;
+    --card:    #1C2330;
+    --border:  #2A3441;
+    --teal:    #00C9A7;
+    --teal-dim:#007A66;
+    --teal-glow: rgba(0,201,167,0.15);
+    --white:   #F0F4F8;
+    --muted:   #8B9BB4;
+    --mono:    "JetBrains Mono", monospace;
+    --sans:    "Inter", sans-serif;
+    --display: "Space Grotesk", sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--black); color: var(--white);
+    font-family: var(--sans); font-size: 16px; line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  img { max-width: 100%; height: auto; display: block; }
+  a { color: var(--teal); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,17,23,0.9); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem; display: flex; align-items: center;
+    justify-content: space-between; height: 56px;
+  }
+  .nav-brand { font-family: var(--display); font-weight: 700; font-size: 1.05rem; color: var(--white); }
+  .nav-brand span { color: var(--teal); }
+  .nav-links { display: flex; gap: 1.75rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.8rem; font-weight: 500; color: var(--muted);
+    letter-spacing: 0.05em; text-transform: uppercase; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--teal); text-decoration: none; }
+
+  .hero {
+    min-height: 90vh; display: flex; flex-direction: column;
+    justify-content: center; padding: 6rem 2rem 4rem;
+    position: relative; overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse 70% 60% at 60% 40%, rgba(0,201,167,0.07) 0%, transparent 70%);
+  }
+  .hero-eyebrow {
+    font-family: var(--mono); font-size: 0.78rem; color: var(--teal);
+    letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 1.25rem;
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .hero-title {
+    font-family: var(--display); font-size: clamp(2.8rem, 6vw, 5rem);
+    font-weight: 700; line-height: 1.08; letter-spacing: -0.02em;
+    max-width: 820px; margin-bottom: 1.5rem;
+  }
+  .hero-title em { font-style: normal; color: var(--teal); }
+  .hero-subtitle { font-size: 1.1rem; color: var(--muted); max-width: 560px; line-height: 1.65; margin-bottom: 2.5rem; }
+  .hero-meta { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 3rem; }
+  .meta-pill {
+    font-family: var(--mono); font-size: 0.74rem;
+    background: var(--card); border: 1px solid var(--border);
+    color: var(--muted); padding: 0.35rem 0.9rem; border-radius: 999px;
+  }
+  .meta-pill strong { color: var(--white); }
+  .hero-wave { width: 100%; max-width: 900px; margin-top: 1rem; opacity: 0.85; }
+  .wave-line { fill: none; stroke: var(--teal); stroke-width: 2; stroke-linecap: round; filter: drop-shadow(0 0 6px rgba(0,201,167,0.6)); }
+  .wave-baseline { stroke: var(--border); stroke-width: 1; fill: none; }
+  .wave-fill { fill: url(#waveGrad); opacity: 0.18; }
+  .wave-dot { fill: var(--teal); filter: drop-shadow(0 0 4px var(--teal)); }
+  @keyframes trace {
+    0%   { stroke-dashoffset: 2200; opacity: 0.3; }
+    30%  { opacity: 1; }
+    100% { stroke-dashoffset: 0; opacity: 1; }
+  }
+  .wave-animated { stroke-dasharray: 2200; stroke-dashoffset: 2200; animation: trace 3.2s cubic-bezier(0.4,0,0.2,1) forwards; }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .live-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--teal);
+    display: inline-block; animation: blink 1.4s ease-in-out infinite;
+    box-shadow: 0 0 8px var(--teal);
+  }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+  section { padding: 6rem 0; border-top: 1px solid var(--border); }
+  .section-eyebrow { font-family: var(--mono); font-size: 0.72rem; color: var(--teal); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 0.75rem; }
+  .section-title { font-family: var(--display); font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 700; letter-spacing: -0.01em; margin-bottom: 1rem; }
+  .section-lead { font-size: 1.03rem; color: var(--muted); max-width: 680px; line-height: 1.7; margin-bottom: 3rem; }
+
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1.25rem; margin-bottom: 3rem; }
+  .stat-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 1.5rem 1.75rem; position: relative; overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .stat-card:hover { border-color: var(--teal-dim); box-shadow: 0 0 24px var(--teal-glow); }
+  .stat-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--teal), transparent); }
+  .stat-value { font-family: var(--mono); font-size: 2.1rem; color: var(--teal); line-height: 1; margin-bottom: 0.4rem; }
+  .stat-label { font-size: 0.82rem; color: var(--muted); line-height: 1.4; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+  @media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } }
+
+  .prose p { color: rgba(240,244,248,0.85); line-height: 1.75; margin-bottom: 1rem; font-size: 0.97rem; }
+  .prose p:last-child { margin-bottom: 0; }
+  .prose strong { color: var(--white); font-weight: 600; }
+
+  .steps { display: flex; flex-direction: column; gap: 1.5rem; }
+  .step { display: grid; grid-template-columns: 48px 1fr; gap: 1rem; align-items: start; }
+  .step-num {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--card); border: 1px solid var(--teal-dim);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 0.85rem; color: var(--teal); flex-shrink: 0;
+  }
+  .step-title { font-family: var(--display); font-weight: 600; font-size: 1rem; margin-bottom: 0.3rem; }
+  .step-body { font-size: 0.9rem; color: var(--muted); line-height: 1.65; }
+
+  .figure-block { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .figure-block img { border-radius: 0; width: 100%; display: block; }
+  .figure-caption { padding: 0.9rem 1.25rem; font-family: var(--mono); font-size: 0.75rem; color: var(--muted); border-top: 1px solid var(--border); line-height: 1.5; }
+  .figure-caption strong { color: var(--teal); }
+
+  .perf-table-wrap { overflow-x: auto; margin-bottom: 0.75rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  thead tr { background: var(--surface); }
+  th { font-family: var(--mono); font-size: 0.72rem; color: var(--teal); letter-spacing: 0.1em; text-transform: uppercase; padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+  td { padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); color: rgba(240,244,248,0.8); }
+  tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--card); }
+  .best { color: var(--teal); font-weight: 600; font-family: var(--mono); }
+  .table-caption { font-size: 0.78rem; color: var(--muted); margin-top: 0.4rem; margin-bottom: 2rem; font-style: italic; }
+
+  .cap-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+  .cap-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; transition: border-color 0.2s, transform 0.2s; }
+  .cap-card:hover { border-color: var(--teal-dim); transform: translateY(-3px); }
+  .cap-icon { font-size: 1.6rem; margin-bottom: 1rem; }
+  .cap-title { font-family: var(--display); font-weight: 600; font-size: 1.05rem; margin-bottom: 0.6rem; }
+  .cap-body { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+
+  .feature-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+  .feature-list li { display: flex; gap: 0.75rem; align-items: flex-start; font-size: 0.92rem; color: rgba(240,244,248,0.8); line-height: 1.55; }
+  .feature-list li::before { content: "\2192"; color: var(--teal); flex-shrink: 0; font-family: var(--mono); }
+
+  .equation-block {
+    background: var(--surface); border: 1px solid var(--border);
+    border-left: 3px solid var(--teal); border-radius: 0 8px 8px 0;
+    padding: 1.25rem 1.5rem; margin: 1.5rem 0;
+    font-family: var(--mono); font-size: 0.88rem; color: var(--white);
+    overflow-x: auto; line-height: 1.8;
+  }
+  .eq-label { font-size: 0.72rem; color: var(--muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.1em; }
+
+  .tag-cloud { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
+  .tag { font-family: var(--mono); font-size: 0.76rem; background: var(--card); border: 1px solid var(--border); color: var(--muted); padding: 0.4rem 0.9rem; border-radius: 6px; }
+  .tag.hi { border-color: var(--teal-dim); color: var(--teal); }
+
+  footer { border-top: 1px solid var(--border); padding: 2.5rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; font-size: 0.82rem; color: var(--muted); }
+  footer strong { color: var(--white); }
+
+  @media (max-width: 600px) { .nav-links { display: none; } .hero-title { font-size: 2.2rem; } }
+  @media (prefers-reduced-motion: reduce) { .wave-animated { animation: none; stroke-dashoffset: 0; } .live-dot { animation: none; } .cap-card:hover { transform: none; } }
+</style>
+<style>
+/* ── Site primary nav ── */
+.pnav{height:56px;border-bottom:1px solid #cdd8ea;background:rgba(238,243,251,0.92);backdrop-filter:blur(10px);position:sticky;top:0;z-index:9999;display:flex;align-items:center}
+.pnav-inner{width:100%;max-width:1200px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.pnav-logo{font-family:'Lora',Georgia,serif;font-size:1.125rem;font-weight:600;color:#0f172a;text-decoration:none;letter-spacing:-0.01em}
+.pnav-list{display:flex;gap:1.5rem;list-style:none}
+.pnav-list a{font-size:0.875rem;font-weight:500;color:#5c6b82;text-decoration:none;transition:color 150ms}
+.pnav-list a:hover,.pnav-list a[aria-current]{color:#2563eb;text-decoration:none}
+@media(max-width:600px){.pnav-logo{font-size:1rem}.pnav-list{gap:1rem}}
+/* ── Silva-style override ── */
+:root{
+  --black:#F7F5F0;--surface:#EAF2EB;--card:#ffffff;--border:#A8CFB0;
+  --teal:#2E6B3E;--teal-dim:#1A3D28;--teal-glow:rgba(46,107,62,0.06);
+  --white:#1C2319;--muted:#6B7A67;
+}
+body{background:var(--black);color:var(--white);font-family:Georgia,"Times New Roman",serif}
+nav:not(.pnav){top:56px!important;background:#1A3D28!important;backdrop-filter:none!important;border-bottom:1px solid rgba(255,255,255,0.08)!important}
+.nav-brand{color:#E8F4EA!important}
+.nav-brand span{color:#7ED99A!important}
+.nav-links a{color:#8FBA9A!important}
+.nav-links a:hover{color:#FFFFFF!important;text-decoration:none!important}
+nav:not(.pnav){padding-left:max(1.5rem,calc(50% - 430px))!important;padding-right:max(1.5rem,calc(50% - 430px))!important}
+/* Fix hardcoded near-white text in body content */
+.prose p{color:#3D4A3A}
+td{color:var(--text)}
+.feature-list li{color:#3D4A3A}
+</style>
 </head>
 <body>
 
-  <nav class="site-nav" aria-label="Main navigation">
-    <div class="container">
-      <a href="/" class="nav-logo">Joshua Martin</a>
-      <ul class="nav-links" role="list">
-        <li><a href="/">Home</a></li>
-        <li><a href="/about/">About</a></li>
-        <li><a href="/projects/">Projects</a></li>
-      </ul>
+<nav class="pnav" aria-label="Site navigation">
+  <div class="pnav-inner">
+    <a href="/" class="pnav-logo">Joshua Martin</a>
+    <ul class="pnav-list" role="list">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about/">About</a></li>
+      <li><a href="/projects/" aria-current="page">Projects</a></li>
+    </ul>
+  </div>
+</nav>
+
+<nav>
+  <div class="nav-brand"><span>Emi</span>For</div>
+  <ul class="nav-links">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#approach">Approach</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#capabilities">Capabilities</a></li>
+    <li><a href="#application">Application</a></li>
+    <li><a href="#future">Future Work</a></li>
+  </ul>
+</nav>
+
+<section class="hero" id="overview">
+  <div class="hero-bg"></div>
+  <div class="container">
+    <div class="hero-eyebrow">
+      <span class="live-dot"></span> DoE SBIR Phase I
     </div>
-  </nav>
-
-  <main>
-    <div class="container">
-
-      <a href="/projects/" class="back-link">← All projects</a>
-
-      <header class="page-header">
-        <h1>EmiFor</h1>
-        <p>DOE Phase I · Principal Investigator</p>
-      </header>
-
-      <section class="project-section" aria-labelledby="overview-heading">
-        <h2 id="overview-heading">Overview</h2>
-        <p>
-          EmiFor is a forecasting and decision-support framework for amine emissions from
-          carbon capture operations, developed as PI under DOE Phase I SBIR. The project
-          addressed the challenge of predicting solvent degradation byproduct emissions under
-          sparse experimental data conditions — a domain where standard deep learning
-          approaches underperform due to limited labeled data and complex physical dynamics.
-        </p>
-        <p>
-          The solution combined data-efficient forecasting architectures with a synthetic data
-          pipeline built on vine-copula residual modeling, and delivered causal and
-          counterfactual analysis tools to help operators understand what drives emissions
-          under different operating regimes.
-        </p>
-      </section>
-
-      <section class="project-section" aria-labelledby="approach-heading">
-        <h2 id="approach-heading">Technical Approach</h2>
-        <ul>
-          <li>Temporal Convolutional Network (TCN) baselines with quantile regression heads for uncertainty-aware point and interval forecasting</li>
-          <li>Neural Differential Equations (NDEs) for continuous-time dynamics modeling, capturing the smooth temporal evolution of emissions under varying process conditions</li>
-          <li>Physics-informed step-response models incorporating domain constraints on emissions dynamics to regularize predictions in data-sparse regimes</li>
-          <li>Vine-copula synthetic data pipeline modeling multivariate residual dependencies across process variables, used to augment sparse experimental records from the Niederaussem carbon capture pilot</li>
-          <li>Causal impact analysis and counterfactual evaluation to identify key emission drivers and simulate intervention effects</li>
-          <li>Streamlit dashboard for parameter optimization and scenario exploration, enabling operators to evaluate forecast sensitivity under different operating configurations</li>
-        </ul>
-      </section>
-
-      <section class="project-section" aria-labelledby="results-heading">
-        <h2 id="results-heading">Results</h2>
-        <ul>
-          <li>MAPE of 4.2% on synthetic validation data</li>
-          <li>MAPE of 4.4% on Niederaussem experimental data from a real carbon capture pilot plant</li>
-        </ul>
-      </section>
-
-      <section class="project-section" aria-labelledby="stack-heading">
-        <h2 id="stack-heading">Stack</h2>
-        <ul class="project-tags" role="list">
-          <li class="tag">PyTorch</li>
-          <li class="tag">TCN</li>
-          <li class="tag">Neural ODEs</li>
-          <li class="tag">Probabilistic Forecasting</li>
-          <li class="tag">Streamlit</li>
-          <li class="tag">Python</li>
-        </ul>
-      </section>
-
+    <h1 class="hero-title">Forecasting <em>amine emissions</em><br>in real time</h1>
+    <p class="hero-subtitle">
+      EmiFor is a deep learning framework built by VISIMO that predicts solvent emissions from
+      post-combustion carbon capture plants, enabling operators to understand, simulate, and
+      minimize emissions before they occur.
+    </p>
+    <div class="hero-meta">
+      <span class="meta-pill"><strong>My Role</strong>&nbsp; Principal Investigator</span>
+      <span class="meta-pill"><strong>Sponsor</strong>&nbsp; U.S. Department of Energy</span>
+      <span class="meta-pill"><strong>Period</strong>&nbsp; Jul 2024 &ndash; Apr 2025</span>
     </div>
-  </main>
+    <svg class="hero-wave" viewBox="0 0 900 140" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="waveGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#00C9A7"/>
+          <stop offset="100%" stop-color="#00C9A7" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <line class="wave-baseline" x1="0" y1="100" x2="900" y2="100"/>
+      <path class="wave-fill" d="M0 100 C20 100 25 72 40 65 S60 82 75 78 S95 58 110 52 S130 68 145 72 S165 48 180 42 S200 62 215 68 S235 44 250 38 S270 58 285 62 S305 38 320 32 S340 52 355 56 S375 32 390 26 S410 46 425 50 S445 26 460 20 S480 40 495 44 S515 24 530 30 S550 50 565 46 S585 26 600 32 S620 52 635 48 S655 28 670 34 S690 54 705 50 S725 34 740 38 S760 54 775 58 S795 40 810 44 S830 60 845 64 S865 48 880 52 L900 52 L900 100 Z"/>
+      <path class="wave-line wave-animated" d="M0 100 C20 100 25 72 40 65 S60 82 75 78 S95 58 110 52 S130 68 145 72 S165 48 180 42 S200 62 215 68 S235 44 250 38 S270 58 285 62 S305 38 320 32 S340 52 355 56 S375 32 390 26 S410 46 425 50 S445 26 460 20 S480 40 495 44 S515 24 530 30 S550 50 565 46 S585 26 600 32 S620 52 635 48 S655 28 670 34 S690 54 705 50 S725 34 740 38 S760 54 775 58 S795 40 810 44 S830 60 845 64 S865 48 880 52"/>
+      <rect x="620" y="0" width="280" height="140" fill="rgba(0,201,167,0.04)"/>
+      <line x1="620" y1="10" x2="620" y2="130" stroke="rgba(0,201,167,0.3)" stroke-width="1" stroke-dasharray="4 4"/>
+      <text x="628" y="24" font-family="JetBrains Mono, monospace" font-size="9" fill="rgba(0,201,167,0.6)">forecast horizon</text>
+      <circle class="wave-dot" cx="880" cy="52" r="4"/>
+      <text x="0" y="120" font-family="JetBrains Mono, monospace" font-size="9" fill="rgba(139,155,180,0.7)">t=0</text>
+      <text x="855" y="120" font-family="JetBrains Mono, monospace" font-size="9" fill="rgba(139,155,180,0.7)">t+30m</text>
+      <text x="390" y="135" font-family="JetBrains Mono, monospace" font-size="9" fill="rgba(139,155,180,0.5)" text-anchor="middle">AMP emissions &mdash; observed vs. 30-min forecast</text>
+    </svg>
+  </div>
+</section>
 
-  <footer class="site-footer">
-    <div class="container">
-      <ul class="footer-links" role="list">
-        <li><a href="mailto:joshtmartin99@gmail.com">Email</a></li>
-        <li><a href="https://github.com/JTM119" target="_blank" rel="noopener">GitHub</a></li>
-        <li><a href="https://www.linkedin.com/in/joshua-martin-333456192/" target="_blank" rel="noopener">LinkedIn</a></li>
-      </ul>
+<section>
+  <div class="container">
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-value">4.22%</div><div class="stat-label">MAPE on synthetic data<br>(physics-informed NDE)</div></div>
+      <div class="stat-card"><div class="stat-value">4.44%</div><div class="stat-label">MAPE on real Niederaussem<br>plant data</div></div>
+      <div class="stat-card"><div class="stat-value">30 min</div><div class="stat-label">Forecasting horizon from<br>80 min of sensor history</div></div>
+      <div class="stat-card"><div class="stat-value">0.94</div><div class="stat-label">KS Complement score for<br>synthetic data fidelity</div></div>
+      <div class="stat-card"><div class="stat-value">3</div><div class="stat-label">Analytical modes: causal,<br>counterfactual, optimize</div></div>
     </div>
-  </footer>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="two-col">
+      <div>
+        <p class="section-eyebrow">The Problem</p>
+        <h2 class="section-title">Carbon capture at scale demands real-time emission insight</h2>
+        <div class="prose">
+          <p>Amine-based post-combustion carbon capture (PCC) scrubs flue gas with an amine solution, capturing approximately 90% of CO<sub>2</sub>. But amines degrade over time, producing carcinogenic by-products like nitrosamines and nitramines that must be carefully managed.</p>
+          <p>Today, emission tracking is largely manual: process simulators and spreadsheets, inconsistent sensor data, and no tool that can forecast what emissions will look like in the next 30 minutes. The ability to forecast in real time is critical for safe, compliant plant operation.</p>
+          <p>EmiFor fills that gap: a forecasting framework grounded in real plant physics, validated against two international pilot plants, and delivered through an interface any operator can use.</p>
+        </div>
+      </div>
+      <div>
+        <p class="section-eyebrow">Amine PCC Process</p>
+        <div class="steps">
+          <div class="step"><div class="step-num">01</div><div><div class="step-title">Absorber</div><div class="step-body">Flue gas contacts amine solution; CO<sub>2</sub> is captured. A water wash section limits amine carryover into the stack.</div></div></div>
+          <div class="step"><div class="step-num">02</div><div><div class="step-title">Regenerator</div><div class="step-body">Steam heats the rich solvent to release concentrated CO<sub>2</sub>, which is compressed and piped to a storage site.</div></div></div>
+          <div class="step"><div class="step-num">03</div><div><div class="step-title">Solvent Degradation</div><div class="step-body">Thermal and oxidative cycling degrades the amine, generating nitrosamines, nitramines, and other regulated emission compounds.</div></div></div>
+          <div class="step"><div class="step-num">04</div><div><div class="step-title">Emission Monitoring</div><div class="step-body">AMP and other species are measured in the stack. EmiFor forecasts these 30 minutes ahead from five process variables sampled at 5-minute intervals.</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="approach">
+  <div class="container">
+    <p class="section-eyebrow">Technical Approach</p>
+    <h2 class="section-title">From sparse observations to physics-informed forecasts</h2>
+    <p class="section-lead">Three interconnected activities formed the technical core of Phase I: understanding and augmenting available data, developing two families of deep learning models, and validating predictive and analytical capabilities on real plant data.</p>
+
+    <div class="two-col" style="margin-bottom:4rem;">
+      <div>
+        <h3 style="font-family:var(--display);font-size:1.1rem;margin-bottom:1rem;">Data Sources</h3>
+        <div class="prose">
+          <p><strong>Technology Centre Mongstad (TCM), Norway</strong> provided the primary dataset. Statistical analysis (stationarity, autocorrelation, Granger causality) revealed the data captured mostly steady-state operations, insufficient for physics-informed models that require step-change variability.</p>
+          <p><strong>Niederaussem pilot plant, Germany</strong> provided a dynamic experimental campaign with controlled step changes in five process variables. Models were trained directly on this data and it served as the template for synthetic generation.</p>
+        </div>
+        <h3 style="font-family:var(--display);font-size:1.1rem;margin:1.5rem 0 1rem;">Model Input Features</h3>
+        <ul class="feature-list">
+          <li>Upper Water Wash Temperature</li>
+          <li>Upper Water Wash Flow Rate</li>
+          <li>Lean Solvent Flow Rate</li>
+          <li>Lean Solvent Temperature</li>
+          <li>Flue Gas Flow Rate</li>
+          <li>Target: AMP emissions (ppm / mg/m&#179;)</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="font-family:var(--display);font-size:1.1rem;margin-bottom:1rem;">Synthetic Data Generation</h3>
+        <div class="steps">
+          <div class="step"><div class="step-num" style="font-size:0.75rem;">S1</div><div><div class="step-title">Residual Modeling via Vine Copula</div><div class="step-body">Smoothed TCM variable means were subtracted from raw values to obtain residuals. A vine copula was fitted to capture complex multi-variable statistical dependencies.</div></div></div>
+          <div class="step"><div class="step-num" style="font-size:0.75rem;">S2</div><div><div class="step-title">Step Response Overlay</div><div class="step-body">Copula-sampled residuals were applied to second-order step response functions from each Niederaussem experiment, producing physically realistic synthetic time series.</div></div></div>
+          <div class="step"><div class="step-num" style="font-size:0.75rem;">S3</div><div><div class="step-title">Fidelity Validation</div><div class="step-body">KS Complement: <strong style="color:var(--teal)">0.94</strong>. Mantel statistic: <strong style="color:var(--teal)">0.29</strong>. Best scores among all synthesis approaches tested, including PAR synthesizer.</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-family:var(--display);font-size:1.15rem;margin-bottom:1.5rem;">Model Architecture: Neural Differential Equations</h3>
+    <div class="two-col" style="align-items:center;">
+      <div>
+        <div class="prose">
+          <p>The primary approach embeds a neural network inside a differential equation framework anchored by the <strong>second-order step response function</strong> from the Charalambous et al. flexible CO<sub>2</sub> capture plant literature:</p>
+        </div>
+        <div class="equation-block">
+          <div class="eq-label">Second-Order Step Response (Charalambous et al., 2021)</div>
+          y(t) = y&#8320; + KM [ 1 &minus; (&tau;&#8321;&minus;&xi;)/(&tau;&#8321;&minus;&tau;&#8322;) &middot; e<sup>&minus;(t&minus;&vartheta;)/&tau;&#8321;</sup> &minus; (&tau;&#8322;&minus;&xi;)/(&tau;&#8322;&minus;&tau;&#8321;) &middot; e<sup>&minus;(t&minus;&vartheta;)/&tau;&#8322;</sup> ]
+        </div>
+        <div class="prose">
+          <p>A <strong>supplemental neural network</strong> (MLP or LSTM) learns residual nonlinear dynamics not captured by the physics backbone, while preserving interpretable parameters: time constants &tau;, damping &xi;, time delay &vartheta;.</p>
+          <p>A <strong>Temporal Convolutional Network (TCN)</strong> served as the baseline model, with both MSE and quantile loss variants to quantify prediction uncertainty.</p>
+        </div>
+      </div>
+      <div class="figure-block">
+        <img src="images/image_001.jpg" alt="NDE architecture diagram">
+        <div class="figure-caption"><strong>Figure 1</strong> &mdash; NDE data flow. The current system state passes through five system equations and a supplemental neural network; an ODE solver combines outputs to predict the next state.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="results">
+  <div class="container">
+    <p class="section-eyebrow">Model Results</p>
+    <h2 class="section-title">Physics-informed modeling decisively outperforms data-only approaches</h2>
+    <p class="section-lead">Performance is measured by MAPE using a sliding-window protocol: 16-step input (80 min) predicting a 6-step horizon (30 min). Lower is better.</p>
+    <div class="two-col">
+      <div>
+        <h3 style="font-family:var(--display);font-size:0.95rem;color:var(--muted);margin-bottom:0.75rem;">Table 1 &mdash; TCN Baseline</h3>
+        <div class="perf-table-wrap"><table>
+          <thead><tr><th>Dataset</th><th>Loss</th><th>MAPE</th></tr></thead>
+          <tbody>
+            <tr><td>Synthetic</td><td>MSE</td><td class="best">4.26%</td></tr>
+            <tr><td>Synthetic</td><td>Quantile</td><td>4.82%</td></tr>
+            <tr><td>Niederaussem</td><td>MSE</td><td class="best">4.64%</td></tr>
+            <tr><td>Niederaussem</td><td>Quantile</td><td>6.54%</td></tr>
+          </tbody>
+        </table></div>
+        <p class="table-caption">MSE variants outperform quantile; quantile models add uncertainty bounds at some accuracy cost.</p>
+        <h3 style="font-family:var(--display);font-size:0.95rem;color:var(--muted);margin-bottom:0.75rem;">Table 2 &mdash; Baseline Models: MLP vs. LSTM</h3>
+        <div class="perf-table-wrap"><table>
+          <thead><tr><th>Model</th><th>Dataset</th><th>MAPE</th></tr></thead>
+          <tbody>
+            <tr><td>MLP</td><td>Synthetic</td><td>4.71%</td></tr>
+            <tr><td>MLP</td><td>Niederaussem</td><td>13.20%</td></tr>
+            <tr><td>LSTM</td><td>Synthetic</td><td class="best">4.48%</td></tr>
+            <tr><td>LSTM</td><td>Niederaussem</td><td class="best">8.26%</td></tr>
+          </tbody>
+        </table></div>
+        <p class="table-caption">LSTM outperforms MLP, particularly on real plant data, and serves as the stronger baseline for comparison with the physics-informed NDE.</p>
+      </div>
+      <div>
+        <h3 style="font-family:var(--display);font-size:0.95rem;color:var(--muted);margin-bottom:0.75rem;">Table 3 &mdash; NDE: Prior Knowledge Level</h3>
+        <div class="perf-table-wrap"><table>
+          <thead><tr><th>Prior Knowledge</th><th>Dataset</th><th>MAPE</th></tr></thead>
+          <tbody>
+            <tr><td>None (NN only)</td><td>Synthetic</td><td>4.48%</td></tr>
+            <tr><td>None (NN only)</td><td>Niederaussem</td><td>8.26%</td></tr>
+            <tr><td>Linear Base</td><td>Synthetic</td><td>4.71%</td></tr>
+            <tr><td>Linear Base</td><td>Niederaussem</td><td>4.81%</td></tr>
+            <tr><td>Physics-Informed</td><td>Synthetic</td><td class="best">4.22%</td></tr>
+            <tr><td>Physics-Informed</td><td>Niederaussem</td><td class="best">4.44%</td></tr>
+          </tbody>
+        </table></div>
+        <p class="table-caption">Embedding step-response physics reduces real-plant MAPE from 8.26% to 4.44%: a 46% error reduction.</p>
+        <div class="stat-card" style="margin-top:1.25rem;">
+          <div class="stat-value">46%</div>
+          <div class="stat-label">Error reduction on real plant data when moving from a plain neural network (8.26%) to a physics-informed NDE (4.44%)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="capabilities">
+  <div class="container">
+    <p class="section-eyebrow">Analytical Capabilities</p>
+    <h2 class="section-title">Beyond forecasting: understand and act on emission drivers</h2>
+    <p class="section-lead">EmiFor exposes three analytical modes that transform forecasting models into operational decision-support tools for plant engineers and operators.</p>
+    <div class="cap-grid">
+      <div class="cap-card"><div class="cap-icon">&#128270;</div><div class="cap-title">Causal Impact Analysis</div><div class="cap-body">Isolates the causal effect of a specific operational variable on historical emissions. Granger causality tests remove confounders; a counterfactual baseline is trained on pre-intervention data. Reports Mean, Relative, and Total Impact metrics.</div></div>
+      <div class="cap-card"><div class="cap-icon">&#128260;</div><div class="cap-title">Counterfactual Evaluation</div><div class="cap-body">Answers "what if" questions by modifying historical process variable values and running the model forward to forecast alternative emission trajectories over any user-specified time window.</div></div>
+      <div class="cap-card"><div class="cap-icon">&#9881;</div><div class="cap-title">Parameter Optimization</div><div class="cap-body">Adaptive grid search with iterative refinement finds the process variable combination that minimizes forecasted emissions within user-defined operational constraints. Groundwork for BOED in Phase II.</div></div>
+    </div>
+    <div style="margin-top:3.5rem;">
+      <h3 style="font-family:var(--display);font-size:1.1rem;margin-bottom:1.5rem;">Causal Impact: Example Results on Niederaussem Data</h3>
+      <div class="two-col">
+        <div class="figure-block">
+          <img src="images/image_002.jpg" alt="Causal impact of flue gas temperature on AMP emissions">
+          <div class="figure-caption"><strong>Figure 2</strong> &mdash; Effect of flue gas temperature on AMP. Mean: 0.1235 &bull; Total: 8.8937 &bull; <strong>Relative: +19.50%</strong>. Shaded region shows the gap between actual and modeled baseline AMP during the intervention.</div>
+        </div>
+        <div class="figure-block">
+          <img src="images/image_003.jpg" alt="Causal impact of lean solvent variables on AMP">
+          <div class="figure-caption"><strong>Figures 3 &amp; 4</strong> &mdash; Lean solvent flow rate (+5.15% relative, top) and lean solvent temperature (&minus;9.26% relative, bottom). Temperature reductions correlate with lower AMP, revealing a high-value operational control lever.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="application">
+  <div class="container">
+    <p class="section-eyebrow">Demonstration Application</p>
+    <h2 class="section-title">A three-stage workflow any operator can use</h2>
+    <p class="section-lead">A Streamlit proof-of-concept demonstrates real-world deployability. The framework is data-agnostic and accepts any time series, supporting any process governed by differential equations.</p>
+    <div class="two-col" style="margin-bottom:3rem;align-items:center;">
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div><div class="step-title">Data Upload &amp; Preprocessing</div><div class="step-body">Upload any tabular time series, select feature columns, and apply cleaning steps including despiking and exponential window smoothing.</div></div></div>
+        <div class="step"><div class="step-num">2</div><div><div class="step-title">Model Selection &amp; Training</div><div class="step-body">Choose a pre-trained PCC-optimized model or train a new one. Automated hyperparameter optimization removes the need for ML expertise. Forecast horizon is configurable.</div></div></div>
+        <div class="step"><div class="step-num">3</div><div><div class="step-title">Analytical Exploration</div><div class="step-body">Three interactive pages expose causal impact, counterfactual evaluation, and parameter optimization. Each produces exportable charts and impact metrics.</div></div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        <div class="figure-block">
+          <img src="images/image_004.jpg" alt="Causal impact analysis UI">
+          <div class="figure-caption"><strong>Figure 5</strong> &mdash; Causal impact analysis interface. Users select a variable and intervention window; the app produces emissions projections showing the impact of that feature.</div>
+        </div>
+        <div class="figure-block">
+          <img src="images/image_005.jpg" alt="Counterfactual evaluation UI">
+          <div class="figure-caption"><strong>Figure 6</strong> &mdash; Counterfactual evaluation interface. Users select a variable, specify a change amount and time window, and the app forecasts emissions under that scenario.</div>
+        </div>
+      </div>
+    </div>
+    <div class="two-col" style="align-items:center;">
+      <div class="figure-block">
+        <img src="images/image_006.jpg" alt="Parameter optimization UI">
+        <div class="figure-caption"><strong>Figure 7</strong> &mdash; Parameter optimization UI. Users select process variables and define operational bounds; the app identifies the combination that minimizes forecasted emissions.</div>
+      </div>
+      <div class="figure-block">
+        <img src="images/image_007.jpg" alt="Figma wireframes for Phase II">
+        <div class="figure-caption"><strong>Figure 8</strong> &mdash; Figma wireframes for the Phase II prototype. Sidebar navigation, persistent sessions, a reporting dashboard, and saved results are introduced while retaining the core analytical workflow.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="future">
+  <div class="container">
+    <p class="section-eyebrow">Phase II Roadmap</p>
+    <h2 class="section-title">Five directions for continued development</h2>
+    <div class="two-col">
+      <div class="steps">
+        <div class="step"><div class="step-num" style="font-size:1rem;">&#8594;</div><div><div class="step-title">NDE Integration &amp; Symbolic Regression</div><div class="step-body">Integrate trained NDEs into the production application and apply symbolic regression to derive human-readable mathematical expressions describing emission dynamics.</div></div></div>
+        <div class="step"><div class="step-num" style="font-size:1rem;">&#8594;</div><div><div class="step-title">Bayesian Optimal Experimental Design (BOED)</div><div class="step-body">Use Bayesian inference to identify the experiments most likely to yield informative training data, minimizing operational burden while maximizing model improvement.</div></div></div>
+        <div class="step"><div class="step-num" style="font-size:1rem;">&#8594;</div><div><div class="step-title">Generalizability Testing</div><div class="step-body">Evaluate the pipeline on smelting, natural gas treatment, and concrete production, targeting methane, VOCs, and sulfur compounds.</div></div></div>
+        <div class="step"><div class="step-num" style="font-size:1rem;">&#8594;</div><div><div class="step-title">Progressive Web Application</div><div class="step-body">Replace the Streamlit proof-of-concept with a production PWA offering cross-platform compatibility, persistent sessions, and offline capability.</div></div></div>
+        <div class="step"><div class="step-num" style="font-size:1rem;">&#8594;</div><div><div class="step-title">Alpha &amp; Beta Testing</div><div class="step-body">Two-phase user testing with plant operators to eliminate bugs, refine the interface, and validate workflow integration in real carbon capture facilities.</div></div></div>
+      </div>
+      <div>
+        <div class="prose" style="margin-bottom:1.25rem;"><p><strong>Phase II target variables and techniques:</strong></p></div>
+        <div class="tag-cloud">
+          <span class="tag hi">Piperazine (PZ)</span>
+          <span class="tag hi">Ammonia</span>
+          <span class="tag hi">BOED</span>
+          <span class="tag hi">Symbolic Regression</span>
+          <span class="tag">Methane</span>
+          <span class="tag">VOCs</span>
+          <span class="tag">Sulfur compounds</span>
+          <span class="tag">Smelting</span>
+          <span class="tag">Concrete production</span>
+          <span class="tag">Expanding window CV</span>
+          <span class="tag">Online learning</span>
+        </div>
+        <div class="stat-card" style="margin-top:2rem;">
+          <div style="font-family:var(--mono);font-size:0.72rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1rem;">Phase I Objectives: All Complete</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+            <div style="background:var(--surface);border:1px solid var(--teal-dim);border-radius:6px;padding:0.6rem 0.75rem;font-size:0.78rem;">
+              <span style="color:var(--teal);font-family:var(--mono);">OBJ 1</span>
+              <span style="color:var(--muted);margin-left:0.4rem;">Planning</span>
+            </div>
+            <div style="background:var(--surface);border:1px solid var(--teal-dim);border-radius:6px;padding:0.6rem 0.75rem;font-size:0.78rem;">
+              <span style="color:var(--teal);font-family:var(--mono);">OBJ 2</span>
+              <span style="color:var(--muted);margin-left:0.4rem;">EDA &amp; Synthesis</span>
+            </div>
+            <div style="background:var(--surface);border:1px solid var(--teal-dim);border-radius:6px;padding:0.6rem 0.75rem;font-size:0.78rem;">
+              <span style="color:var(--teal);font-family:var(--mono);">OBJ 3</span>
+              <span style="color:var(--muted);margin-left:0.4rem;">Forecasting Models</span>
+            </div>
+            <div style="background:var(--surface);border:1px solid var(--teal-dim);border-radius:6px;padding:0.6rem 0.75rem;font-size:0.78rem;">
+              <span style="color:var(--teal);font-family:var(--mono);">OBJ 4</span>
+              <span style="color:var(--muted);margin-left:0.4rem;">Causal / CF Analysis</span>
+            </div>
+            <div style="background:var(--surface);border:1px solid var(--teal-dim);border-radius:6px;padding:0.6rem 0.75rem;font-size:0.78rem;">
+              <span style="color:var(--teal);font-family:var(--mono);">OBJ 5</span>
+              <span style="color:var(--muted);margin-left:0.4rem;">Extensibility Testing</span>
+            </div>
+          </div>
+          <div style="font-size:0.78rem;color:var(--teal);margin-top:0.75rem;font-family:var(--mono);">5 / 5 objectives: 100% complete &#10003;</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>
+    <strong>EmiFor</strong> &mdash; High Temporal Resolution Forecasting Framework Supporting Carbon Capture<br>
+    <span>DoE SBIR Phase I</span>
+  </div>
+  <div style="text-align:right;">
+    <div>Period of Performance: Jul 22, 2024 &ndash; Apr 21, 2025</div>
+    <div style="margin-top:0.25rem;">Report Date: April 25, 2025</div>
+  </div>
+</footer>
 
 </body>
 </html>

@@ -1,96 +1,420 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ScopeVis — Joshua Martin</title>
-  <link rel="stylesheet" href="/static/css/reset.css" />
-  <link rel="stylesheet" href="/static/css/typography.css" />
-  <link rel="stylesheet" href="/static/css/main.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ScopeVis — Visualization Toolkit for Nanoscale Imaging Data</title>
+<style>
+:root {
+  --bg:#0a0e14; --surface:#111720; --card:#161d28; --border:#1e2d3d;
+  --accent:#00b8d9; --accent2:#0052cc; --green:#36b37e;
+  --text:#d4dde8; --muted:#6b7c8e; --heading:#e8f0f7;
+  --sans:'Inter',system-ui,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+
+nav{position:sticky;top:0;z-index:100;background:rgba(10,14,20,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;gap:2rem;height:56px}
+.nav-logo{font-size:1rem;font-weight:700;letter-spacing:.08em;color:var(--accent);text-decoration:none;text-transform:uppercase}
+.nav-links{display:flex;gap:1.5rem;list-style:none;margin-left:auto}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.82rem;letter-spacing:.05em;text-transform:uppercase;transition:color .2s}
+.nav-links a:hover{color:var(--accent)}
+
+.hero{position:relative;padding:6rem 2rem 5rem;text-align:center;overflow:hidden}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,184,217,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,184,217,.06) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,black 40%,transparent 100%)}
+.eyebrow{display:inline-block;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:600;border:1px solid rgba(0,184,217,.3);padding:.3em .9em;border-radius:2em;margin-bottom:1.5rem}
+.hero h1{font-size:clamp(2.4rem,5vw,4rem);font-weight:800;letter-spacing:-.02em;color:var(--heading);line-height:1.1;max-width:800px;margin:0 auto .8rem}
+.hero h1 span{color:var(--accent)}
+.hero-sub{font-size:1.1rem;color:var(--muted);max-width:560px;margin:0 auto 2.5rem}
+.hero-meta{display:flex;flex-wrap:wrap;justify-content:center;gap:2rem;font-size:.82rem;color:var(--muted)}
+.hero-meta span{display:flex;align-items:center;gap:.4rem}
+.hero-meta strong{color:var(--text)}
+
+.container{max-width:1100px;margin:0 auto;padding:0 2rem}
+section{padding:5rem 0;border-top:1px solid var(--border)}
+
+.slabel{font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:.6rem}
+.stitle{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700;color:var(--heading);letter-spacing:-.02em;margin-bottom:1.2rem;line-height:1.2}
+.sbody{max-width:720px;color:var(--text);margin-bottom:2rem}
+
+/* Figure blocks */
+.fig{background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin:1.5rem 0}
+.fig img{width:100%;display:block}
+.fig-cap{padding:.65rem 1rem;font-size:.78rem;color:var(--muted);font-style:italic;border-top:1px solid var(--border);text-align:center;line-height:1.4}
+
+/* Grid layouts */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin:1.5rem 0}
+.g2v{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin:1.5rem 0;align-items:start}
+
+/* Threshold 4-up */
+.thresh4{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.thresh4 .fig.ok{border-color:var(--green)}
+.thresh4 .fig.ok .fig-cap{color:var(--green)}
+.thresh-label{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:.5rem .75rem;border-top:1px solid var(--border);text-align:center}
+.thresh4 .fig.ok .thresh-label{color:var(--green)}
+
+/* Seg table */
+.seg-table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.88rem}
+.seg-table th{background:var(--surface);color:var(--accent);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;padding:.7rem 1rem;text-align:left;border-bottom:1px solid var(--border);font-weight:600}
+.seg-table td{padding:.75rem 1rem;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top}
+.seg-table tr:hover td{background:var(--surface)}
+.seg-table .method{color:var(--heading);font-weight:600}
+.tag{display:inline-block;font-size:.68rem;padding:.15em .5em;border-radius:3px;background:rgba(0,184,217,.12);color:var(--accent);margin-top:.3rem;font-weight:600}
+
+/* Reward cards */
+.rcards{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.rcard{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.25rem}
+.rcard.a{border-color:var(--accent)}
+.rcard.g{border-color:var(--green)}
+.rcard .rl{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:.4rem}
+.rcard h4{color:var(--heading);font-size:.95rem;margin-bottom:.4rem}
+.rcard p{font-size:.85rem;color:var(--muted)}
+
+/* Results */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:2rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.25rem}
+.stat .n{font-size:2.2rem;font-weight:800;color:var(--accent);letter-spacing:-.04em;line-height:1}
+.stat .l{font-size:.8rem;color:var(--muted);margin-top:.3rem}
+
+.findings{list-style:none;margin:1.5rem 0;display:grid;gap:.75rem}
+.findings li{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:0 6px 6px 0;padding:.85rem 1.1rem;font-size:.9rem}
+
+.obj-table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.88rem}
+.obj-table th{background:var(--surface);color:var(--accent);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;padding:.7rem 1rem;text-align:left;border-bottom:1px solid var(--border);font-weight:600}
+.obj-table td{padding:.75rem 1rem;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top}
+.obj-table tr:hover td{background:var(--surface)}
+.badge{display:inline-block;font-size:.68rem;padding:.2em .6em;border-radius:3px;background:rgba(54,179,126,.15);color:var(--green);font-weight:700;letter-spacing:.05em}
+
+.team{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin:1.5rem 0}
+.tc{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.1rem}
+.tc .n{color:var(--heading);font-weight:600;font-size:.95rem}
+.tc .r{font-size:.75rem;color:var(--accent);margin:.2rem 0 .5rem;font-weight:600;letter-spacing:.04em}
+.tc .o{font-size:.78rem;color:var(--muted)}
+.tc p{font-size:.8rem;color:var(--muted);margin-top:.5rem}
+
+footer{border-top:1px solid var(--border);padding:2.5rem 2rem;text-align:center;font-size:.8rem;color:var(--muted)}
+
+@media(max-width:700px){
+  .g2,.g2v,.thresh4,.rcards,.stats{grid-template-columns:1fr}
+  nav .nav-links{display:none}
+}
+</style>
+<style>
+/* ── Site primary nav ── */
+.pnav{height:56px;border-bottom:1px solid #cdd8ea;background:rgba(238,243,251,0.92);backdrop-filter:blur(10px);position:sticky;top:0;z-index:9999;display:flex;align-items:center}
+.pnav-inner{width:100%;max-width:1200px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.pnav-logo{font-family:'Lora',Georgia,serif;font-size:1.125rem;font-weight:600;color:#0f172a;text-decoration:none;letter-spacing:-0.01em}
+.pnav-list{display:flex;gap:1.5rem;list-style:none}
+.pnav-list a{font-size:0.875rem;font-weight:500;color:#5c6b82;text-decoration:none;transition:color 150ms}
+.pnav-list a:hover,.pnav-list a[aria-current]{color:#2563eb;text-decoration:none}
+@media(max-width:600px){.pnav-logo{font-size:1rem}.pnav-list{gap:1rem}}
+/* ── Silva-style override ── */
+:root{
+  --bg:#F7F5F0;--surface:#ffffff;--card:#EAF2EB;--border:#A8CFB0;
+  --accent:#2E6B3E;--accent2:#C8860A;--green:#2E6B3E;
+  --text:#1C2319;--muted:#6B7A67;--heading:#1A3D28;
+}
+body{background:var(--bg);color:var(--text);font-family:Georgia,"Times New Roman",serif}
+nav:not(.pnav){top:56px!important;background:#1A3D28!important;backdrop-filter:none!important;border-bottom:1px solid rgba(255,255,255,0.08)!important}
+.nav-logo{color:#7ED99A!important}
+.nav-links a{color:#8FBA9A!important}
+.nav-links a:hover{color:#FFFFFF!important}
+nav:not(.pnav){padding-left:max(1.5rem,calc(50% - 430px))!important;padding-right:max(1.5rem,calc(50% - 430px))!important}
+</style>
 </head>
 <body>
 
-  <nav class="site-nav" aria-label="Main navigation">
-    <div class="container">
-      <a href="/" class="nav-logo">Joshua Martin</a>
-      <ul class="nav-links" role="list">
-        <li><a href="/">Home</a></li>
-        <li><a href="/about/">About</a></li>
-        <li><a href="/projects/">Projects</a></li>
-      </ul>
+<nav class="pnav" aria-label="Site navigation">
+  <div class="pnav-inner">
+    <a href="/" class="pnav-logo">Joshua Martin</a>
+    <ul class="pnav-list" role="list">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about/">About</a></li>
+      <li><a href="/projects/" aria-current="page">Projects</a></li>
+    </ul>
+  </div>
+</nav>
+
+<nav>
+  <a class="nav-logo" href="#">ScopeVis</a>
+  <ul class="nav-links">
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#pipeline">Pipeline</a></li>
+    <li><a href="#thresholding">Thresholding</a></li>
+    <li><a href="#segmentation">Segmentation</a></li>
+    <li><a href="#roi">ROI Selection</a></li>
+    <li><a href="#parameters">Parameters</a></li>
+    <li><a href="#results">Results</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="container" style="position:relative">
+    <div class="eyebrow">DoE SBIR Phase I</div>
+    <h1>Automated visualization for<br><span>nanoscale imaging data</span></h1>
+    <p class="hero-sub">ScopeVis is an ML-powered toolkit that identifies regions of interest and recommends optimal viewing parameters in complex multichannel microscopy volumes.</p>
+    <div class="hero-meta">
+      <span><strong>My Role</strong> Technical Lead</span>
+      <span><strong>Partner</strong> Brookhaven National Laboratory</span>
+      <span><strong>Period</strong> Feb &ndash; Nov 2024</span>
+      <span><strong>Impact</strong> 94% reduction in parameter-tuning time</span>
     </div>
-  </nav>
+  </div>
+</div>
 
-  <main>
-    <div class="container">
-
-      <a href="/projects/" class="back-link">← All projects</a>
-
-      <header class="page-header">
-        <h1>ScopeVis</h1>
-        <p>DOE / Brookhaven National Laboratory · Technical Lead</p>
-      </header>
-
-      <section class="project-section" aria-labelledby="overview-heading">
-        <h2 id="overview-heading">Overview</h2>
-        <p>
-          ScopeVis is an AI-assisted toolkit for segmenting and visualizing nanoscale
-          microscopy data, developed in partnership with Brookhaven National Laboratory under
-          DOE funding. The project evaluated and combined multiple computer vision approaches
-          to automate 3D object reconstruction from 2D microscopy stack slices — a process
-          that previously required hours of manual expert annotation per sample.
-        </p>
-        <p>
-          The toolkit was designed to be generalizable across microscopy modalities and sample
-          types, with automated threshold selection and Bayesian hyperparameter optimization
-          reducing the per-dataset configuration burden on domain scientists.
-        </p>
-      </section>
-
-      <section class="project-section" aria-labelledby="approach-heading">
-        <h2 id="approach-heading">Technical Approach</h2>
-        <ul>
-          <li>Implemented and evaluated five 2D segmentation approaches: SAM (Segment Anything Model), MicroSAM (microscopy-adapted SAM), 3D watershed, region growing, and a custom Sobel-edge watershed pipeline</li>
-          <li>Graph-based clustering to join 2D segmentation masks across z-slices into coherent 3D objects, handling object split and merge cases common in dense nanoscale samples</li>
-          <li>Entropy-based automatic threshold selection for foreground/background separation, removing the need for per-image manual threshold tuning</li>
-          <li>KDE background estimation and mutual-information scoring for feature quality assessment and segmentation validation</li>
-          <li>TPE (Tree-structured Parzen Estimator) Bayesian optimization for pipeline hyperparameter tuning across the full segmentation and clustering configuration space</li>
-        </ul>
-      </section>
-
-      <section class="project-section" aria-labelledby="results-heading">
-        <h2 id="results-heading">Results</h2>
-        <ul>
-          <li>All five technical objectives delivered at 100% completion</li>
-          <li>Estimated 94% time reduction compared to manual expert annotation methods</li>
-        </ul>
-      </section>
-
-      <section class="project-section" aria-labelledby="stack-heading">
-        <h2 id="stack-heading">Stack</h2>
-        <ul class="project-tags" role="list">
-          <li class="tag">SAM</li>
-          <li class="tag">MicroSAM</li>
-          <li class="tag">Computer Vision</li>
-          <li class="tag">Segmentation</li>
-          <li class="tag">3D Reconstruction</li>
-          <li class="tag">PyTorch</li>
-          <li class="tag">Python</li>
-        </ul>
-      </section>
-
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="container">
+    <div class="slabel">The Problem</div>
+    <h2 class="stitle">Manual parameter tuning is a scientific bottleneck</h2>
+    <p class="sbody">Modern nanoscale imaging at national laboratory facilities generates four-dimensional datasets: three spatial dimensions plus chemical element channels. Determining correct visualization parameters for each dataset requires enormous manual effort. ScopeVis automates this process end-to-end.</p>
+    <div class="g2">
+      <div class="fig">
+        <img src="images/image_001.png" alt="ScopeVis Z-axis volume slice" loading="lazy">
+        <div class="fig-cap">Fig 1 &mdash; The ScopeVis Trame web application. A multichannel volume is sliced through its Z axis: 3D render (left panel) and 2D cross-section (right panel). Channel controls appear in the sidebar.</div>
+      </div>
+      <div class="fig">
+        <img src="images/image_002.png" alt="ScopeVis segmentation map overlay" loading="lazy">
+        <div class="fig-cap">Fig 2 &mdash; Segmentation map overlaid on the 3D volume. Outer regions are suppressed in intensity, isolating the ML-identified ROI for clearer visual analysis.</div>
+      </div>
     </div>
-  </main>
+  </div>
+</section>
 
-  <footer class="site-footer">
-    <div class="container">
-      <ul class="footer-links" role="list">
-        <li><a href="mailto:joshtmartin99@gmail.com">Email</a></li>
-        <li><a href="https://github.com/JTM119" target="_blank" rel="noopener">GitHub</a></li>
-        <li><a href="https://www.linkedin.com/in/joshua-martin-333456192/" target="_blank" rel="noopener">LinkedIn</a></li>
-      </ul>
+<!-- PIPELINE -->
+<section id="pipeline">
+  <div class="container">
+    <div class="slabel">Architecture</div>
+    <h2 class="stitle">A four-stage ML pipeline</h2>
+    <p class="sbody">The ScopeVis pipeline automatically processes multichannel microscopy volumes through thresholding, segmentation, ROI selection, and parameter optimization. Results surface directly in the web application as recommended starting parameters.</p>
+    <div class="fig">
+      <img src="images/image_003.png" alt="ScopeVis ML architecture diagram" loading="lazy">
+      <div class="fig-cap">Fig 3 &mdash; Full ML architecture. Input volumes are segmented per-channel (purple region), ROIs and optimal channel subsets are identified (blue region), and visualization parameters are optimized via Bayesian TPE (red region).</div>
     </div>
-  </footer>
+  </div>
+</section>
 
+<!-- THRESHOLDING -->
+<section id="thresholding">
+  <div class="container">
+    <div class="slabel">Stage 1</div>
+    <h2 class="stitle">Thresholding</h2>
+    <p class="sbody">Raw microscopy intensity values span wide ranges (0&ndash;12,000+) that are incompatible with the 0&ndash;255 RGB range required by segmentation models. Linear rescaling produces images too dark to analyze. ScopeVis uses a two-step method to find the optimal lower and upper bounds before rescaling.</p>
+
+    <div class="g2v">
+      <div>
+        <div class="slabel" style="margin-bottom:.5rem">Lower Bound &mdash; KDE Method</div>
+        <p style="font-size:.9rem;color:var(--muted);margin-bottom:1rem">A Kernel Density Estimate is fit to the intensity histogram. The first local maximum of the KDE curve identifies the background peak, becoming the lower bound. This handles noisy backgrounds that don&rsquo;t start at zero.</p>
+        <div class="fig">
+          <img src="images/image_004.png" alt="KDE lower bound selection" loading="lazy">
+          <div class="fig-cap">Fig 5 &mdash; KDE (black line) fit to the intensity histogram (grey bars). The first local maximum at 579.82 (dashed blue line) is selected as the lower bound, separating background from image content.</div>
+        </div>
+      </div>
+      <div>
+        <div class="slabel" style="margin-bottom:.5rem">Reference Image</div>
+        <p style="font-size:.9rem;color:var(--muted);margin-bottom:1rem">This Z-axis slice at index 22, Channel 0 is the example used throughout the thresholding section. Raw intensity range: 0&ndash;12,000+.</p>
+        <div class="fig">
+          <img src="images/image_005.png" alt="Raw microscopy image slice" loading="lazy">
+          <div class="fig-cap">Fig 4 &mdash; Single Z-axis slice of a raw fluorescence microscopy channel. Too dark to analyze without thresholding.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slabel" style="margin-top:2.5rem;margin-bottom:.75rem">Upper Bound &mdash; Entropy Optimization</div>
+    <p style="font-size:.9rem;color:var(--muted);max-width:720px;margin-bottom:1.5rem">Three metrics were evaluated: KL-Divergence, Gini Index, and Entropy. Entropy produced the best visualizations. ScopeVis iterates over 100 candidate upper bounds and selects the value maximizing a joint objective of entropy (even use of 0&ndash;255 range) and data inclusion (minimizing clipped pixels).</p>
+
+    <div class="thresh4">
+      <div class="fig">
+        <img src="images/image_006.png" alt="Original unthresholded" loading="lazy">
+        <div class="thresh-label">Original &mdash; too dark</div>
+      </div>
+      <div class="fig">
+        <img src="images/image_007.png" alt="Upper bound too high" loading="lazy">
+        <div class="thresh-label">Upper bound too high &mdash; still dark</div>
+      </div>
+      <div class="fig">
+        <img src="images/image_008.png" alt="Upper bound too low" loading="lazy">
+        <div class="thresh-label">Upper bound too low &mdash; blown out</div>
+      </div>
+      <div class="fig ok">
+        <img src="images/image_009.png" alt="Optimal threshold" loading="lazy">
+        <div class="thresh-label">Optimal &mdash; balanced detail</div>
+      </div>
+    </div>
+
+    <div class="g2v" style="margin-top:1rem">
+      <div class="fig">
+        <img src="images/image_010.png" alt="Entropy vs data inclusion factor" loading="lazy">
+        <div class="fig-cap">Fig 10 &mdash; Entropy decreases as the upper bound increases; the data inclusion factor plateaus near 60%. ScopeVis selects the upper bound at 2377 (black vertical line) that jointly maximizes both metrics.</div>
+      </div>
+      <div class="fig">
+        <img src="images/image_011.png" alt="Final thresholded image" loading="lazy">
+        <div class="fig-cap">Fig 11 &mdash; Intensity mapping curve and the final thresholded image. Data within the bounds is linearly scaled to 50&ndash;150; data outside is exponentially scaled to suppress white-flare artifacts.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SEGMENTATION -->
+<section id="segmentation">
+  <div class="container">
+    <div class="slabel">Stage 2</div>
+    <h2 class="stitle">Segmentation</h2>
+    <p class="sbody">Accurate segmentation is essential: ROIs rely entirely on objects identified here. ScopeVis implements five segmentation methods, chosen based on data type and resolution.</p>
+
+    <table class="seg-table">
+      <thead><tr><th>Method</th><th>Best For</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><span class="method">SAM</span><br><span class="tag">Segment Anything Model</span></td><td>High-resolution volumes (e.g., 35&times;728&times;968)</td><td>Vision Transformer backbone. 2D segments stitched into 3D volumes via graph spectral clustering.</td></tr>
+        <tr><td><span class="method">MicroSAM</span></td><td>Microscopy-specific datasets</td><td>SAM fine-tuned on electron microscopy data. Less effective on optical fluorescence; reserved for Phase II.</td></tr>
+        <tr><td><span class="method">3D Watershed</span></td><td>Lower-resolution volumes (e.g., 120&times;120&times;120)</td><td>Treats intensity as topography and floods from local minima. Sensitive to noise.</td></tr>
+        <tr><td><span class="method">3D Region Growing</span></td><td>Connected, similar-intensity regions</td><td>Iteratively expands from local-maxima seed points using an intensity similarity threshold.</td></tr>
+        <tr><td><span class="method">Custom 3D Watershed</span><br><span class="tag">Sobel-Enhanced</span></td><td>Subtle intensity boundaries</td><td>Augments watershed with 3D Sobel edge detection (3&times;3 kernels in X, Y, Z). Distance computed to edges rather than background.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="g2v" style="margin-top:1.5rem">
+      <div>
+        <div class="slabel" style="margin-bottom:.6rem">SAM Output</div>
+        <div class="fig">
+          <img src="images/image_012.png" alt="SAM segmentation output" loading="lazy">
+          <div class="fig-cap">Fig 12 &mdash; SAM applied to the fluorescence image. Left: thresholded grayscale input. Right: per-segment color masks &mdash; each color is a distinct object identified by SAM.</div>
+        </div>
+      </div>
+      <div>
+        <div class="slabel" style="margin-bottom:.6rem">3D Volume Assembly via Graph Clustering</div>
+        <p style="font-size:.88rem;color:var(--muted);margin-bottom:.75rem">SAM operates on 2D slices. Naive IoU threshold joining fails for diagonal or stacked objects. ScopeVis uses graph spectral clustering: each 2D segment becomes a node, overlapping segments form weighted edges (centroid distance + IoU), and spectral clustering produces coherent 3D volumes.</p>
+        <div class="fig">
+          <img src="images/image_013.png" alt="Graph clustering for 3D volumes" loading="lazy">
+          <div class="fig-cap">Fig 14 &mdash; Segmentation masks become graph nodes; nodes with spatial overlap form weighted edges; spectral clustering on the adjacency matrix yields 3D segmented volumes.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fig" style="margin-top:.5rem">
+      <img src="images/image_014.png" alt="Cylinder failure modes for naive IoU joining" loading="lazy">
+      <div class="fig-cap">Fig 13 &mdash; Three failure modes for naive IoU joining. Left: a standard vertical cylinder where any missed slice splits the object. Center: two stacked cylinders with a gap that must remain separate. Right: a diagonal cylinder whose per-slice overlap is partial. Graph spectral clustering handles all three correctly.</div>
+    </div>
+
+    <div class="slabel" style="margin-top:2.5rem;margin-bottom:.6rem">Sobel-Enhanced Custom Watershed</div>
+    <p style="font-size:.88rem;color:var(--muted);max-width:720px;margin-bottom:1rem">For lower-resolution data, standard watershed produces a single mask for the entire region. ScopeVis supplements watershed with 3D Sobel edge detection: gradient magnitudes are computed as &#8214;&nabla;G&#8214;&nbsp;=&nbsp;&radic;(G<sub>x</sub>&sup2;&nbsp;+&nbsp;G<sub>y</sub>&sup2;&nbsp;+&nbsp;G<sub>z</sub>&sup2;). Watershed then computes distance-to-edge rather than distance-to-background, enabling detection of sub-structures separated by gradual intensity transitions.</p>
+    <div class="g2">
+      <div class="fig">
+        <img src="images/image_015.png" alt="Watershed binary mask" loading="lazy">
+        <div class="fig-cap">Fig 15 &mdash; Raw low-resolution slice (left) and the imperfect single-region mask produced by standard watershed and region-growing (right).</div>
+      </div>
+      <div class="fig">
+        <img src="images/image_016.png" alt="Sobel3D edge detection" loading="lazy">
+        <div class="fig-cap">Fig 16 &mdash; Original slice (left) and the Sobel3D edge map (right). The edge map reveals structural boundaries invisible to standard intensity-based segmentation.</div>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="images/image_017.png" alt="Segmentation masks from Sobel-enhanced watershed" loading="lazy">
+      <div class="fig-cap">Fig 17 &mdash; Distinct segmentation masks produced by the Sobel-enhanced custom watershed. Multiple separate regions are correctly identified where the standard method produced a single blob.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ROI SELECTION -->
+<section id="roi">
+  <div class="container">
+    <div class="slabel">Stage 3</div>
+    <h2 class="stitle">Region of Interest Selection</h2>
+    <p class="sbody">After segmentation, cross-channel segments corresponding to the same physical object are grouped into unified ROIs. A second graph clustering algorithm identifies which segments from different chemical channels co-localize spatially, then recommends the optimal channel subset for viewing each ROI.</p>
+    <div class="g2">
+      <div class="fig">
+        <img src="images/image_018.png" alt="Per-channel segmentation masks" loading="lazy">
+        <div class="fig-cap">Fig 18 &mdash; Independent segmentation masks for each chemical channel (Co, La, Mn, Ni) in a four-element dataset. Co, Mn, and Ni show strong spatial overlap; La does not co-localize with the main body.</div>
+      </div>
+      <div class="fig">
+        <img src="images/image_019.png" alt="ROI grouping result" loading="lazy">
+        <div class="fig-cap">Fig 19 &mdash; ROI grouping result. Top row: original per-channel masks. Bottom row: unified ROI assignments &mdash; regions sharing a color across channels belong to the same physical ROI. The red ROI spans Co/Mn/Ni; the yellow ROI spans Co/La/Ni.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARAMETER SELECTION -->
+<section id="parameters">
+  <div class="container">
+    <div class="slabel">Stage 4</div>
+    <h2 class="stitle">Parameter Selection</h2>
+    <p class="sbody">Two groups of parameters are selected per ROI: color assignments (which RGB vectors map to each channel) and non-color parameters (contrast, brightness, transparency, gamma, etc.).</p>
+    <div class="rcards">
+      <div class="rcard">
+        <div class="rl">Color Selection</div>
+        <h4>Orthogonal RGB Vectors</h4>
+        <p>Each channel is treated as a vector in 3D color space. ScopeVis assigns colors so that selected channel vectors are as orthogonal as possible, maximizing visual separability between co-visualized channels.</p>
+      </div>
+      <div class="rcard">
+        <div class="rl">Non-Color Parameters</div>
+        <h4>Bayesian TPE Optimization</h4>
+        <p>A Tree-structured Parzen Estimator maintains two KDEs &mdash; for high-reward g(x) and low-reward l(x) configurations &mdash; and selects new candidates by maximizing g(x)/l(x). More efficient than grid or random search.</p>
+      </div>
+    </div>
+    <div class="slabel" style="margin-top:1.5rem;margin-bottom:.75rem">TPE Reward Function</div>
+    <div class="rcards">
+      <div class="rcard a">
+        <div class="rl">Criterion 1</div>
+        <h4>Visual Distinctness</h4>
+        <p>The ROI must be visually distinguishable from its surroundings. Measured as contrast between the ROI region and the surrounding rendered image.</p>
+      </div>
+      <div class="rcard g">
+        <div class="rl">Criterion 2</div>
+        <h4>Information Preservation</h4>
+        <p>The visualization must not obscure original data features. Measured using <strong style="color:var(--text)">mutual information</strong> between the rendered output and each input channel. Configurations that erase detail are penalized.</p>
+      </div>
+    </div>
+    <div class="g2v" style="margin-top:1.5rem">
+      <div class="fig">
+        <img src="images/image_020.png" alt="Final two-channel output visualization" loading="lazy">
+        <div class="fig-cap">Fig 20 &mdash; Example final output from the parameter selection stage. Two channels are rendered with TPE-selected colors, contrast, and transparency, revealing the structural relationship between elements within the ROI.</div>
+      </div>
+      <div style="display:flex;flex-direction:column;justify-content:center;gap:.9rem;padding:.5rem 0">
+        <p style="font-size:.88rem;color:var(--muted)">The TPE pipeline runs for a configurable number of iterations. During each iteration, a candidate parameter set is applied to the image; visual distinction and mutual information are computed and fed back to TPE to update its probability models.</p>
+        <p style="font-size:.88rem;color:var(--muted)">This optimization cannot be performed via gradient descent &mdash; the relationship between visualization parameters and perceptual quality has no differentiable form &mdash; making the Bayesian approach particularly well suited.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="container">
+    <div class="slabel">Results</div>
+    <h2 class="stitle">All five objectives completed at 100%</h2>
+    <div class="stats">
+      <div class="stat"><div class="n">94%</div><div class="l">Reduction in parameter-tuning time vs. manual methods</div></div>
+      <div class="stat"><div class="n">5/5</div><div class="l">Technical objectives completed at 100%</div></div>
+      <div class="stat"><div class="n">4</div><div class="l">Microscopy file formats supported (.czi, .npy, .tif, .lsm)</div></div>
+    </div>
+    <table class="obj-table">
+      <thead><tr><th>Technical Objective</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Finalize R&amp;D Plan &mdash; specifications, stakeholder interviews, benchmarks</td><td><span class="badge">100%</span></td></tr>
+        <tr><td>Data Collection &amp; I/O &mdash; BNL training dataset, file ingestion, raw visualization</td><td><span class="badge">100%</span></td></tr>
+        <tr><td>Build Trame-based Application &mdash; frontend, per-channel controls, slice view</td><td><span class="badge">100%</span></td></tr>
+        <tr><td>Implement ML Pipeline &mdash; segmentation, ROI selection, optimal display parameters</td><td><span class="badge">100%</span></td></tr>
+        <tr><td>Verify &amp; Validate ML Architecture &mdash; SME evaluation at BNL, iterative testing</td><td><span class="badge">100%</span></td></tr>
+      </tbody>
+    </table>
+    <div class="slabel" style="margin-top:2rem;margin-bottom:.75rem">Key Findings</div>
+    <ul class="findings">
+      <li>The entropy-based thresholding metric outperformed KL-Divergence and Gini Index for producing interpretable rescaled microscopy images.</li>
+      <li>Graph spectral clustering for 3D volume assembly from 2D SAM segments resolves the diagonal-object and stacked-object problems that a naive IoU threshold approach cannot handle.</li>
+      <li>SAM performs well on high-resolution data (35&times;728&times;968) but is less effective on lower-resolution volumes (120&times;120&times;120), where 3D Watershed or Region Growing are better suited.</li>
+      <li>Creating a fully modality-agnostic pipeline is challenging due to variation in data collection methods, resolution, and data shape. User-guided segmentation selection is the primary Phase II improvement.</li>
+      <li>SAM&rsquo;s prompting capabilities (point, bounding box, natural language) offer a path toward an interactive assistant-style experience in Phase II.</li>
+      <li>Phase II will pivot to plugin/extension integration with existing microscopy platforms (Fiji/ImageJ, napari), focusing ScopeVis effort on the ML pipeline as the core differentiator.</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <div>ScopeVis &mdash; Visualization Toolkit for Nanoscale Imaging Data</div>
+  <div style="margin-top:.4rem">DoE SBIR Phase I &nbsp;&middot;&nbsp; Period of Performance: Feb 12 &ndash; Nov 11, 2024</div>
+</footer>
 </body>
 </html>

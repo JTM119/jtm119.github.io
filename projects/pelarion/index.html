@@ -1,106 +1,925 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pelarion — Joshua Martin</title>
-  <link rel="stylesheet" href="/static/css/reset.css" />
-  <link rel="stylesheet" href="/static/css/typography.css" />
-  <link rel="stylesheet" href="/static/css/main.css" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Pelarion — ChemGrey Project</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&display=swap');
+
+  /* ── TOKENS ── */
+  :root {
+    --ink:        #0F1217;
+    --paper:      #F7F8FA;
+    --surface:    #FFFFFF;
+    --accent:     #1A5CFF;
+    --accent-dim: #E8EFFE;
+    --green:      #0D9E6E;
+    --green-dim:  #E2F5EF;
+    --amber:      #C97B00;
+    --border:     #DDE1E8;
+    --muted:      #6B7280;
+    --mono:       'IBM Plex Mono', monospace;
+    --display:    'Fraunces', Georgia, serif;
+    --body:       'Inter', system-ui, sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--body);
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(247,248,250,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2.5rem;
+    height: 56px;
+  }
+  .nav-brand {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: color 0.15s;
+  }
+  .nav-links a:hover { color: var(--ink); }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--ink);
+    color: #fff;
+    padding: 7rem 2.5rem 5rem;
+  }
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(26,92,255,0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(26,92,255,0.07) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+  .hero-glow {
+    position: absolute;
+    top: -120px;
+    right: -80px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(26,92,255,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-inner {
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(26,92,255,0.9);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 28px;
+    height: 1px;
+    background: rgba(26,92,255,0.7);
+  }
+  .hero h1 {
+    font-family: var(--display);
+    font-size: clamp(2.4rem, 5vw, 3.8rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: #fff;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: rgba(255,255,255,0.55);
+  }
+  .hero-desc {
+    font-size: 1.05rem;
+    color: rgba(255,255,255,0.7);
+    max-width: 620px;
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+  }
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+  .hero-pill {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    padding: 0.35rem 0.85rem;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 2px;
+    color: rgba(255,255,255,0.6);
+  }
+  .hero-pill strong { color: rgba(255,255,255,0.92); }
+
+  /* ── STAT BAR ── */
+  .stat-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .stat-bar-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2.5rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    divide-x: 1px solid var(--border);
+  }
+  .stat {
+    padding: 2rem 1.5rem 2rem 0;
+    border-right: 1px solid var(--border);
+  }
+  .stat:first-child { padding-left: 0; }
+  .stat:last-child { border-right: none; }
+  .stat-num {
+    font-family: var(--display);
+    font-size: 2.4rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--accent);
+    letter-spacing: -0.03em;
+    margin-bottom: 0.3rem;
+  }
+  .stat-label {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+  .stat-sub {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 0.2rem;
+    font-weight: 400;
+  }
+
+  /* ── LAYOUT ── */
+  .content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2.5rem;
+  }
+
+  section {
+    padding: 5rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  section:last-of-type { border-bottom: none; }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+
+  h2 {
+    font-family: var(--display);
+    font-size: 1.9rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+  }
+
+  h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+    margin-bottom: 0.6rem;
+    margin-top: 2rem;
+  }
+
+  p {
+    font-size: 0.96rem;
+    color: #374151;
+    line-height: 1.75;
+    margin-bottom: 1rem;
+  }
+
+  /* ── PIPELINE ── */
+  .pipeline {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin: 2.5rem 0;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+  .pipeline-step {
+    flex: 1;
+    min-width: 120px;
+    padding: 1.25rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-right: none;
+    position: relative;
+  }
+  .pipeline-step:last-child {
+    border-right: 1px solid var(--border);
+  }
+  .pipeline-step::after {
+    content: '›';
+    position: absolute;
+    right: -11px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.3rem;
+    color: var(--muted);
+    z-index: 1;
+    background: var(--surface);
+    padding: 0 2px;
+  }
+  .pipeline-step:last-child::after { display: none; }
+  .step-num {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--accent);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.4rem;
+  }
+  .step-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.3;
+    margin-bottom: 0.35rem;
+  }
+  .step-desc {
+    font-size: 0.73rem;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+
+  /* ── TECH GRID ── */
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin: 2rem 0;
+  }
+  .tech-card {
+    background: var(--surface);
+    padding: 1.5rem;
+  }
+  .tech-icon {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    font-weight: 500;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .tech-card h4 {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+  }
+  .tech-card p {
+    font-size: 0.82rem;
+    color: #4B5563;
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  /* ── FIGURE ── */
+  .fig-block {
+    margin: 2.5rem 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .fig-block img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-bottom: 1px solid var(--border);
+  }
+  .fig-caption {
+    padding: 0.85rem 1.1rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.5;
+  }
+  .fig-caption strong {
+    font-style: normal;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  /* ── METRIC CALLOUTS ── */
+  .metric-row {
+    display: flex;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin: 2rem 0;
+  }
+  .metric-cell {
+    flex: 1;
+    background: var(--surface);
+    padding: 1.5rem;
+    text-align: center;
+  }
+  .metric-big {
+    font-family: var(--display);
+    font-size: 2.6rem;
+    font-weight: 700;
+    color: var(--green);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+  .metric-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 0.2rem;
+    letter-spacing: 0.02em;
+  }
+  .metric-note {
+    font-size: 0.73rem;
+    color: var(--muted);
+  }
+
+  /* ── OBJECTIVE TABLE ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.84rem;
+    margin: 1.5rem 0;
+  }
+  thead th {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 2px solid var(--border);
+    padding: 0.6rem 1rem 0.6rem 0;
+    text-align: left;
+    font-weight: 500;
+  }
+  tbody td {
+    padding: 0.75rem 1rem 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+    color: #374151;
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  .badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    font-weight: 500;
+    padding: 0.15rem 0.55rem;
+    border-radius: 2px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .badge-green { background: var(--green-dim); color: var(--green); }
+  .badge-blue  { background: var(--accent-dim); color: var(--accent); }
+
+  /* ── STAKEHOLDER QUOTES ── */
+  .quote-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin: 2rem 0;
+  }
+  .quote-card {
+    background: var(--surface);
+    padding: 1.5rem;
+  }
+  .quote-text {
+    font-family: var(--display);
+    font-size: 0.95rem;
+    font-style: italic;
+    color: var(--ink);
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+  }
+  .quote-attr {
+    font-family: var(--mono);
+    font-size: 0.67rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ── CREDIT ── */
+  .credit-bar {
+    background: var(--ink);
+    color: rgba(255,255,255,0.55);
+    padding: 2.5rem;
+    font-size: 0.8rem;
+    line-height: 1.7;
+    text-align: center;
+  }
+  .credit-bar a { color: rgba(255,255,255,0.7); }
+  .credit-highlight {
+    font-family: var(--display);
+    font-size: 1.05rem;
+    font-style: italic;
+    color: rgba(255,255,255,0.85);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  @media (max-width: 640px) {
+    nav { padding: 0 1.25rem; }
+    .nav-links { display: none; }
+    .hero, .content { padding-left: 1.25rem; padding-right: 1.25rem; }
+    .stat-bar-inner { grid-template-columns: repeat(2,1fr); padding: 0 1.25rem; }
+    .tech-grid, .quote-grid { grid-template-columns: 1fr; }
+    .metric-row { flex-direction: column; }
+    .pipeline { flex-direction: column; }
+    .pipeline-step { border-right: 1px solid var(--border); border-bottom: none; }
+    .pipeline-step:last-child { border-bottom: 1px solid var(--border); }
+    .pipeline-step::after { display: none; }
+  }
+</style>
+<style>
+/* ── Site primary nav ── */
+.pnav{height:56px;border-bottom:1px solid #cdd8ea;background:rgba(238,243,251,0.92);backdrop-filter:blur(10px);position:sticky;top:0;z-index:9999;display:flex;align-items:center}
+.pnav-inner{width:100%;max-width:1200px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.pnav-logo{font-family:'Lora',Georgia,serif;font-size:1.125rem;font-weight:600;color:#0f172a;text-decoration:none;letter-spacing:-0.01em}
+.pnav-list{display:flex;gap:1.5rem;list-style:none}
+.pnav-list a{font-size:0.875rem;font-weight:500;color:#5c6b82;text-decoration:none;transition:color 150ms}
+.pnav-list a:hover,.pnav-list a[aria-current]{color:#2563eb;text-decoration:none}
+@media(max-width:600px){.pnav-logo{font-size:1rem}.pnav-list{gap:1rem}}
+/* ── Silva-style override ── */
+body{background:#F7F5F0!important;color:#1C2319!important;font-family:Georgia,"Times New Roman",serif!important}
+nav:not(.pnav){top:56px!important;background:#1A3D28!important;border-bottom:1px solid rgba(255,255,255,0.08)!important}
+.nav-brand{color:#7ED99A!important}
+.nav-links a{color:#8FBA9A!important}
+.nav-links a:hover{color:#FFFFFF!important}
+nav:not(.pnav){padding-left:max(1.5rem,calc(50% - 430px))!important;padding-right:max(1.5rem,calc(50% - 430px))!important}
+</style>
 </head>
 <body>
 
-  <nav class="site-nav" aria-label="Main navigation">
-    <div class="container">
-      <a href="/" class="nav-logo">Joshua Martin</a>
-      <ul class="nav-links" role="list">
-        <li><a href="/">Home</a></li>
-        <li><a href="/about/">About</a></li>
-        <li><a href="/projects/">Projects</a></li>
-      </ul>
+<nav class="pnav" aria-label="Site navigation">
+  <div class="pnav-inner">
+    <a href="/" class="pnav-logo">Joshua Martin</a>
+    <ul class="pnav-list" role="list">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about/">About</a></li>
+      <li><a href="/projects/" aria-current="page">Projects</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-brand">Pelarion / ChemGrey</span>
+  <ul class="nav-links">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#technical">Technical Work</a></li>
+    <li><a href="#interface">Interface</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#stakeholders">Stakeholders</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">EPA Phase II SBIR</div>
+    <h1>Machine Learning Toolkit<br>for <em>Grey Literature</em> Screening</h1>
+    <p class="hero-desc">
+      Pelarion is a production-ready web platform that brings explainable AI into the systematic review
+      process, making grey literature discoverable, screenable, and auditable at scale.
+    </p>
+    <div class="hero-meta">
+      <span class="hero-pill"><strong>My Role</strong>&nbsp; Technical Lead</span>
+      <span class="hero-pill"><strong>Period</strong>&nbsp; Oct 2023 – Oct 2025</span>
     </div>
-  </nav>
+  </div>
+</div>
 
-  <main>
-    <div class="container">
-
-      <a href="/projects/" class="back-link">← All projects</a>
-
-      <header class="page-header">
-        <h1>Pelarion</h1>
-        <p>EPA Phase II (2023–2025) · Technical Lead</p>
-      </header>
-
-      <div class="project-detail-img">
-        <img src="/static/img/pelarion.jpg" alt="Pelarion title and abstract screening interface showing model recommendations and conflict flags" />
-      </div>
-
-      <section class="project-section" aria-labelledby="overview-heading">
-        <h2 id="overview-heading">Overview</h2>
-        <p>
-          Pelarion is a full-stack systematic review platform built for the EPA to accelerate
-          grey literature screening across regulatory documents, reports, technical studies,
-          and web content. The platform automates the most time-consuming stages of evidence
-          synthesis — title and abstract triage, full-text relevance assessment, and conflict
-          flagging — while preserving reviewer control and audit trails throughout.
-        </p>
-        <p>
-          The EPA's systematic review workflows required handling heterogeneous source types
-          (PDF, HTML, scanned documents), supporting multi-reviewer conflict resolution, and
-          producing structured outputs suitable for regulatory documentation. Pelarion was
-          designed to reduce the screening burden on domain experts without removing them from
-          the decision loop.
-        </p>
-      </section>
-
-      <section class="project-section" aria-labelledby="approach-heading">
-        <h2 id="approach-heading">Technical Approach</h2>
-        <ul>
-          <li>PDF and HTML ingestion pipeline with sentence-aware chunking and LLM-assisted title and abstract extraction for documents lacking structured metadata</li>
-          <li>BM25 lexical ranking for fast first-pass title and abstract triage across large literature sets</li>
-          <li>Random Forest and XGBoost classifiers with Optuna Bayesian hyperparameter tuning for learned relevance scoring at the abstract stage</li>
-          <li>Full-text screening via Gemini Flash LLM with structured prompts — producing criterion-by-criterion rationales and page-level citations as structured JSON, enabling reviewer audit</li>
-          <li>Multi-reviewer conflict detection and resolution workflow with configurable inclusion thresholds</li>
-          <li>Production stack: Django REST backend, React frontend, PostgreSQL, Celery task queue, RabbitMQ message broker, Redis cache, Azure Blob Storage for document storage</li>
-        </ul>
-      </section>
-
-      <section class="project-section" aria-labelledby="results-heading">
-        <h2 id="results-heading">Results</h2>
-        <ul>
-          <li>80% recall and 86% precision on held-out literature sets</li>
-          <li>LLM-based full-text screening with structured criterion-by-criterion outputs and page-level citations, enabling reviewer verification without re-reading full documents</li>
-          <li>Delivered as a production web application used by EPA reviewers across an active systematic review engagement</li>
-        </ul>
-      </section>
-
-      <section class="project-section" aria-labelledby="stack-heading">
-        <h2 id="stack-heading">Stack</h2>
-        <ul class="project-tags" role="list">
-          <li class="tag">Django</li>
-          <li class="tag">React</li>
-          <li class="tag">PostgreSQL</li>
-          <li class="tag">Celery</li>
-          <li class="tag">RabbitMQ</li>
-          <li class="tag">Redis</li>
-          <li class="tag">XGBoost</li>
-          <li class="tag">LLMs</li>
-          <li class="tag">Azure</li>
-        </ul>
-      </section>
-
+<!-- STAT BAR -->
+<div class="stat-bar">
+  <div class="stat-bar-inner">
+    <div class="stat">
+      <div class="stat-num">80%</div>
+      <div class="stat-label">Recall</div>
+      <div class="stat-sub">Full screening pipeline</div>
     </div>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container">
-      <ul class="footer-links" role="list">
-        <li><a href="mailto:joshtmartin99@gmail.com">Email</a></li>
-        <li><a href="https://github.com/JTM119" target="_blank" rel="noopener">GitHub</a></li>
-        <li><a href="https://www.linkedin.com/in/joshua-martin-333456192/" target="_blank" rel="noopener">LinkedIn</a></li>
-      </ul>
+    <div class="stat">
+      <div class="stat-num">86%</div>
+      <div class="stat-label">Precision</div>
+      <div class="stat-sub">Full screening pipeline</div>
     </div>
-  </footer>
+    <div class="stat">
+      <div class="stat-num">96.8%</div>
+      <div class="stat-label">Metadata Accuracy</div>
+      <div class="stat-sub">Population size extraction</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">12</div>
+      <div class="stat-label">Stakeholder Interviews</div>
+      <div class="stat-sub">4 countries</div>
+    </div>
+  </div>
+</div>
+
+<!-- OVERVIEW -->
+<div class="content">
+<section id="overview">
+  <div class="section-label">Background</div>
+  <h2>Why grey literature screening matters</h2>
+  <p>
+    Systematic Reviews (SRs) are the cornerstone of evidence-based chemical risk assessment at the EPA.
+    But their conclusions are only as sound as the literature they include. Grey literature — government
+    reports, technical documents, theses, and conference proceedings — is routinely underrepresented,
+    introducing publication bias that skews risk assessments and delays regulatory action.
+  </p>
+  <p>
+    The consequences are real. In the EPA's assessment of perchloroethylene (PCE), SR delays drove
+    widespread substitution with n-propylbromide, a chemical later found to carry even greater health
+    risks. In assessments of carbon tetrachloride, the EPA and international agencies reached
+    opposite conclusions partly because grey and biological literature was excluded from one analysis.
+  </p>
+  <p>
+    Grey literature's barriers are structural: no standardized metadata, no consistent indexing,
+    dispersed sources, and link decay that turns retrieval into a manual, error-prone process.
+    SR teams fall back on spreadsheets for dual screening, which is slow, non-scalable, and
+    non-reproducible. Pelarion was built to close this gap.
+  </p>
+
+  <div class="section-label" style="margin-top:2.5rem;">Objectives</div>
+  <h2 style="font-size:1.4rem;">All Phase II technical objectives met</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:30%">Objective</th>
+        <th style="width:12%">Status</th>
+        <th>Milestone</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>TO 1</strong> — Finalize R&D Plan</td>
+        <td><span class="badge badge-green">Complete</span></td>
+        <td>Kickoff with partners; R&D timeline drafted.</td>
+      </tr>
+      <tr>
+        <td><strong>SD TO 1</strong> — Data Gathering</td>
+        <td><span class="badge badge-green">Complete</span></td>
+        <td>Semantic Scholar API integrated for live database search.</td>
+      </tr>
+      <tr>
+        <td><strong>SD TO 2</strong> — Design Web App</td>
+        <td><span class="badge badge-green">Complete</span></td>
+        <td>Figma wireframes refined iteratively with SME partners.</td>
+      </tr>
+      <tr>
+        <td><strong>SD TO 3</strong> — Build Web App</td>
+        <td><span class="badge badge-green">Complete</span></td>
+        <td>Application deployed and internally tested for stability.</td>
+      </tr>
+      <tr>
+        <td><strong>SD TO 4</strong> — Alpha Testing</td>
+        <td><span class="badge badge-green">Complete</span></td>
+        <td>Testing with SME partners and Johns Hopkins University students.</td>
+      </tr>
+      <tr>
+        <td><strong>DS TO 1</strong> — Gather Data</td>
+        <td><span class="badge badge-green">Complete</span></td>
+        <td>Expanded validation corpus developed with partners.</td>
+      </tr>
+      <tr>
+        <td><strong>DS TO 2</strong> — Improve ML Pipeline</td>
+        <td><span class="badge badge-green">Complete</span></td>
+        <td>Gemini Flash 2.5 integrated; 80% recall and 86% precision achieved.</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- TECHNICAL -->
+<section id="technical">
+  <div class="section-label">Technical Work</div>
+  <h2>Data science and system architecture</h2>
+
+  <p>
+    The platform accepts PDFs, Office documents (converted to PDF), and web-scraped HTML.
+    The pipeline runs three sequential stages before any model sees a document.
+  </p>
+
+  <div class="pipeline">
+    <div class="pipeline-step">
+      <div class="step-num">01</div>
+      <div class="step-title">Ingest</div>
+      <div class="step-desc">Normalize raw PDF into a continuous narrative, removing page-boundary artifacts.</div>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-num">02</div>
+      <div class="step-title">Segment</div>
+      <div class="step-desc">Split into overlapping, sentence-aware chunks. Overlap prevents mid-thought cuts.</div>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-num">03</div>
+      <div class="step-title">Extract Metadata</div>
+      <div class="step-desc">LLM derives title and abstract. ~50% improvement over heading-based approach.</div>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-num">04</div>
+      <div class="step-title">Rank Abstracts</div>
+      <div class="step-desc">BM25 + TF-IDF + Random Forest. Calibrated inclusion probabilities order the queue.</div>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-num">05</div>
+      <div class="step-title">Screen Full Text</div>
+      <div class="step-desc">Gemini Flash evaluates each criterion with JSON output and page-level citations.</div>
+    </div>
+  </div>
+
+  <h3>Abstract Screening: Two-Stage Ranking</h3>
+  <p>
+    Abstracts are ranked by blending fast lexical signals with a learned classifier. BM25 provides a
+    transparent first pass, scoring how often criterion terms appear in each abstract, how rare those
+    terms are across the collection, and normalizing for document length. In parallel, TF-IDF vectors
+    over unigrams and bigrams feed a Random Forest classifier trained on reviewer decisions accumulated
+    during the current review, with XGBoost available as an alternative. Hyperparameters are tuned
+    via Bayesian optimization (Optuna) using F1 as the objective.
+  </p>
+  <p>
+    In head-to-head testing, this approach matched a BERT embedding paired with a neural network
+    classifier — at a fraction of the compute, latency, and maintenance overhead.
+  </p>
+
+  <h3>Full-Text Screening: Structured LLM Prompting</h3>
+  <p>
+    Full-text screening drives Gemini Flash with criteria-aware templated prompts. The model returns
+    a strict JSON schema: for each inclusion criterion it produces a label (yes / no / maybe) plus
+    a short rationale. The three-way label was a deliberate choice: during prompt engineering,
+    allowing "maybe" measurably reduced hallucinated citations compared to a binary yes/no scheme.
+    Page citations are emitted as XML tags — &lt;page:X&gt; or &lt;page:X-Y&gt; — and parsed
+    immediately so every claim links to its source location.
+  </p>
+
+  <div class="tech-grid">
+    <div class="tech-card">
+      <div class="tech-icon">Backend</div>
+      <h4>Django + DRF</h4>
+      <p>Versioned, JWT-secured REST API. Celery workers on RabbitMQ handle all compute-heavy tasks asynchronously. PostgreSQL for transactional data; Azure Blob Storage for PDFs.</p>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon">Frontend</div>
+      <h4>React 18 + Vite</h4>
+      <p>Redux Toolkit state management. Material UI with Emotion. Real-time progress via Server-Sent Events (SSE). Full-text review with react-pdf-viewer and pdfjs-dist.</p>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon">ML Stack</div>
+      <h4>BM25 · TF-IDF · Random Forest</h4>
+      <p>Bayesian hyperparameter optimization via Optuna. Calibrated inclusion probabilities. Matched BERT + neural network baseline at lower cost and latency.</p>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon">LLM Integration</div>
+      <h4>Gemini Flash 2.5 · Cohere</h4>
+      <p>Structured JSON output with per-criterion rationales. XML page citation tags parsed in real time. Conservative flag logic: any NO criterion excludes the article.</p>
+    </div>
+  </div>
+
+  <h3>Additional Feasibility Work</h3>
+  <p>
+    <strong>Custom metadata extraction</strong> lets users define arbitrary fields (name, type, description,
+    example) that an LLM extracts from each document for downstream filtering. Tested on 32 biomedical
+    articles targeting population size and characteristics, the system achieved 96.77% accuracy on
+    population size — including cases that required summing across table cells — and 100% on
+    population characteristics. The single error arose when the source article was a synthesis and the
+    model pulled figures from a referenced study rather than noting that no standalone population existed.
+  </p>
+  <p>
+    <strong>Grey literature search planning</strong> reads YAML configurations and uses an OpenAI model
+    to draft topic-specific search strategies, including recommended databases, search strings, and
+    retrieval tips. An execution companion then translates those plans into DuckDuckGo queries
+    to collect candidate sources, logging each configuration for reproducibility.
+  </p>
+</section>
+
+<!-- INTERFACE -->
+<section id="interface">
+  <div class="section-label">User Interface</div>
+  <h2>A task-oriented workspace for high-volume review</h2>
+
+  <p>
+    Pelarion guides reviewers through six locked stages — Data Gathering, Criteria, Title/Abstract
+    Screening, Full Text Retrieval, Full Text Screening, and Results — displayed as a progress bar
+    at the top of every screen. Criteria and document lists are locked before screening begins,
+    following SR protocol to prevent bias from influencing decisions.
+  </p>
+
+  <div class="fig-block">
+    <img src="images/image_001.jpg" alt="Pelarion home page showing three active systematic reviews"/>
+    <div class="fig-caption"><strong>Figure 1.</strong> The Pelarion home page. Users see all systematic reviews they participate in alongside current progress at each stage.</div>
+  </div>
+
+  <p>
+    Data gathering supports three entry paths: direct PDF or ZIP upload (including Zotero exports),
+    live search against Semantic Scholar with date-range filtering, and a "Your Articles" view that
+    surfaces duplicates and abstracts that could not be automatically extracted. Users control the
+    de-duplication step, choosing which records to retain.
+  </p>
+
+  <div class="fig-block">
+    <img src="images/image_002.jpg" alt="Title and abstract screening list and detailed view"/>
+    <div class="fig-caption"><strong>Figures 7 and 8.</strong> Title/Abstract Screening. The list view (top) shows model recommendations and conflict flags. The detail view (bottom) highlights the exact text driving each model decision and presents per-criterion rationales alongside human override controls.</div>
+  </div>
+
+  <p>
+    The batch size setting controls how frequently the Random Forest ranking model retrains during
+    abstract screening. Smaller batches trigger more frequent updates on less data, producing gradual
+    ranking shifts. Larger batches produce more pronounced improvements between iterations. After
+    every batch the model is retrained on accumulated reviewer decisions, progressively improving
+    the relevance of documents surfaced in future batches.
+  </p>
+
+  <div class="fig-block">
+    <img src="images/image_003.jpg" alt="Full text screening interface with document viewer and model panel"/>
+    <div class="fig-caption"><strong>Figure 10.</strong> Full Text Screening. The raw document is shown on the left. Per-criterion assessments with page-linked evidence appear on the right — clicking a page citation scrolls the document directly to that location.</div>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-label">Results</div>
+  <h2>Screening performance and domain generalization</h2>
+
+  <div class="metric-row">
+    <div class="metric-cell">
+      <div class="metric-big">80%</div>
+      <div class="metric-label">Recall</div>
+      <div class="metric-note">Protects against missing eligible studies</div>
+    </div>
+    <div class="metric-cell">
+      <div class="metric-big">86%</div>
+      <div class="metric-label">Precision</div>
+      <div class="metric-note">Limits reviewer time on false positives</div>
+    </div>
+    <div class="metric-cell">
+      <div class="metric-big">96.8%</div>
+      <div class="metric-label">Metadata Extraction</div>
+      <div class="metric-note">Population size on 32 biomedical articles</div>
+    </div>
+    <div class="metric-cell">
+      <div class="metric-big">100%</div>
+      <div class="metric-label">Characteristics</div>
+      <div class="metric-note">Population characteristics accuracy</div>
+    </div>
+  </div>
+
+  <p>
+    Results were validated across a dataset mixing grey literature and academic literature, with
+    some documents exceeding several hundred pages. Despite non-standard grey literature formatting,
+    Pelarion correctly screened documents for relevance to provided criteria and surfaced criterion-level
+    rationales and page anchors for reviewer verification.
+  </p>
+
+  <h3>Patent screening generalization</h3>
+  <p>
+    Following interest from IP.com, VISIMO ran the pipeline against a patent dataset to assess
+    domain generalizability. Abstract screening proved unreliable — patent abstracts are often a
+    single sentence, too brief for the model to extract useful relevance signals. When abstracts
+    were bypassed and all patents advanced directly to full-text screening, the model performed
+    strongly across patents ranging from 17 to 303 pages. Notably, it cited figures and diagrams
+    as supporting evidence — a promising multimodal capability.
+  </p>
+
+  <div class="fig-block">
+    <img src="images/image_004.jpg" alt="Lung tissue segmentation diagram cited by the model as evidence"/>
+    <div class="fig-caption"><strong>Figure 12.</strong> A lung tissue segmentation diagram from a screened patent, cited by the model as evidence for inclusion. The model's rationale referenced specific figure labels to support its recommendation, demonstrating reasoning over visual content.</div>
+  </div>
+
+  <p>
+    Near-term adaptations for the patent domain include updated filtering logic (match any criterion
+    rather than all), removal or replacement of abstract screening with lightweight full-text
+    heuristics, domain vocabulary alignment, and evaluation metrics tuned to patent review workflows.
+  </p>
+</section>
+
+<!-- STAKEHOLDERS -->
+<section id="stakeholders">
+  <div class="section-label">Stakeholder Engagement</div>
+  <h2>Discovery across four countries, twelve conversations</h2>
+
+  <p>
+    Interviews were conducted with librarians, evidence centers, academics, public health researchers,
+    competitive intelligence teams, and content providers in the United States, United Kingdom,
+    France, and Canada. Participants consistently described SRs as high-volume, labor-intensive,
+    and sensitive to missed evidence. One evidence center reported workstreams reaching 50,000 items
+    per review.
+  </p>
+
+  <div class="quote-grid">
+    <div class="quote-card">
+      <div class="quote-text">"The biggest adoption barrier for any AI assistant is trust — specifically, the risk of missing eligible studies."</div>
+      <div class="quote-attr">Evidence Center — United States</div>
+    </div>
+    <div class="quote-card">
+      <div class="quote-text">"We want to know why a document was included, with citations or page-level anchors for every extracted claim."</div>
+      <div class="quote-attr">Systematic Review Librarian</div>
+    </div>
+    <div class="quote-card">
+      <div class="quote-text">"Pelarion should act as a second reviewer with blind screening, not a replacement for dual independent review."</div>
+      <div class="quote-attr">Public Health Researcher</div>
+    </div>
+    <div class="quote-card">
+      <div class="quote-text">"A freemium option is essential. Researchers stick with the first tool they learn."</div>
+      <div class="quote-attr">Academic Stakeholder</div>
+    </div>
+  </div>
+
+  <h3>Top feature requests</h3>
+  <p>
+    PRISMA diagram generation, automated de-duplication and citation tracking, integration with
+    Zotero / Elicit / ResearchRabbit / SciSpace / Mendeley, explainable AI decisions with external
+    validation, accurate full-text retrieval, and flexible filters (study type, citation count, sample
+    size). Batch summarization of large document sets was also frequently requested.
+  </p>
+
+  <h3>Commercialization path</h3>
+  <p>
+    Priority targets span pharma and biotech evidence centers, medical affairs teams, contract
+    research organizations, Health Economics and Outcomes Research agencies, patent analytics firms,
+    and health insurers evaluating coverage policies. The recommended go-to-market sequence:
+    formalize a grey literature content partnership pilot, launch a limited freemium beta with PRISMA
+    and exportable evidence logs, secure an independent validation study, then expand into
+    patent-centric workflows with IP.com.
+  </p>
+</section>
+</div>
+
+<!-- FOOTER -->
+<div class="credit-bar">
+  <span class="credit-highlight">Pelarion — Machine Learning Toolkit for Grey Literature Screening</span>
+  EPA Phase II SBIR &nbsp;·&nbsp; Oct 2023 – Oct 2025<br>
+  <strong style="color:rgba(255,255,255,0.8)">Technical Lead</strong>
+</div>
 
 </body>
 </html>
